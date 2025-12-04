@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // =====================
 const i18n = new I18n({
   ar: {
+    // ===== SETTINGS (موجودة كما هي) =====
     settingsTitle: "إعدادات النظام",
     alertTimeout: "⏱ مهلة التنبيه الحالية:",
     minutes: "دقيقة",
@@ -24,9 +25,40 @@ const i18n = new I18n({
     languageChangedTitle: "🌐 تم تغيير اللغة",
     languageChangedMessage:
       "سيتم تطبيق اللغة الجديدة بعد إعادة تشغيل التطبيق.",
+
+    // ===== SMART CHAIR (مضاف جديد) =====
+    smartChairTitle: "الكرسي الذكي",
+    chairConnected: "الكرسي متصل",
+    chairInactive: "الكرسي غير متصل",
+    camActive: "الكاميرا مفعّلة",
+    camOff: "الكاميرا متوقفة",
+
+    sensorsReadings: "قراءات الحساسات",
+    sessionStatus: "حالة الجلسة",
+
+    postureLabel: "وضعية الجلسة",
+    postureCorrect: "صحيحة",
+    postureIncorrect: "غير صحيحة",
+
+    attentionLevel: "مستوى الانتباه",
+    attentionFocused: "مركز",
+    attentionDistracted: "مشتت",
+
+    workDuration: "مدة العمل",
+
+    personStatus: "حالة الشخص",
+    present: "موجود",
+    notPresent: "غير موجود",
+
+    drowsyAlert: "نعاس مُكتشف – يُفضّل أخذ استراحة",
+
+    startMonitoring: "تشغيل المراقبة",
+    stopMonitoring: "إيقاف المراقبة",
+    calibrate: "معايرة",
   },
 
   en: {
+    // ===== SETTINGS (موجودة كما هي) =====
     settingsTitle: "System Settings",
     alertTimeout: "⏱ Alert Timeout:",
     minutes: "min",
@@ -42,6 +74,36 @@ const i18n = new I18n({
     languageChangedTitle: "🌐 Language Changed",
     languageChangedMessage:
       "The new language will apply after restarting the app.",
+
+    // ===== SMART CHAIR (مضاف جديد) =====
+    smartChairTitle: "Smart Chair",
+    chairConnected: "Chair Connected",
+    chairInactive: "Chair Inactive",
+    camActive: "Camera Active",
+    camOff: "Camera Off",
+
+    sensorsReadings: "Sensor Readings",
+    sessionStatus: "Session Status",
+
+    postureLabel: "Posture",
+    postureCorrect: "Correct",
+    postureIncorrect: "Incorrect",
+
+    attentionLevel: "Attention Level",
+    attentionFocused: "Focused",
+    attentionDistracted: "Distracted",
+
+    workDuration: "Work Duration",
+
+    personStatus: "Person Status",
+    present: "Present",
+    notPresent: "Not Present",
+
+    drowsyAlert: "Drowsiness detected – consider taking a break",
+
+    startMonitoring: "Start Monitoring",
+    stopMonitoring: "Stop Monitoring",
+    calibrate: "Calibrate",
   },
 });
 

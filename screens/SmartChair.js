@@ -57,6 +57,9 @@ export default function SmartChair() {
   const attentionText =
     attention == null ? "—" : attention > 60 ? "مركز" : "مشتت";
 
+  const hours = Math.floor(workSeconds / 3600);
+  const minutes = Math.floor((workSeconds % 3600) / 60);
+
   return (
     <LinearGradient colors={theme.gradient} style={s.container}>
       <StatusBar
@@ -70,9 +73,9 @@ export default function SmartChair() {
         style={[s.headerContainer, { backgroundColor: theme.primary }]}
         edges={['top']}>
         <Text style={s.headerTitle}>
-          <MaterialCommunityIcons name="chair-school" size={22} color="#FFF" />{' '}
-          الكرسي الذكي
-        </Text>
+  <MaterialCommunityIcons name="chair-school" size={22} color="#FFF" />{" "}
+  {i18n.t("smartChairTitle")}
+</Text>
       </SafeAreaView>
 
       <ScrollView
@@ -90,7 +93,7 @@ export default function SmartChair() {
               color={statusColor(chairActive)}
             />
             <Text style={[s.statusText, { color: theme.text }]}>
-              {chairActive ? 'Chair Connected' : 'Chair Inactive'}
+              {chairActive ? i18n.t("chairConnected") : i18n.t("chairInactive")}
             </Text>
           </View>
 
@@ -101,7 +104,7 @@ export default function SmartChair() {
               color={statusColor(camActive)}
             />
             <Text style={[s.statusText, { color: theme.text }]}>
-              {camActive ? 'Cam Active' : 'Cam Off'}
+              {camActive ? i18n.t("camActive") : i18n.t("camOff")}
             </Text>
           </View>
         </View>
@@ -139,7 +142,8 @@ export default function SmartChair() {
 
         {/* قراءة الحساسات */}
         <View style={[s.card, isDark ? s.cardDark : s.cardLight]}>
-          <Text style={[s.title, { color: theme.text }]}>قراءات الحساسات</Text>
+          <Text style={[s.title, { color: theme.text }]}> {i18n.t("sensorsReadings")} </Text>
+
           <View style={s.readingsGrid}>
             {pressures.map((p, i) => (
               <View key={i} style={s.readCell}>
@@ -163,8 +167,9 @@ export default function SmartChair() {
   ]}
 >
   <Text style={[s.cardTitle, { color: theme.text }]}>
-    حالة الجلسة
-  </Text>
+  {i18n.t("sessionStatus")}
+</Text>
+
   {/* وضعية الجلسة */}
 <View
   style={[
@@ -188,7 +193,7 @@ export default function SmartChair() {
         { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
       ]}
     >
-      وضعية الجلسة
+     {i18n.t("postureLabel")}
     </Text>
 
     <Text
@@ -200,7 +205,7 @@ export default function SmartChair() {
         },
       ]}
     >
-      {posture}
+      {posture === "صحيحة" ? i18n.t("postureCorrect") : i18n.t("postureIncorrect")}
     </Text>
   </View>
 </View>
@@ -235,7 +240,7 @@ export default function SmartChair() {
         { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
       ]}
     >
-      مستوى الانتباه
+     {i18n.t("attentionLevel")}
     </Text>
 
     <Text
@@ -247,7 +252,7 @@ export default function SmartChair() {
         },
       ]}
     >
-      {attentionText}
+      {attentionText === "مركز" ? i18n.t("attentionFocused") : i18n.t("attentionDistracted")}
     </Text>
   </View>
 </View>
@@ -270,7 +275,7 @@ export default function SmartChair() {
         { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
       ]}
     >
-      مدة العمل
+     {i18n.t("workDuration")}
     </Text>
 
     <Text
@@ -279,7 +284,10 @@ export default function SmartChair() {
         { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
       ]}
     >
-      {workSeconds} ثانية
+      {hours > 0
+  ? `${hours} ${i18n.t("hours")} ${minutes} ${i18n.t("minutes")}`
+  : `${minutes} ${i18n.t("minutes")}`}
+
     </Text>
   </View>
 </View>
@@ -307,7 +315,7 @@ export default function SmartChair() {
         { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
       ]}
     >
-      حالة الشخص
+     {i18n.t("personStatus")}
     </Text>
 
     <Text
@@ -319,7 +327,8 @@ export default function SmartChair() {
         },
       ]}
     >
-      {isPresent ? "موجود" : "غير موجود"}
+      {isPresent ? i18n.t("present") : i18n.t("notPresent")}
+
     </Text>
   </View>
 </View>
@@ -343,7 +352,7 @@ export default function SmartChair() {
         },
       ]}
     >
-      نعاس مُكتشف – يُفضّل أخذ استراحة
+     {i18n.t("drowsyAlert")}
     </Text>
   </View>
 )}
@@ -358,12 +367,12 @@ export default function SmartChair() {
               { backgroundColor: monitoring ? theme.primary : theme.muted },
             ]}>
             <Text style={s.btnTxt}>
-              {monitoring ? 'إيقاف المراقبة' : 'تشغيل المراقبة'}
+              {monitoring ? i18n.t("stopMonitoring") : i18n.t("startMonitoring")}
             </Text>
           </Pressable>
 
           <Pressable style={[s.btn, { backgroundColor: theme.secondary }]}>
-            <Text style={s.btnTxt}>معايرة</Text>
+            <Text style={s.btnTxt}>{i18n.t("calibrate")}</Text>
           </Pressable>
         </View>
 
