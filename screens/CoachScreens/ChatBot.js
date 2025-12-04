@@ -243,7 +243,7 @@ export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
 
         {/* ✅ KEYBOARD SPACE */}
         {keyboardHeight > 0 && (
-          <View style={{ height: Platform.OS === "ios" ? keyboardHeight - 20 : keyboardHeight }} />
+          <View style={{ height: Platform.OS === "ios" ? keyboardHeight - 5 : keyboardHeight }} />
         )}
       </Animated.View>
     </View>
