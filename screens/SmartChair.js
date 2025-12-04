@@ -259,9 +259,9 @@ export default function SmartChair() {
     { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
   ]}
 >
-  <View style={[s.iconBubble, { backgroundColor: theme.accent }]}>
-    <Ionicons name="time" size={18} color="#fff" />
-  </View>
+  <View style={[s.iconBubble, { backgroundColor: theme.primary }]}>
+  <Ionicons name="time" size={18} color="#fff" />
+</View>
 
   <View style={s.infoTextGroup}>
     <Text
@@ -349,36 +349,23 @@ export default function SmartChair() {
 )}
 </View>
 
-<View style={s.controls}>
-  <Pressable
-    onPress={() => setMonitoring(!monitoring)}
-    style={({ pressed }) => [
-      s.btn,
-      {
-        backgroundColor: monitoring
-          ? pressed
-            ? "#194D73"
-            : theme.accent
-          : "#AAB2BC",
-      },
-    ]}
-  >
-    <Text style={s.btnTxt}>
-      {monitoring ? "إيقاف المراقبة" : "تشغيل المراقبة"}
-    </Text>
-  </Pressable>
+{/* CONTROLS */}
+        <View style={s.controls}>
+          <Pressable
+            onPress={() => setMonitoring(!monitoring)}
+            style={[
+              s.btn,
+              { backgroundColor: monitoring ? theme.primary : theme.muted },
+            ]}>
+            <Text style={s.btnTxt}>
+              {monitoring ? 'إيقاف المراقبة' : 'تشغيل المراقبة'}
+            </Text>
+          </Pressable>
 
-  <Pressable
-    disabled={!true}
-    style={({ pressed }) => [
-      s.btn,
-      s.btnGray,
-      { opacity: pressed ? 0.7 : true ? 1 : 0.5 },
-    ]}
-  >
-    <Text style={s.btnTxt}>معايرة</Text>
-  </Pressable>
-</View>
+          <Pressable style={[s.btn, { backgroundColor: theme.secondary }]}>
+            <Text style={s.btnTxt}>معايرة</Text>
+          </Pressable>
+        </View>
 
       </ScrollView>
     </LinearGradient>
@@ -417,8 +404,9 @@ const s = StyleSheet.create({
   },
   chairOnly: { marginTop: 25, alignItems: "center", justifyContent: "center" },
   card: {
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: 22,
+    paddingVertical: 26,   // ⬅️ أكبر
+    paddingHorizontal: 22,
     marginTop: 20,
     width: "90%",
     alignItems: "center",
@@ -461,22 +449,27 @@ cardTitle: {
 },
 
 infoRow: {
-  width : "100%",
+  width: "100%",
+  flexDirection: "row",
   alignItems: "center",
-  marginVertical: 10,
+  justifyContent: "flex-start", // ✅ هذا هو المفتاح
+  marginVertical: 14,
 },
+
 infoTextGroup: {
   flex: 1,
+  justifyContent: "center",
 },
 
 infoLabel: {
-  fontSize: 14,
+  fontSize: 15,     // ⬅️ أكبر
   opacity: 0.6,
+  marginBottom: 2,
 },
 
 infoValue: {
-  fontSize: 16,
-  fontWeight: "700",
+  fontSize: 19,     // ⬅️ أهم سطر
+  fontWeight: "800",
 },
 
 rowReverse: {
@@ -484,34 +477,31 @@ rowReverse: {
 },
 
 iconBubble: {
-  width: 34,
-  height: 34,
-  borderRadius: 18,
+  width: 42,        // ⬅️ أكبر وواضح
+  height: 42,
+  borderRadius: 21,
   justifyContent: "center",
   alignItems: "center",
-  marginHorizontal: 12,
+  marginHorizontal: 14,
 },
 
-infoText: {
-  fontSize: 15,
-  flex: 1,
-},
-
-infoValue: {
-  fontSize: 15,
-  fontWeight: "700",
+cardTitle: {
+  fontSize: 18,
+  fontWeight: "800",
+  marginBottom: 16,
 },
 
 alertRow: {
-  marginTop: 14,
+  marginTop: 18,
+  paddingTop: 14,
+  borderTopWidth: 1,
+  borderColor: "rgba(0,0,0,0.08)",
   flexDirection: "row",
   alignItems: "center",
-  gap: 6,
-  paddingTop: 12,
 },
 
 alertText: {
-  fontSize: 14,
+  fontSize: 15,
   fontWeight: "600",
 },
 });
