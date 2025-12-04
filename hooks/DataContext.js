@@ -1,19 +1,20 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 const DataContext = createContext();
 export const useData = () => useContext(DataContext);
 
-/**
- * ✅ ترتيب السيرفرات:
- * 1. Local (Primary)
- * 2. Railway (Backup)
- */
+// ترتيب الاتصال فقط عند الفشل
 const SERVERS = [
-  "ws://10.10.10.19:3000",
-  "wss://smartchairserver-production.up.railway.app",
+  "ws://10.10.10.19:3000", // LOCAL
+  "wss://smartchairserver-production.up.railway.app", // BACKUP
 ];
 
-// ⏱️ debounce لإطفاء الكاميرا
 let cameraTimeout = null;
 
 export function DataProvider({ children }) {
@@ -25,94 +26,8 @@ export function DataProvider({ children }) {
 
   const wsRef = useRef(null);
   const serverIndexRef = useRef(0);
-  const retryTimeoutRef = useRef(null);
+  const reconnectTimer = useRef(null);
 
-  // ==========================
-  // WebSocket Connect Logic
-  // ==========================
-  const connectWS = () => {
-    const url = SERVERS[serverIndexRef.current];
-    console.log(`🔌 Connecting to ${url}`);
-
-    try {
-      wsRef.current = new WebSocket(url);
-
-      wsRef.current.onopen = () => {
-        console.log(`✅ Connected to ${url}`);
-      };
-
-      wsRef.current.onclose = () => {
-        console.log(`❌ WS closed: ${url}`);
-
-        resetData();
-
-        // 🔁 انتقل للسيرفر التالي
-        serverIndexRef.current =
-          (serverIndexRef.current + 1) % SERVERS.length;
-
-        retryTimeoutRef.current = setTimeout(() => {
-          connectWS();
-        }, 5000);
-      };
-
-      wsRef.current.onerror = (err) => {
-        console.log("⚠️ WS Error", err.message);
-        wsRef.current.close();
-      };
-
-      wsRef.current.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-
-          // ===============================
-          // Camera Status (Heartbeat)
-          // ===============================
-          if (data.type === "camera_status") {
-            if (data.active) {
-              if (cameraTimeout) {
-                clearTimeout(cameraTimeout);
-                cameraTimeout = null;
-              }
-              setCamActive(true);
-            } else {
-              if (!cameraTimeout) {
-                cameraTimeout = setTimeout(() => {
-                  resetData();
-                  cameraTimeout = null;
-                }, 3000);
-              }
-            }
-            return;
-          }
-
-          // ===============================
-          // Camera Data
-          // ===============================
-          setCamActive(true);
-          setAttention(data.attention_level);
-          setIsPresent(data.is_present);
-          setDrowsy(data.drowsy);
-          setWorkSeconds(data.working_duration_seconds);
-
-        } catch (e) {
-          console.log("❌ Parse error:", e);
-        }
-      };
-    } catch (e) {
-      console.log("❌ WS init error:", e);
-
-      serverIndexRef.current =
-        (serverIndexRef.current + 1) % SERVERS.length;
-
-      retryTimeoutRef.current = setTimeout(() => {
-        connectWS();
-      }, 5000);
-    }
-  };
-
-  // ==========================
-  // Reset UI State
-  // ==========================
   const resetData = () => {
     setCamActive(false);
     setAttention(null);
@@ -121,15 +36,64 @@ export function DataProvider({ children }) {
     setWorkSeconds(0);
   };
 
-  // ==========================
-  // Init on Mount
-  // ==========================
-  useEffect(() => {
-    connectWS();
+  const connect = () => {
+    const url = SERVERS[serverIndexRef.current];
+    console.log(`🔌 Connecting to ${url}`);
 
+    wsRef.current = new WebSocket(url);
+
+    wsRef.current.onopen = () => {
+      console.log(`✅ Connected to ${url}`);
+    };
+
+    wsRef.current.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "camera_status") {
+          if (data.active) {
+            if (cameraTimeout) clearTimeout(cameraTimeout);
+            setCamActive(true);
+          } else {
+            cameraTimeout = setTimeout(() => {
+              resetData();
+            }, 3000);
+          }
+          return;
+        }
+
+        setCamActive(true);
+        setAttention(data.attention_level);
+        setIsPresent(data.is_present);
+        setDrowsy(data.drowsy);
+        setWorkSeconds(data.working_duration_seconds);
+
+      } catch (e) {
+        console.log("❌ JSON error", e);
+      }
+    };
+
+    wsRef.current.onerror = () => {
+      wsRef.current.close();
+    };
+
+    wsRef.current.onclose = () => {
+      console.log("❌ WS closed");
+
+      resetData();
+
+      serverIndexRef.current =
+        (serverIndexRef.current + 1) % SERVERS.length;
+
+      reconnectTimer.current = setTimeout(connect, 3000);
+    };
+  };
+
+  useEffect(() => {
+    connect();
     return () => {
       if (wsRef.current) wsRef.current.close();
-      if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
+      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
       if (cameraTimeout) clearTimeout(cameraTimeout);
     };
   }, []);
