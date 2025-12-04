@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Alert,
+  ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,6 +16,7 @@ import { useTheme } from '../../hooks/ThemeContext';
 
 export default function Account({ navigation }) {
   const { theme, isDark } = useTheme();
+
   const [user, setUser] = useState({
     name: 'عثمان العُبيّات',
     email: 'othman@pau.edu.ps',
@@ -30,8 +32,7 @@ export default function Account({ navigation }) {
     loadUser();
   }, []);
 
-  const handleEdit = () =>
-    Alert.alert('✏️', 'ميزة تعديل البيانات ستتوفر لاحقًا');
+  const handleEdit = () => Alert.alert('✏️', 'ميزة تعديل البيانات ستتوفر لاحقًا');
   const handlePassword = () =>
     Alert.alert('🔐', 'ميزة تغيير كلمة المرور ستتوفر قريبًا');
   const handleLogout = async () => {
@@ -45,29 +46,26 @@ export default function Account({ navigation }) {
       style={[
         s.container,
         { backgroundColor: isDark ? '#0F172A' : theme.background },
-      ]}>
-      <StatusBar
-        translucent
-        barStyle="light-content"
-        backgroundColor="transparent"
-      />
-      <SafeAreaView style={s.headerContainer} edges={['top']}>
-        <View style={s.headerRow}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={s.backBtn}
-            activeOpacity={0.8}>
-            <Ionicons name="arrow-back" size={24} color="#FFF" />
-          </TouchableOpacity>
-          <Text style={s.headerTitle}>👤 إعدادات الحساب</Text>
-        </View>
+      ]}
+    >
+      <StatusBar translucent barStyle="light-content" backgroundColor="transparent" />
+
+      {/* HEADER */}
+      <SafeAreaView style={s.header} edges={['top']}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
+          <Ionicons name="arrow-back" size={24} color="#FFF" />
+        </TouchableOpacity>
+        <Text style={s.headerTitle}>👤 إعدادات الحساب</Text>
       </SafeAreaView>
 
-      <View style={s.content}>
+      {/* CONTENT */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ alignItems: 'center', paddingVertical: 25 }}
+      >
+        {/* الصورة + الاسم */}
         <Image
-          source={{
-            uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
-          }}
+          source={{ uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}
           style={s.avatar}
         />
         <Text style={[s.name, { color: theme.text }]}>{user.name}</Text>
@@ -75,64 +73,115 @@ export default function Account({ navigation }) {
           {user.email}
         </Text>
 
+        {/* CARD OPTIONS */}
         <View
-          style={[s.card, { backgroundColor: isDark ? '#1C2433' : '#FFF' }]}>
+          style={[
+            s.card,
+            {
+              backgroundColor: isDark ? '#1C2433' : '#FFF',
+              borderColor: isDark ? '#2E3A50' : '#E0E5EE',
+            },
+          ]}
+        >
           <TouchableOpacity onPress={handleEdit} style={s.row}>
             <Ionicons name="create-outline" size={22} color="#4C89C8" />
-            <Text style={[s.label, { color: theme.text }]}>
-              تعديل البيانات الشخصية
-            </Text>
+            <Text style={[s.label, { color: theme.text }]}>تعديل البيانات الشخصية</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={handlePassword}
-            style={[s.row, { marginTop: 12 }]}>
+          <View style={s.divider} />
+
+          <TouchableOpacity onPress={handlePassword} style={s.row}>
             <Ionicons name="lock-closed-outline" size={22} color="#4C89C8" />
-            <Text style={[s.label, { color: theme.text }]}>
-              تغيير كلمة المرور
-            </Text>
+            <Text style={[s.label, { color: theme.text }]}>تغيير كلمة المرور</Text>
           </TouchableOpacity>
         </View>
 
+        {/* Logout button */}
         <TouchableOpacity
           onPress={handleLogout}
           activeOpacity={0.8}
-          style={[s.mainBtn, { backgroundColor: '#E74C3C' }]}>
+          style={[s.mainBtn, { backgroundColor: '#E74C3C' }]}
+        >
           <Ionicons name="log-out-outline" size={20} color="#FFF" />
           <Text style={s.mainBtnTxt}>تسجيل الخروج</Text>
         </TouchableOpacity>
-      </View>
+
+        <View style={{ height: 50 }} />
+      </ScrollView>
     </View>
   );
 }
 
 const s = StyleSheet.create({
   container: { flex: 1 },
-  headerContainer: {
+
+  header: {
     backgroundColor: '#2B4C7E',
-    paddingBottom: 10,
     width: '100%',
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
   },
-  headerTitle: { color: 'white', fontSize: 20, fontWeight: '700' },
-  content: { alignItems: 'center', paddingVertical: 20 },
-  avatar: { width: 100, height: 100, borderRadius: 50, marginBottom: 10 },
-  name: { fontSize: 18, fontWeight: '700' },
-  email: { fontSize: 14, marginBottom: 20 },
+
+  backBtn: {
+    paddingVertical: 6,
+    paddingRight: 10,
+  },
+
+  headerTitle: {
+    color: '#FFF',
+    fontSize: 20,
+    fontWeight: '700',
+  },
+
+  avatar: {
+    width: 110,
+    height: 110,
+    borderRadius: 80,
+    marginBottom: 12,
+  },
+
+  name: {
+    fontSize: 19,
+    fontWeight: '800',
+  },
+
+  email: {
+    fontSize: 14,
+    marginBottom: 22,
+    fontWeight: '600',
+  },
+
   card: {
     width: '92%',
     borderRadius: 16,
     padding: 16,
-    marginBottom: 14,
     borderWidth: 1,
-    borderColor: '#E0E5EE',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    marginBottom: 20,
     elevation: 3,
   },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  label: { fontSize: 16, fontWeight: '600' },
+
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 4,
+  },
+
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: '#D3D8E0',
+    marginVertical: 12,
+    opacity: 0.5,
+  },
+
   mainBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -140,21 +189,13 @@ const s = StyleSheet.create({
     width: '92%',
     borderRadius: 12,
     paddingVertical: 14,
-    marginTop: 25,
+    marginTop: 10,
     gap: 6,
   },
-  mainBtnTxt: { color: '#FFF', fontWeight: '700', fontSize: 15 },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    position: 'relative',
-  },
-  backBtn: {
-    position: 'absolute',
-    left: 15,
-    top: 2,
-    padding: 4,
+
+  mainBtnTxt: {
+    color: '#FFF',
+    fontWeight: '700',
+    fontSize: 15,
   },
 });

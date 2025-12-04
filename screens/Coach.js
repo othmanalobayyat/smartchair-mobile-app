@@ -26,8 +26,8 @@ export default function Coach() {
   // ========================
   // STATES
   // ========================
-  const [posture, setPosture] = useState('تعب'); // صحيحة – منحنية – تعب – طويلة
-  const [sessionMinutes, setSessionMinutes] = useState(1000);
+  const [posture, setPosture] = useState('طوبلة'); // صحيحة – منحنية – تعب – طويلة
+  const [sessionMinutes, setSessionMinutes] = useState(600);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   // تمرين

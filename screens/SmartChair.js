@@ -1,5 +1,6 @@
 // screens/SmartChair.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import i18n from "../hooks/i18n";
 import {
   View,
   Text,
@@ -13,18 +14,18 @@ import Svg, { Path, Rect, G, Circle } from "react-native-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../hooks/ThemeContext";
-import { useData } from "../hooks/DataContext";
+import { useData } from "../hooks/DataContext"; //Data
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
 export default function SmartChair() {
   const { theme, isDark } = useTheme();
   const { attention, camActive, isPresent, drowsy, workSeconds } = useData();
-
+  const [chairActive] = useState(true);
   const [pressures, setPressures] = useState([5, 8, 6, 10, 7, 9]);
   const [posture, setPosture] = useState("صحيحة");
   const [monitoring, setMonitoring] = useState(true);
 
-  const scaleAnim = new Animated.Value(1);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -39,10 +40,17 @@ export default function SmartChair() {
     return () => clearInterval(id);
   }, []);
 
+  const statusBg = (active) => {
+    if (!isDark) return active ? '#D4EDDA' : '#F5C6CB';
+    return active ? 'rgba(46, 204, 113, 0.18)' : 'rgba(231, 76, 60, 0.18)';
+  };
+
+  const statusColor = (active) => (active ? theme.success : theme.error);
+  
   const getColor = (v) => {
-    if (!monitoring) return "#BDC3C7";
+    if (!monitoring) return '#BDC3C7';
     if (v > 10) return theme.error;
-    if (v > 6) return "#F1C40F";
+    if (v > 6) return theme.warning;
     return theme.success;
   };
 
@@ -50,19 +58,20 @@ export default function SmartChair() {
     attention == null ? "—" : attention > 60 ? "مركز" : "مشتت";
 
   return (
-    <LinearGradient
-      colors={
-        isDark
-          ? ["#14171C", "#1E232A", "#2C2F33"]
-          : [theme.background, "#E6EBF5"]
-      }
-      style={s.container}
-    >
-      <StatusBar translucent barStyle="light-content" backgroundColor="transparent" />
+    <LinearGradient colors={theme.gradient} style={s.container}>
+      <StatusBar
+        translucent
+        barStyle="light-content"
+        backgroundColor="transparent"
+      />
 
-      <SafeAreaView style={s.headerContainer} edges={["top"]}>
+      {/* HEADER */}
+      <SafeAreaView
+        style={[s.headerContainer, { backgroundColor: theme.primary }]}
+        edges={['top']}>
         <Text style={s.headerTitle}>
-          <MaterialCommunityIcons name="chair-school" size={22} color="#fff" /> الكرسي الذكي
+          <MaterialCommunityIcons name="chair-school" size={22} color="#FFF" />{' '}
+          الكرسي الذكي
         </Text>
       </SafeAreaView>
 
@@ -71,25 +80,28 @@ export default function SmartChair() {
         contentContainerStyle={{ alignItems: "center", paddingBottom: 30 }}
         showsVerticalScrollIndicator={false}
       >
+        {/* STATUS ROW */}
         <View style={s.headerStatusRow}>
-          <View style={[s.statusBox, { backgroundColor: "#D4EDDA" }]}>
-            <MaterialCommunityIcons name="power-plug" size={18} color={theme.text} />
-            <Text style={[s.statusText, { color: theme.text }]}>Chair Connected</Text>
+          <View
+            style={[s.statusBox, { backgroundColor: statusBg(chairActive) }]}>
+            <MaterialCommunityIcons
+              name="power-plug"
+              size={18}
+              color={statusColor(chairActive)}
+            />
+            <Text style={[s.statusText, { color: theme.text }]}>
+              {chairActive ? 'Chair Connected' : 'Chair Inactive'}
+            </Text>
           </View>
 
-          <View
-            style={[
-              s.statusBox,
-              { backgroundColor: camActive ? "#D4EDDA" : "#F5C6CB" },
-            ]}
-          >
+          <View style={[s.statusBox, { backgroundColor: statusBg(camActive) }]}>
             <MaterialCommunityIcons
               name="video"
               size={18}
-              color={camActive ? theme.text : theme.error}
+              color={statusColor(camActive)}
             />
             <Text style={[s.statusText, { color: theme.text }]}>
-              {camActive ? "Cam Active" : "Cam Off"}
+              {camActive ? 'Cam Active' : 'Cam Off'}
             </Text>
           </View>
         </View>
@@ -139,39 +151,205 @@ export default function SmartChair() {
           </View>
         </View>
 
-        {/* حالة الجلسة */}
-        <View style={[s.card, s.equalCard, isDark ? s.cardDark : s.cardLight]}>
-          <Text style={[s.status, { color: theme.success }]}>
-            وضعية الجلسة: {posture}
-          </Text>
+        {/* STATUS CARD */}
+        <View
+  style={[
+    s.card,
+    {
+      backgroundColor: theme.card,
+      borderWidth: isDark ? 1 : 0,
+      borderColor: isDark ? theme.border : "transparent",
+    },
+  ]}
+>
+  <Text style={[s.cardTitle, { color: theme.text }]}>
+    حالة الجلسة
+  </Text>
+  {/* وضعية الجلسة */}
+<View
+  style={[
+    s.infoRow,
+    { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
+  ]}
+>
+  <View
+    style={[
+      s.iconBubble,
+      { backgroundColor: posture === "صحيحة" ? theme.success : theme.error },
+    ]}
+  >
+    <MaterialCommunityIcons name="seat" size={18} color="#fff" />
+  </View>
 
-          <Text
-            style={[
-              s.subStatus,
-              { color: attentionText === "مركز" ? theme.success : theme.error },
-            ]}
-          >
-            مستوى الانتباه: {attentionText}
-          </Text>
+  <View style={s.infoTextGroup}>
+    <Text
+      style={[
+        s.infoLabel,
+        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
+      ]}
+    >
+      وضعية الجلسة
+    </Text>
 
-          <Text style={[s.subStatus, { color: theme.text, marginTop: 6 }]}>
-            مدة العمل: {workSeconds} ثانية
-          </Text>
+    <Text
+      style={[
+        s.infoValue,
+        {
+          color: posture === "صحيحة" ? theme.success : theme.error,
+          textAlign: i18n.isRTL ? "right" : "left",
+        },
+      ]}
+    >
+      {posture}
+    </Text>
+  </View>
+</View>
 
-          {drowsy && (
-            <Text style={[s.subStatus, { color: theme.error }]}>⚠️ نعاس مُكتشف</Text>
-          )}
+{/* مستوى الانتباه */}
+<View
+  style={[
+    s.infoRow,
+    { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
+  ]}
+>
+  <View
+    style={[
+      s.iconBubble,
+      {
+        backgroundColor:
+          attentionText === "مركز" ? theme.success : theme.error,
+      },
+    ]}
+  >
+    <Ionicons
+      name={attentionText === "مركز" ? "eye" : "eye-off"}
+      size={18}
+      color="#fff"
+    />
+  </View>
 
-          <Text
-            style={[
-              s.subStatus,
-              { marginTop: 6, color: isPresent ? theme.success : theme.error },
-            ]}
-          >
-            {isPresent ? "الشخص موجود" : "الشخص غير موجود"}
-          </Text>
-        </View>
-        <View style={s.controls}>
+  <View style={s.infoTextGroup}>
+    <Text
+      style={[
+        s.infoLabel,
+        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
+      ]}
+    >
+      مستوى الانتباه
+    </Text>
+
+    <Text
+      style={[
+        s.infoValue,
+        {
+          color: attentionText === "مركز" ? theme.success : theme.error,
+          textAlign: i18n.isRTL ? "right" : "left",
+        },
+      ]}
+    >
+      {attentionText}
+    </Text>
+  </View>
+</View>
+
+{/* مدة العمل */}
+<View
+  style={[
+    s.infoRow,
+    { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
+  ]}
+>
+  <View style={[s.iconBubble, { backgroundColor: theme.accent }]}>
+    <Ionicons name="time" size={18} color="#fff" />
+  </View>
+
+  <View style={s.infoTextGroup}>
+    <Text
+      style={[
+        s.infoLabel,
+        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
+      ]}
+    >
+      مدة العمل
+    </Text>
+
+    <Text
+      style={[
+        s.infoValue,
+        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
+      ]}
+    >
+      {workSeconds} ثانية
+    </Text>
+  </View>
+</View>
+
+{/* وجود الشخص */}
+<View
+  style={[
+    s.infoRow,
+    { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
+  ]}
+>
+  <View
+    style={[
+      s.iconBubble,
+      { backgroundColor: isPresent ? theme.success : theme.error },
+    ]}
+  >
+    <Ionicons name="person" size={18} color="#fff" />
+  </View>
+
+  <View style={s.infoTextGroup}>
+    <Text
+      style={[
+        s.infoLabel,
+        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
+      ]}
+    >
+      حالة الشخص
+    </Text>
+
+    <Text
+      style={[
+        s.infoValue,
+        {
+          color: isPresent ? theme.success : theme.error,
+          textAlign: i18n.isRTL ? "right" : "left",
+        },
+      ]}
+    >
+      {isPresent ? "موجود" : "غير موجود"}
+    </Text>
+  </View>
+</View>
+
+{/* نعاس */}
+{drowsy && (
+  <View
+    style={[
+      s.alertRow,
+      { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
+    ]}
+  >
+    <Ionicons name="warning" size={18} color={theme.error} />
+    <Text
+      style={[
+        s.alertText,
+        {
+          color: theme.error,
+          textAlign: i18n.isRTL ? "right" : "left",
+          marginHorizontal: 8,
+        },
+      ]}
+    >
+      نعاس مُكتشف – يُفضّل أخذ استراحة
+    </Text>
+  </View>
+)}
+</View>
+
+<View style={s.controls}>
   <Pressable
     onPress={() => setMonitoring(!monitoring)}
     style={({ pressed }) => [
@@ -276,5 +454,64 @@ btn: {
 
 btnGray: { backgroundColor: "#A5B8D8" },
 btnTxt: { color: "#FFF", fontWeight: "700" },
+cardTitle: {
+  fontSize: 16,
+  fontWeight: "700",
+  marginBottom: 12,
+},
 
+infoRow: {
+  width : "100%",
+  alignItems: "center",
+  marginVertical: 10,
+},
+infoTextGroup: {
+  flex: 1,
+},
+
+infoLabel: {
+  fontSize: 14,
+  opacity: 0.6,
+},
+
+infoValue: {
+  fontSize: 16,
+  fontWeight: "700",
+},
+
+rowReverse: {
+  flexDirection: "row-reverse",
+},
+
+iconBubble: {
+  width: 34,
+  height: 34,
+  borderRadius: 18,
+  justifyContent: "center",
+  alignItems: "center",
+  marginHorizontal: 12,
+},
+
+infoText: {
+  fontSize: 15,
+  flex: 1,
+},
+
+infoValue: {
+  fontSize: 15,
+  fontWeight: "700",
+},
+
+alertRow: {
+  marginTop: 14,
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 6,
+  paddingTop: 12,
+},
+
+alertText: {
+  fontSize: 14,
+  fontWeight: "600",
+},
 });

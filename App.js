@@ -5,6 +5,8 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import { ThemeProvider } from "./hooks/ThemeContext";
 import { DataProvider } from "./hooks/DataContext";
+import { useEffect } from "react";
+import { loadLanguage } from "./hooks/i18n";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -69,6 +71,7 @@ function Tabs() {
 }
 
 export default function App() {
+  useEffect(() => { loadLanguage(); }, []);
   return (
     <ThemeProvider>
       <DataProvider>
