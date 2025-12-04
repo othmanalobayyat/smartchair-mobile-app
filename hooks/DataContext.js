@@ -15,7 +15,7 @@ export function DataProvider({ children }) {
   const [workSeconds, setWorkSeconds] = useState(0);
 
   useEffect(() => {
-    const ws = new WebSocket("wss://smartchairserver-production.up.railway.app");
+    const ws = new WebSocket("ws://10.10.10.19:3000");
 
     ws.onopen = () => {
       console.log("📡 Mobile connected to WS");
