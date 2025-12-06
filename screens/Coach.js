@@ -26,8 +26,8 @@ export default function Coach() {
   // ========================
   // STATES
   // ========================
-  const [posture, setPosture] = useState('طوبلة'); // صحيحة – منحنية – تعب – طويلة
-  const [sessionMinutes, setSessionMinutes] = useState(600);
+  const [posture, setPosture] = useState('طويلة'); // صحيحة – منحنية – تعب – طويلة
+  const [sessionMinutes, setSessionMinutes] = useState(15);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   // تمرين
@@ -224,46 +224,41 @@ export default function Coach() {
   // EXERCISES
   // ========================
   const exercisesCorrect = [
-    {
-      id: 1,
-      name: 'تمرين الذراعين',
-      img: 'https://i.imgur.com/H2Tn8RQ.png',
-      desc: 'حرّك ذراعيك للأمام والخلف لمدة 30 ثانية.',
-    },
-    {
-      id: 2,
-      name: 'لف الرقبة',
-      img: 'https://i.imgur.com/m9pZboc.png',
-      desc: 'أدر رقبتك بلطف يمينًا ويسارًا.',
-    },
-    {
-      id: 3,
-      name: 'تمديد الظهر',
-      img: 'https://via.placeholder.com/300x200/DFE7FD/2B4C7E?text=Back+Stretch',
-      desc: 'اركع ظهرك للأمام قليلاً ثم عد للوضع الطبيعي.',
-    },
-  ];
+  {
+    id: 1,
+    name: 'تمديد الذراعين',
+    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048391.png',
+    desc: 'حرّك ذراعيك للأمام والخلف لمدة 30 ثانية.',
+  },
+  {
+    id: 2,
+    name: 'تمرين الرقبة',
+    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048381.png',
+    desc: 'حرّك رقبتك بلطف يمينًا ويسارًا.',
+  },
+  {
+    id: 3,
+    name: 'استقامة الجلوس',
+    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048387.png',
+    desc: 'اجلس باستقامة مع شد الكتفين للخلف.',
+  },
+];
 
-  const exercisesTired = [
-    {
-      id: 1,
-      name: 'تمديد الرقبة',
-      img: 'https://i.imgur.com/Vh9xOLu.png',
-      desc: 'أدر رقبتك ببطء لمدة 30 ثانية.',
-    },
-    {
-      id: 2,
-      name: 'تمديد الكتفين',
-      img: 'https://i.imgur.com/6TzyYKM.png',
-      desc: 'حرّك كتفيك للأعلى وللخلف عدة مرات.',
-    },
-    {
-      id: 3,
-      name: 'تمرين الظهر السفلي',
-      img: 'https://via.placeholder.com/300x200/DFE7FD/2B4C7E?text=Lower+Back',
-      desc: 'انحنِ ببطء للأمام لمدة 5 ثوانٍ ثم عد.',
-    },
-  ];
+const exercisesTired = [
+  {
+    id: 4,
+    name: 'تمديد الرقبة',
+    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048381.png',
+    desc: 'تمرين لتخفيف شد الرقبة.',
+  },
+  {
+    id: 5,
+    name: 'تمديد الكتفين',
+    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048394.png',
+    desc: 'لفّ الكتفين للأعلى والخلف.',
+  },
+];
+
 
   let exercises = exercisesCorrect;
   if (posture === 'تعب') exercises = exercisesTired;
@@ -396,7 +391,9 @@ export default function Coach() {
                     marginRight: index === exercises.length - 1 ? 60 : 14,
                   },
                 ]}>
-                <Image source={{ uri: ex.img }} style={styles.exerciseImg} />
+                <View style={styles.exerciseImageWrapper}>
+  <Image source={{ uri: ex.img }} style={styles.exerciseImg} />
+</View>
                 <Text style={[styles.exerciseName, { color: theme.text }]}>
                   {ex.name}
                 </Text>
@@ -870,6 +867,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6b7280',
   },
+  exerciseImageWrapper: {
+  backgroundColor: '#F1F5FF',
+  borderRadius: 14,
+  padding: 8,
+  marginBottom: 8,
+},
+
+exerciseImg: {
+  width: '100%',
+  height: 120,
+  resizeMode: 'contain',
+},
+
+
 });
 
 

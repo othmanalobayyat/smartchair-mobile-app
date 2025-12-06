@@ -388,8 +388,6 @@ const s = StyleSheet.create({
     paddingBottom: 10,
     width: "100%",
     alignItems: "center",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
   },
   headerTitle: { color: "#FFF", fontSize: 22, fontWeight: "800" },
   headerStatusRow: {
