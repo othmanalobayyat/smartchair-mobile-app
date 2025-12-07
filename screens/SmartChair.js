@@ -16,6 +16,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../hooks/ThemeContext";
 import { useData } from "../hooks/DataContext"; //Data
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import Header from "./SmartChairScreens/Header";
+import ChairGraphic from "./SmartChairScreens/ChairGraphic";
+import SensorsCard from "./SmartChairScreens/SensorsCard";
+import SessionStatusCard from "./SmartChairScreens/SessionStatusCard";
+import Controls from "./SmartChairScreens/Controls";
 
 export default function SmartChair() {
   const { theme, isDark } = useTheme();
@@ -30,25 +35,35 @@ export default function SmartChair() {
   useEffect(() => {
     const id = setInterval(() => {
       setPressures((prev) =>
-        prev.map((v) => Math.max(0, Math.min(15, v + (Math.random() - 0.5) * 2)))
+        prev.map((v) =>
+          Math.max(0, Math.min(15, v + (Math.random() - 0.5) * 2))
+        )
       );
       Animated.sequence([
-        Animated.timing(scaleAnim, { toValue: 1.05, duration: 300, useNativeDriver: true }),
-        Animated.timing(scaleAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+        Animated.timing(scaleAnim, {
+          toValue: 1.05,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
       ]).start();
     }, 2000);
     return () => clearInterval(id);
   }, []);
 
   const statusBg = (active) => {
-    if (!isDark) return active ? '#D4EDDA' : '#F5C6CB';
-    return active ? 'rgba(46, 204, 113, 0.18)' : 'rgba(231, 76, 60, 0.18)';
+    if (!isDark) return active ? "#D4EDDA" : "#F5C6CB";
+    return active ? "rgba(46, 204, 113, 0.18)" : "rgba(231, 76, 60, 0.18)";
   };
 
   const statusColor = (active) => (active ? theme.success : theme.error);
-  
+
   const getColor = (v) => {
-    if (!monitoring) return '#BDC3C7';
+    if (!monitoring) return "#BDC3C7";
     if (v > 10) return theme.error;
     if (v > 6) return theme.warning;
     return theme.success;
@@ -69,14 +84,7 @@ export default function SmartChair() {
       />
 
       {/* HEADER */}
-      <SafeAreaView
-        style={[s.headerContainer, { backgroundColor: theme.primary }]}
-        edges={['top']}>
-        <Text style={s.headerTitle}>
-  <MaterialCommunityIcons name="chair-school" size={22} color="#FFF" />{" "}
-  {i18n.t("smartChairTitle")}
-</Text>
-      </SafeAreaView>
+      <Header theme={theme} />
 
       <ScrollView
         style={{ width: "100%" }}
@@ -86,7 +94,8 @@ export default function SmartChair() {
         {/* STATUS ROW */}
         <View style={s.headerStatusRow}>
           <View
-            style={[s.statusBox, { backgroundColor: statusBg(chairActive) }]}>
+            style={[s.statusBox, { backgroundColor: statusBg(chairActive) }]}
+          >
             <MaterialCommunityIcons
               name="power-plug"
               size={18}
@@ -110,272 +119,36 @@ export default function SmartChair() {
         </View>
 
         <View style={s.chairOnly}>
-          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-            <Svg width={280} height={280} viewBox="0 0 511.992 511.992">
-              <G>
-                <Rect x="394.647" y="234.656" width="21.344" height="78.22" fill="#AAB2BC" />
-                <Rect x="95.997" y="234.656" width="21.328" height="78.22" fill="#AAB2BC" />
-                <Path
-                  d="M149.327 499.992v-52c0-1.312 1.922-3.594 3.219-3.812l85.913-14.312c4.406-.734 10.797-1.156 17.539-1.156 6.734 0 13.125.422 17.531 1.156l85.92 14.312c1.281.219 3.203 2.5 3.203 3.812v52h21.344v-52c0-11.734-9.469-22.922-21.047-24.842l-85.904-14.328c-5.797-.953-13.422-1.438-21.046-1.438-7.633 0-15.258.484-21.047 1.438l-85.913 14.328C137.469 425.07 128 436.257 128 447.992v52h21.327z"
-                  fill="#AAB2BC"
-                />
-              </G>
-
-              <Rect x="245.327" y="353.996" width="21.335" height="133.54" fill="#CCD1D9" />
-              <Path
-                d="M383.995 351.994c0 5.875-4.781 10.656-10.672 10.656h-234.66c-5.891 0-10.664-4.781-10.664-10.656V10.656C127.998 4.765 132.771 0 138.663 0h234.66c5.891 0 10.672 4.765 10.672 10.656V351.994z"
-                fill={isDark ? "#2C2F33" : theme.card}
-              />
-              <Path
-                d="M415.995 361.994c0 5.875-4.781 10.656-10.672 10.656H106.664c-5.891 0-10.664-4.781-10.664-10.656v-73.342c0-5.891 4.773-10.656 10.664-10.656h298.659c5.891 0 10.672 4.766 10.672 10.656V361.994z"
-                fill="#656D78"
-              />
-              <Circle cx="150" cy="300" r="16" fill={getColor(pressures[0])} />
-              <Circle cx="360" cy="300" r="16" fill={getColor(pressures[1])} />
-              <Circle cx="150" cy="355" r="16" fill={getColor(pressures[2])} />
-              <Circle cx="360" cy="355" r="16" fill={getColor(pressures[3])} />
-              <Circle cx="190" cy="220" r="16" fill={getColor(pressures[4])} />
-              <Circle cx="320" cy="220" r="16" fill={getColor(pressures[5])} />
-            </Svg>
-          </Animated.View>
+          <ChairGraphic
+            pressures={pressures}
+            monitoring={monitoring}
+            scaleAnim={scaleAnim}
+            theme={theme}
+            isDark={isDark}
+            getColor={getColor}
+          />
         </View>
 
         {/* قراءة الحساسات */}
-        <View style={[s.card, isDark ? s.cardDark : s.cardLight]}>
-          <Text style={[s.title, { color: theme.text }]}> {i18n.t("sensorsReadings")} </Text>
-
-          <View style={s.readingsGrid}>
-            {pressures.map((p, i) => (
-              <View key={i} style={s.readCell}>
-                <Text style={[s.readVal, { color: theme.text }]}>
-                  L{i + 1}: {p.toFixed(1)}kg
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
+        <SensorsCard pressures={pressures} theme={theme} isDark={isDark} />
 
         {/* STATUS CARD */}
-        <View
-  style={[
-    s.card,
-    {
-      backgroundColor: theme.card,
-      borderWidth: isDark ? 1 : 0,
-      borderColor: isDark ? theme.border : "transparent",
-    },
-  ]}
->
-  <Text style={[s.cardTitle, { color: theme.text }]}>
-  {i18n.t("sessionStatus")}
-</Text>
-
-  {/* وضعية الجلسة */}
-<View
-  style={[
-    s.infoRow,
-    { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
-  ]}
->
-  <View
-    style={[
-      s.iconBubble,
-      { backgroundColor: posture === "صحيحة" ? theme.success : theme.error },
-    ]}
-  >
-    <MaterialCommunityIcons name="seat" size={18} color="#fff" />
-  </View>
-
-  <View style={s.infoTextGroup}>
-    <Text
-      style={[
-        s.infoLabel,
-        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
-      ]}
-    >
-     {i18n.t("postureLabel")}
-    </Text>
-
-    <Text
-      style={[
-        s.infoValue,
-        {
-          color: posture === "صحيحة" ? theme.success : theme.error,
-          textAlign: i18n.isRTL ? "right" : "left",
-        },
-      ]}
-    >
-      {posture === "صحيحة" ? i18n.t("postureCorrect") : i18n.t("postureIncorrect")}
-    </Text>
-  </View>
-</View>
-
-{/* مستوى الانتباه */}
-<View
-  style={[
-    s.infoRow,
-    { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
-  ]}
->
-  <View
-    style={[
-      s.iconBubble,
-      {
-        backgroundColor:
-          attentionText === "مركز" ? theme.success : theme.error,
-      },
-    ]}
-  >
-    <Ionicons
-      name={attentionText === "مركز" ? "eye" : "eye-off"}
-      size={18}
-      color="#fff"
-    />
-  </View>
-
-  <View style={s.infoTextGroup}>
-    <Text
-      style={[
-        s.infoLabel,
-        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
-      ]}
-    >
-     {i18n.t("attentionLevel")}
-    </Text>
-
-    <Text
-      style={[
-        s.infoValue,
-        {
-          color: attentionText === "مركز" ? theme.success : theme.error,
-          textAlign: i18n.isRTL ? "right" : "left",
-        },
-      ]}
-    >
-      {attentionText === "مركز" ? i18n.t("attentionFocused") : i18n.t("attentionDistracted")}
-    </Text>
-  </View>
-</View>
-
-{/* مدة العمل */}
-<View
-  style={[
-    s.infoRow,
-    { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
-  ]}
->
-  <View style={[s.iconBubble, { backgroundColor: theme.primary }]}>
-  <Ionicons name="time" size={18} color="#fff" />
-</View>
-
-  <View style={s.infoTextGroup}>
-    <Text
-      style={[
-        s.infoLabel,
-        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
-      ]}
-    >
-     {i18n.t("workDuration")}
-    </Text>
-
-    <Text
-      style={[
-        s.infoValue,
-        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
-      ]}
-    >
-      {hours > 0
-  ? `${hours} ${i18n.t("hours")} ${minutes} ${i18n.t("minutes")}`
-  : `${minutes} ${i18n.t("minutes")}`}
-
-    </Text>
-  </View>
-</View>
-
-{/* وجود الشخص */}
-<View
-  style={[
-    s.infoRow,
-    { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
-  ]}
->
-  <View
-    style={[
-      s.iconBubble,
-      { backgroundColor: isPresent ? theme.success : theme.error },
-    ]}
-  >
-    <Ionicons name="person" size={18} color="#fff" />
-  </View>
-
-  <View style={s.infoTextGroup}>
-    <Text
-      style={[
-        s.infoLabel,
-        { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
-      ]}
-    >
-     {i18n.t("personStatus")}
-    </Text>
-
-    <Text
-      style={[
-        s.infoValue,
-        {
-          color: isPresent ? theme.success : theme.error,
-          textAlign: i18n.isRTL ? "right" : "left",
-        },
-      ]}
-    >
-      {isPresent ? i18n.t("present") : i18n.t("notPresent")}
-
-    </Text>
-  </View>
-</View>
-
-{/* نعاس */}
-{drowsy && (
-  <View
-    style={[
-      s.alertRow,
-      { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
-    ]}
-  >
-    <Ionicons name="warning" size={18} color={theme.error} />
-    <Text
-      style={[
-        s.alertText,
-        {
-          color: theme.error,
-          textAlign: i18n.isRTL ? "right" : "left",
-          marginHorizontal: 8,
-        },
-      ]}
-    >
-     {i18n.t("drowsyAlert")}
-    </Text>
-  </View>
-)}
-</View>
-
-{/* CONTROLS */}
-        <View style={s.controls}>
-          <Pressable
-            onPress={() => setMonitoring(!monitoring)}
-            style={[
-              s.btn,
-              { backgroundColor: monitoring ? theme.primary : theme.muted },
-            ]}>
-            <Text style={s.btnTxt}>
-              {monitoring ? i18n.t("stopMonitoring") : i18n.t("startMonitoring")}
-            </Text>
-          </Pressable>
-
-          <Pressable style={[s.btn, { backgroundColor: theme.secondary }]}>
-            <Text style={s.btnTxt}>{i18n.t("calibrate")}</Text>
-          </Pressable>
-        </View>
-
+        <SessionStatusCard
+          posture={posture}
+          attentionText={attentionText}
+          hours={hours}
+          minutes={minutes}
+          isPresent={isPresent}
+          drowsy={drowsy}
+          theme={theme}
+          isDark={isDark}
+        />
+        {/* CONTROLS */}
+        <Controls
+          monitoring={monitoring}
+          setMonitoring={setMonitoring}
+          theme={theme}
+        />
       </ScrollView>
     </LinearGradient>
   );
@@ -412,7 +185,7 @@ const s = StyleSheet.create({
   chairOnly: { marginTop: 25, alignItems: "center", justifyContent: "center" },
   card: {
     borderRadius: 22,
-    paddingVertical: 26,   // ⬅️ أكبر
+    paddingVertical: 26, // ⬅️ أكبر
     paddingHorizontal: 22,
     marginTop: 20,
     width: "90%",
@@ -438,77 +211,77 @@ const s = StyleSheet.create({
   subStatus: { fontSize: 16 },
   controls: { flexDirection: "row", gap: 10, marginVertical: 25 },
 
-btn: {
-  paddingVertical: 10,
-  paddingHorizontal: 22,
-  borderRadius: 12,
-  shadowColor: "#000",
-  shadowOpacity: 0.1,
-  elevation: 3,
-},
+  btn: {
+    paddingVertical: 10,
+    paddingHorizontal: 22,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    elevation: 3,
+  },
 
-btnGray: { backgroundColor: "#A5B8D8" },
-btnTxt: { color: "#FFF", fontWeight: "700" },
-cardTitle: {
-  fontSize: 16,
-  fontWeight: "700",
-  marginBottom: 12,
-},
+  btnGray: { backgroundColor: "#A5B8D8" },
+  btnTxt: { color: "#FFF", fontWeight: "700" },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 12,
+  },
 
-infoRow: {
-  width: "100%",
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "flex-start", // ✅ هذا هو المفتاح
-  marginVertical: 14,
-},
+  infoRow: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start", // ✅ هذا هو المفتاح
+    marginVertical: 14,
+  },
 
-infoTextGroup: {
-  flex: 1,
-  justifyContent: "center",
-},
+  infoTextGroup: {
+    flex: 1,
+    justifyContent: "center",
+  },
 
-infoLabel: {
-  fontSize: 15,     // ⬅️ أكبر
-  opacity: 0.6,
-  marginBottom: 2,
-},
+  infoLabel: {
+    fontSize: 15, // ⬅️ أكبر
+    opacity: 0.6,
+    marginBottom: 2,
+  },
 
-infoValue: {
-  fontSize: 19,     // ⬅️ أهم سطر
-  fontWeight: "800",
-},
+  infoValue: {
+    fontSize: 19, // ⬅️ أهم سطر
+    fontWeight: "800",
+  },
 
-rowReverse: {
-  flexDirection: "row-reverse",
-},
+  rowReverse: {
+    flexDirection: "row-reverse",
+  },
 
-iconBubble: {
-  width: 42,        // ⬅️ أكبر وواضح
-  height: 42,
-  borderRadius: 21,
-  justifyContent: "center",
-  alignItems: "center",
-  marginHorizontal: 14,
-},
+  iconBubble: {
+    width: 42, // ⬅️ أكبر وواضح
+    height: 42,
+    borderRadius: 21,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 14,
+  },
 
-cardTitle: {
-  fontSize: 18,
-  fontWeight: "800",
-  marginBottom: 16,
-},
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    marginBottom: 16,
+  },
 
-alertRow: {
-  marginTop: 18,
-  paddingTop: 14,
-  borderTopWidth: 1,
-  borderColor: "rgba(0,0,0,0.08)",
-  flexDirection: "row",
-  alignItems: "center",
-},
+  alertRow: {
+    marginTop: 18,
+    paddingTop: 14,
+    borderTopWidth: 1,
+    borderColor: "rgba(0,0,0,0.08)",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 
-alertText: {
-  fontSize: 15,
-  fontWeight: "600",
-},
+  alertText: {
+    fontSize: 15,
+    fontWeight: "600",
+  },
 });
