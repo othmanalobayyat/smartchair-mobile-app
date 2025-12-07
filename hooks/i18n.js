@@ -55,6 +55,25 @@ const i18n = new I18n({
     startMonitoring: "تشغيل المراقبة",
     stopMonitoring: "إيقاف المراقبة",
     calibrate: "معايرة",
+// ===== App.js (موجودة كما هي) =====
+    tabDashboard: "الرئيسية",
+    tabStatistics: "الإحصاءات",
+    tabCoach: "المساعد",
+    tabSettings: "الإعدادات",
+
+    // ===== ِAbout.js (موجودة كما هي) =====
+    aboutTitle: "حول النظام",
+    aboutProjectName: "Posturic – نظام الجلسة والانتباه الذكي",
+    aboutDescription:
+      "بوستريك هو مشروع تخرّج من جامعة فلسطين الأهلية، يهدف إلى تحسين الجلسة والانتباه باستخدام تقنيات الاستشعار الذكي، الكاميرا، وتحليل السلوك الصحي. النظام يدمج بين ESP32، الكرسي الذكي، معالجة الصور، وتطبيق موبايل تفاعلي.",
+    aboutDevelopers: "المطورون",
+    aboutSupervisor: "المشرف",
+    aboutDevOthman: "عثمان العبيات",
+    aboutDevRahaf: "رهف عديلة",
+    aboutSupervisorName: "د. أحمد عبدو",
+
+
+
   },
 
   en: {
@@ -104,6 +123,26 @@ const i18n = new I18n({
     startMonitoring: "Start Monitoring",
     stopMonitoring: "Stop Monitoring",
     calibrate: "Calibrate",
+
+    // ===== App.js (موجودة كما هي) =====
+    tabDashboard: "Dashboard",
+    tabStatistics: "Statistics",
+    tabCoach: "Coach",
+    tabSettings: "Settings",
+    // ===== ِAbout.js (موجودة كما هي) =====
+    aboutTitle: "About the System",
+    aboutProjectName: "Posturic – Smart Posture & Attention System",
+    aboutDescription:
+     "Posturic is a graduation project from Palestine Ahliya University, designed to improve posture and attention using smart sensing, camera analysis, and healthy behavior tracking. The system integrates ESP32, smart seating sensors, computer vision, and an interactive mobile application.",
+    aboutDevelopers: "Developers",
+    aboutSupervisor: "Supervisor",
+    aboutDevOthman: "Othman Al-Obayyat",
+    aboutDevRahaf: "Rahaf Adeelah",
+    aboutSupervisorName: "Dr. Ahmed Abdou",
+
+
+
+
   },
 });
 

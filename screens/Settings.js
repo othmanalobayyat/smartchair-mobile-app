@@ -1,4 +1,4 @@
-// screens/Settings.js
+// screens/Settings.js - محسّن مع الحفاظ على الهوية
 import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { I18nManager } from "react-native";
@@ -30,38 +30,23 @@ export default function Settings({ navigation }) {
   const [vibrationEnabled, setVibrationEnabled] = useState(false);
 
   // ====================== HANDLERS ======================
-const toggleLanguage = async () => {
-  const newLang = lang === "ar" ? "en" : "ar";
-  const isRTL = newLang === "ar";
+  const toggleLanguage = async () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    const isRTL = newLang === "ar";
 
-  // 1️⃣ حفظ اللغة
-  await AsyncStorage.setItem("APP_LANG", newLang);
+    await AsyncStorage.setItem("APP_LANG", newLang);
+    i18n.locale = newLang;
+    i18n.isRTL = isRTL;
+    I18nManager.allowRTL(isRTL);
+    I18nManager.forceRTL(isRTL);
+    setLang(newLang);
 
-  // 2️⃣ تغيير اللغة
-  i18n.locale = newLang;
-  i18n.isRTL = isRTL;
-
-  // 3️⃣ تغيير اتجاه التطبيق (ضروري)
-  I18nManager.allowRTL(isRTL);
-  I18nManager.forceRTL(isRTL);
-
-  // 4️⃣ تحديث الحالة
-  setLang(newLang);
-
-  Alert.alert(
-    i18n.t("languageChangedTitle"),
-    i18n.t("languageChangedMessage"),
-    [
-      {
-        text: "OK",
-        onPress: async () => {
-          // 5️⃣ إعادة تشغيل التطبيق
-          await Updates.reloadAsync();
-        },
-      },
-    ]
-  );
-};
+    Alert.alert(
+      i18n.t("languageChangedTitle"),
+      i18n.t("languageChangedMessage"),
+      [{ text: "OK", onPress: async () => await Updates.reloadAsync() }]
+    );
+  };
 
   const handleTestConnection = () => {
     Alert.alert(i18n.t("connectionTest"), i18n.t("connectionSuccess"));
@@ -76,10 +61,7 @@ const toggleLanguage = async () => {
   };
 
   const handleAbout = () => {
-    Alert.alert(
-      "ℹ️ حول النظام",
-      "اسم التطبيق: Smart Chair\nالإصدار: 1.0.0\nالمطور: فريق الهندسة الذكية - جامعة PAU\nآخر تحديث: نوفمبر 2025"
-    );
+   navigation.navigate("About");
   };
 
   const getBatteryColor = (level) => {
@@ -105,89 +87,93 @@ const toggleLanguage = async () => {
         contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-
-        {/* GENERAL */}
+        {/* ==================== ACCOUNT (بارز) ==================== */}
         <Text style={[s.sectionTitle, { color: theme.text }]}>
-          {i18n.t("generalSettings")}
+          {i18n.t("accountCloud")}
         </Text>
 
-        {/* ALERT TIMEOUT */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[s.label, { color: theme.text }]}>
-            {i18n.t("alertTimeout")} {alertTimeout} {i18n.t("minutes")}
-          </Text>
-
-          <View style={s.btnRow}>
-            <TouchableOpacity
-              style={[s.btn, { backgroundColor: theme.secondary }]}
-              onPress={() => setAlertTimeout((p) => Math.max(1, p - 1))}
+        {/* PROFILE CARD - مميز */}
+        <View style={[s.profileCard, { 
+          backgroundColor: theme.primary,
+          shadowColor: theme.primary,
+        }]}>
+          <View style={s.profileTop}>
+            <View style={s.profileAvatar}>
+              <Ionicons name="person" size={28} color="#FFF" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={s.profileName}>أحمد محمد</Text>
+              <Text style={s.profileEmail}>ahmed@example.com</Text>
+            </View>
+            <TouchableOpacity 
+              onPress={() => navigation.navigate("Account")}
+              style={s.editBtn}
             >
-              <Text style={s.btnTxt}>-</Text>
+              <Ionicons name="create-outline" size={18} color="#FFF" />
             </TouchableOpacity>
+          </View>
 
-            <TouchableOpacity
-              style={[s.btn, { backgroundColor: theme.secondary }]}
-              onPress={() => setAlertTimeout((p) => p + 1)}
-            >
-              <Text style={s.btnTxt}>+</Text>
-            </TouchableOpacity>
+          <View style={s.statsRow}>
+            <View style={s.stat}>
+              <Text style={s.statNum}>247</Text>
+              <Text style={s.statLabel}>ساعات</Text>
+            </View>
+            <View style={s.statDivider} />
+            <View style={s.stat}>
+              <Text style={s.statNum}>32</Text>
+              <Text style={s.statLabel}>تنبيهات</Text>
+            </View>
+            <View style={s.statDivider} />
+            <View style={s.stat}>
+              <Text style={s.statNum}>98%</Text>
+              <Text style={s.statLabel}>التزام</Text>
+            </View>
           </View>
         </View>
 
-        {/* LANGUAGE */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={s.row}>
-            <Ionicons name="language" size={20} color={theme.primary} />
-            <Text style={[s.label, { color: theme.text }]}>{i18n.t("language")}</Text>
-            <TouchableOpacity onPress={toggleLanguage}>
-              <Text style={[s.value, { color: theme.secondary }]}>
-                {lang === "ar" ? "العربية" : "English"}
+        {/* CLOUD SYNC - مميز */}
+        <TouchableOpacity
+          onPress={handleCloudSync}
+          style={[s.cloudCard, { 
+            backgroundColor: theme.card, 
+            borderColor: theme.success,
+          }]}
+        >
+          <View style={s.cloudBadge}>
+            <MaterialCommunityIcons name="cloud-check" size={14} color="#FFF" />
+            <Text style={s.cloudBadgeText}>متزامن</Text>
+          </View>
+
+          <View style={s.cloudContent}>
+            <View style={[s.cloudIcon, { backgroundColor: theme.success + "20" }]}>
+              <Ionicons name="cloud-upload-outline" size={24} color={theme.success} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[s.cloudTitle, { color: theme.text }]}>
+                مزامنة البيانات
               </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* SOUND + VIBRATION */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={s.row}>
-            <MaterialCommunityIcons name="volume-high" size={20} color={theme.secondary} />
-            <Text style={[s.label, { color: theme.text }]}>تشغيل الصوت</Text>
-            <Switch value={soundEnabled} onValueChange={setSoundEnabled} />
+              <Text style={[s.cloudSub, { color: theme.textSecondary }]}>
+                آخر مزامنة: منذ 5 دقائق
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={theme.textSecondary} />
           </View>
 
-          <View style={[s.row, { marginTop: 8 }]}>
-            <MaterialCommunityIcons name="vibrate" size={20} color={theme.secondary} />
-            <Text style={[s.label, { color: theme.text }]}>تفعيل الاهتزاز</Text>
-            <Switch value={vibrationEnabled} onValueChange={setVibrationEnabled} />
+          <View style={[s.progressBar, { backgroundColor: theme.border }]}>
+            <View style={[s.progressFill, { 
+              width: "85%", 
+              backgroundColor: theme.success 
+            }]} />
           </View>
-        </View>
+          <Text style={[s.progressText, { color: theme.textSecondary }]}>
+            85% • 2.4 MB / 2.8 MB
+          </Text>
+        </TouchableOpacity>
 
-        {/* DARK MODE */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={s.row}>
-            <Ionicons
-              name={isDark ? "moon" : "sunny"}
-              size={20}
-              color={isDark ? theme.warning : theme.primary}
-            />
-            <Text style={[s.label, { color: theme.text }]}>{i18n.t("darkMode")}</Text>
-            <Switch value={isDark} onValueChange={toggleTheme} />
-          </View>
-        </View>
-
-        {/* CHAIR */}
+        {/* ==================== CHAIR ==================== */}
         <Text style={[s.sectionTitle, { color: theme.text }]}>
           {i18n.t("chairSettings")}
         </Text>
-
-        {/* CAMERA */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={s.row}>
-            <MaterialCommunityIcons name="video" size={20} color={theme.primary} />
-            <Text style={[s.label, { color: theme.text }]}>{i18n.t("cameraToggle")}</Text>
-            <Switch value={cameraEnabled} onValueChange={setCameraEnabled} />
-          </View>
-        </View>
 
         {/* CONNECTION + BATTERY */}
         <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -202,7 +188,7 @@ const toggleLanguage = async () => {
             </Text>
           </View>
 
-          <View style={[s.row, { marginTop: 8 }]}>
+          <View style={[s.row, { marginTop: 12 }]}>
             <Ionicons name="battery-half" size={20} color={getBatteryColor(batteryLevel)} />
             <Text style={[s.label, { color: theme.text }]}>
               طاقة البطارية: {batteryLevel}%
@@ -222,6 +208,15 @@ const toggleLanguage = async () => {
           </View>
         </View>
 
+        {/* CAMERA */}
+        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={s.row}>
+            <MaterialCommunityIcons name="video" size={20} color={theme.primary} />
+            <Text style={[s.label, { color: theme.text }]}>{i18n.t("cameraToggle")}</Text>
+            <Switch value={cameraEnabled} onValueChange={setCameraEnabled} />
+          </View>
+        </View>
+
         <TouchableOpacity
           onPress={handleTestConnection}
           style={[s.mainBtn, { backgroundColor: theme.secondary }]}
@@ -230,34 +225,89 @@ const toggleLanguage = async () => {
           <Text style={s.mainBtnTxt}>{i18n.t("testConnection")}</Text>
         </TouchableOpacity>
 
-        {/* ACCOUNT */}
+        {/* ==================== GENERAL ==================== */}
         <Text style={[s.sectionTitle, { color: theme.text }]}>
-          {i18n.t("accountCloud")}
+          {i18n.t("generalSettings")}
         </Text>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Account")}
-          style={[s.mainBtn, { backgroundColor: theme.secondary }]}
-        >
-          <Ionicons name="person-circle-outline" size={20} color="#FFF" />
-          <Text style={s.mainBtnTxt}>إعدادات الحساب</Text>
-        </TouchableOpacity>
+        {/* ALERT TIMEOUT */}
+        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={s.timeoutHeader}>
+            <MaterialCommunityIcons name="clock-alert-outline" size={20} color={theme.primary} />
+            <Text style={[s.label, { color: theme.text }]}>
+              {i18n.t("alertTimeout")}
+            </Text>
+          </View>
 
-        <TouchableOpacity
-          onPress={handleCloudSync}
-          style={[s.mainBtn, { backgroundColor: theme.secondary }]}
-        >
-          <Ionicons name="cloud-upload-outline" size={20} color="#FFF" />
-          <Text style={s.mainBtnTxt}>مزامنة البيانات مع السحابة</Text>
-        </TouchableOpacity>
+          <View style={s.btnRow}>
+            <TouchableOpacity
+              style={[s.btn, { backgroundColor: theme.secondary }]}
+              onPress={() => setAlertTimeout((p) => Math.max(1, p - 1))}
+            >
+              <Text style={s.btnTxt}>-</Text>
+            </TouchableOpacity>
 
-        {/* SUPPORT */}
+            <View style={[s.timeoutDisplay, { backgroundColor: theme.primary }]}>
+              <Text style={s.timeoutValue}>{alertTimeout}</Text>
+              <Text style={s.timeoutUnit}>{i18n.t("minutes")}</Text>
+            </View>
+
+            <TouchableOpacity
+              style={[s.btn, { backgroundColor: theme.secondary }]}
+              onPress={() => setAlertTimeout((p) => p + 1)}
+            >
+              <Text style={s.btnTxt}>+</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* LANGUAGE + DARK MODE */}
+        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <TouchableOpacity style={s.row} onPress={toggleLanguage}>
+            <Ionicons name="language" size={20} color={theme.primary} />
+            <Text style={[s.label, { color: theme.text }]}>{i18n.t("language")}</Text>
+            <Text style={[s.value, { color: theme.secondary }]}>
+              {lang === "ar" ? "العربية" : "English"}
+            </Text>
+          </TouchableOpacity>
+
+          <View style={[s.divider, { backgroundColor: theme.border }]} />
+
+          <View style={s.row}>
+            <Ionicons
+              name={isDark ? "moon" : "sunny"}
+              size={20}
+              color={isDark ? theme.warning : theme.primary}
+            />
+            <Text style={[s.label, { color: theme.text }]}>{i18n.t("darkMode")}</Text>
+            <Switch value={isDark} onValueChange={toggleTheme} />
+          </View>
+        </View>
+
+        {/* SOUND + VIBRATION */}
+        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={s.row}>
+            <MaterialCommunityIcons name="volume-high" size={20} color={theme.secondary} />
+            <Text style={[s.label, { color: theme.text }]}>تشغيل الصوت</Text>
+            <Switch value={soundEnabled} onValueChange={setSoundEnabled} />
+          </View>
+
+          <View style={[s.divider, { backgroundColor: theme.border }]} />
+
+          <View style={s.row}>
+            <MaterialCommunityIcons name="vibrate" size={20} color={theme.secondary} />
+            <Text style={[s.label, { color: theme.text }]}>تفعيل الاهتزاز</Text>
+            <Switch value={vibrationEnabled} onValueChange={setVibrationEnabled} />
+          </View>
+        </View>
+
+        {/* ==================== SUPPORT ==================== */}
         <Text style={[s.sectionTitle, { color: theme.text }]}>
           {i18n.t("supportAbout")}
         </Text>
 
         <TouchableOpacity
-          onPress={handleSupport}
+          onPress={() => navigation.navigate("Support")}
           style={[s.mainBtn, { backgroundColor: theme.primary }]}
         >
           <Ionicons name="information-circle-outline" size={20} color="#FFF" />
@@ -271,7 +321,6 @@ const toggleLanguage = async () => {
           <Ionicons name="help-circle-outline" size={20} color="#FFF" />
           <Text style={s.mainBtnTxt}>حول النظام</Text>
         </TouchableOpacity>
-
       </ScrollView>
     </View>
   );
@@ -296,10 +345,148 @@ const s = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     marginBottom: 6,
-    marginTop: 12,
+    marginTop: 16,
     opacity: 0.5,
   },
 
+  // PROFILE CARD (محسّن)
+  profileCard: {
+    width: "92%",
+    borderRadius: 20,
+    padding: 18,
+    marginBottom: 14,
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  profileTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+    gap: 12,
+  },
+  profileAvatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: "#FFFFFF20",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#FFFFFF30",
+  },
+  profileName: {
+    color: "#FFF",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  profileEmail: {
+    color: "#FFFFFF90",
+    fontSize: 13,
+    marginTop: 2,
+  },
+  editBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: "#FFFFFF20",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  statsRow: {
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF20",
+    borderRadius: 14,
+    padding: 14,
+  },
+  stat: {
+    flex: 1,
+    alignItems: "center",
+  },
+  statNum: {
+    color: "#FFF",
+    fontSize: 20,
+    fontWeight: "800",
+  },
+  statLabel: {
+    color: "#FFFFFF80",
+    fontSize: 11,
+    marginTop: 2,
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: "#FFFFFF30",
+  },
+
+  // CLOUD CARD (محسّن)
+  cloudCard: {
+    width: "92%",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 2,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+  cloudBadge: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#10B981",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    gap: 4,
+  },
+  cloudBadgeText: {
+    color: "#FFF",
+    fontSize: 10,
+    fontWeight: "700",
+  },
+  cloudContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 12,
+  },
+  cloudIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cloudTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  cloudSub: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  progressBar: {
+    height: 6,
+    borderRadius: 3,
+    overflow: "hidden",
+    marginTop: 4,
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 3,
+  },
+  progressText: {
+    fontSize: 10,
+    marginTop: 4,
+  },
+
+  // REGULAR CARDS
   card: {
     width: "92%",
     borderRadius: 16,
@@ -318,20 +505,49 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
   },
 
+  divider: {
+    height: 1,
+    marginVertical: 10,
+  },
+
+  // TIMEOUT
+  timeoutHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 12,
+  },
   btnRow: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 10,
-    marginTop: 10,
+    alignItems: "center",
+    gap: 12,
   },
   btn: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
   },
-  btnTxt: { color: "#FFF", fontSize: 18, fontWeight: "700" },
+  btnTxt: { color: "#FFF", fontSize: 20, fontWeight: "700" },
+  timeoutDisplay: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 12,
+    alignItems: "center",
+    minWidth: 90,
+  },
+  timeoutValue: {
+    color: "#FFF",
+    fontSize: 24,
+    fontWeight: "800",
+  },
+  timeoutUnit: {
+    color: "#FFFFFF90",
+    fontSize: 11,
+    fontWeight: "600",
+  },
 
   mainBtn: {
     flexDirection: "row",
@@ -349,7 +565,7 @@ const s = StyleSheet.create({
     width: "100%",
     height: 8,
     borderRadius: 5,
-    marginTop: 8,
+    marginTop: 10,
   },
   batteryBarFill: {
     height: "100%",

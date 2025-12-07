@@ -7,6 +7,7 @@ import { ThemeProvider } from "./hooks/ThemeContext";
 import { DataProvider } from "./hooks/DataContext";
 import { loadLanguage } from "./hooks/i18n";
 import { AuthProvider, useAuth } from "./hooks/AuthContext";
+import i18n from "./hooks/i18n";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -23,6 +24,9 @@ import Coach from "./screens/Coach";
 import Settings from "./screens/Settings";
 import Historical from "./screens/StatisticsScreens/Historical";
 import Account from "./screens/SettingsScreens/Account";
+import About from "./screens/SettingsScreens/About";
+import Support from "./screens/SettingsScreens/Support";
+
 
 // شاشات الـ Auth
 import Login from "./screens/Auth/Login";
@@ -81,22 +85,25 @@ function Tabs() {
         <Tab.Screen
           name="Dashboard"
           component={SmartChair}
-          options={{ title: "الرئيسية" }}
+          options={{ title: i18n.t("tabDashboard") }}
         />
+
         <Tab.Screen
           name="Statistics"
           component={Statistics}
-          options={{ title: "الإحصاءات" }}
+          options={{ title: i18n.t("tabStatistics") }}
         />
+
         <Tab.Screen
           name="Coach"
           component={Coach}
-          options={{ title: "المساعد" }}
+          options={{ title: i18n.t("tabCoach") }}
         />
+
         <Tab.Screen
           name="Settings"
           component={Settings}
-          options={{ title: "الإعدادات" }}
+          options={{ title: i18n.t("tabSettings") }}
         />
       </Tab.Navigator>
     </>
@@ -115,6 +122,9 @@ function AppStackNavigator() {
       <Stack.Screen name="Tabs" component={Tabs} />
       <Stack.Screen name="Historical" component={Historical} />
       <Stack.Screen name="Account" component={Account} />
+      <Stack.Screen name="About" component={About} />
+      <Stack.Screen name="Support" component={Support} />
+
     </Stack.Navigator>
   );
 }

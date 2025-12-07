@@ -13,9 +13,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/ThemeContext';
+import { useAuth } from '../../hooks/AuthContext';
 
 export default function Account({ navigation }) {
   const { theme, isDark } = useTheme();
+  const { logout } = useAuth(); // ← أهم إضافة
 
   const [user, setUser] = useState({
     name: 'عثمان العُبيّات',
@@ -32,13 +34,20 @@ export default function Account({ navigation }) {
     loadUser();
   }, []);
 
-  const handleEdit = () => Alert.alert('✏️', 'ميزة تعديل البيانات ستتوفر لاحقًا');
+  const handleEdit = () =>
+    Alert.alert('✏️', 'ميزة تعديل البيانات ستتوفر لاحقًا');
+
   const handlePassword = () =>
     Alert.alert('🔐', 'ميزة تغيير كلمة المرور ستتوفر قريبًا');
+
+  // 🔥 هنا logout الصحيح 100%
   const handleLogout = async () => {
-    await AsyncStorage.removeItem('userInfo');
-    Alert.alert('🚪', 'تم تسجيل الخروج بنجاح');
-    navigation.navigate('Tabs');
+    await logout(); // يمسح user + token + AsyncStorage داخل AuthContext
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }], // يرجع المستخدم لشاشة الـ Login
+    });
   };
 
   return (
@@ -48,14 +57,18 @@ export default function Account({ navigation }) {
         { backgroundColor: isDark ? '#0F172A' : theme.background },
       ]}
     >
-      <StatusBar translucent barStyle="light-content" backgroundColor="transparent" />
+      <StatusBar
+        translucent
+        barStyle="light-content"
+        backgroundColor="transparent"
+      />
 
       {/* HEADER */}
       <SafeAreaView style={s.header} edges={['top']}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
           <Ionicons name="arrow-back" size={24} color="#FFF" />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>👤 إعدادات الحساب</Text>
+        <Text style={s.headerTitle}> إعدادات الحساب</Text>
       </SafeAreaView>
 
       {/* CONTENT */}
@@ -73,7 +86,7 @@ export default function Account({ navigation }) {
           {user.email}
         </Text>
 
-        {/* CARD OPTIONS */}
+        {/* OPTIONS CARD */}
         <View
           style={[
             s.card,
@@ -85,18 +98,22 @@ export default function Account({ navigation }) {
         >
           <TouchableOpacity onPress={handleEdit} style={s.row}>
             <Ionicons name="create-outline" size={22} color="#4C89C8" />
-            <Text style={[s.label, { color: theme.text }]}>تعديل البيانات الشخصية</Text>
+            <Text style={[s.label, { color: theme.text }]}>
+              تعديل البيانات الشخصية
+            </Text>
           </TouchableOpacity>
 
           <View style={s.divider} />
 
           <TouchableOpacity onPress={handlePassword} style={s.row}>
             <Ionicons name="lock-closed-outline" size={22} color="#4C89C8" />
-            <Text style={[s.label, { color: theme.text }]}>تغيير كلمة المرور</Text>
+            <Text style={[s.label, { color: theme.text }]}>
+              تغيير كلمة المرور
+            </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Logout button */}
+        {/* Logout Button */}
         <TouchableOpacity
           onPress={handleLogout}
           activeOpacity={0.8}

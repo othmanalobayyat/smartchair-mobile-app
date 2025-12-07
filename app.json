@@ -20,10 +20,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.othmanlearn.snack55bfac8d8f694fb38fe1c996e0e26b17"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "25445782-93c8-41b3-8d01-b7eca2a1498f"
+      }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
