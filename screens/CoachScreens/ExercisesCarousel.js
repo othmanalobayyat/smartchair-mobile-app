@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Animated,
 } from "react-native";
+import i18n from "../../hooks/i18n";
 
 export default function ExercisesCarousel({
   exercises,
@@ -67,7 +68,9 @@ export default function ExercisesCarousel({
               style={styles.exerciseBtn}
               onPress={() => handleStartExercise(ex)}
             >
-              <Text style={styles.exerciseBtnText}>ابدأ التمرين</Text>
+              <Text style={styles.exerciseBtnText}>
+                {i18n.t("exerciseStart")}
+              </Text>
             </TouchableOpacity>
           </Animated.View>
         );

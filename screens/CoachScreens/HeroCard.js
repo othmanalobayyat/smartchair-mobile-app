@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import i18n from "../../hooks/i18n";
 
 export default function HeroCard({
   posture,
@@ -10,6 +11,15 @@ export default function HeroCard({
   postureIcon,
   heroAnim,
 }) {
+  const postureStateText =
+    posture === "صحيحة"
+      ? i18n.t("heroStatePerfect")
+      : posture === "منحنية"
+      ? i18n.t("heroStateFix")
+      : posture === "تعب"
+      ? i18n.t("heroStateExercise")
+      : i18n.t("heroStateBreak");
+
   return (
     <Animated.View
       style={[
@@ -25,18 +35,19 @@ export default function HeroCard({
         <Ionicons name="person-outline" size={32} color={heroColor} />
       </View>
 
-      <Text style={styles.heroTitle}>وضعيتك الآن: {posture}</Text>
-      <Text style={styles.heroSmall}>مدة الجلسة: {sessionMinutes} دقيقة</Text>
+      {/* وضعيتك الآن */}
+      <Text style={styles.heroTitle}>
+        {i18n.t("heroYourPosture")} {posture}
+      </Text>
 
+      {/* مدة الجلسة */}
       <Text style={styles.heroSmall}>
-        حالة الجلسة:{" "}
-        {posture === "صحيحة"
-          ? "مثالية"
-          : posture === "منحنية"
-          ? "يلزم تصحيح"
-          : posture === "تعب"
-          ? "تحتاج تمارين"
-          : "تحتاج استراحة"}
+        {i18n.t("heroSessionDuration")} {sessionMinutes} {i18n.t("heroMinutes")}
+      </Text>
+
+      {/* حالة الجلسة */}
+      <Text style={styles.heroSmall}>
+        {i18n.t("heroSessionState")} {postureStateText}
       </Text>
 
       <Ionicons
@@ -56,9 +67,7 @@ export default function HeroCard({
         />
       </View>
 
-      <Text style={styles.sessionHint}>
-        كلما زاد وقت الجلوس، خذ فترات استراحة قصيرة.
-      </Text>
+      <Text style={styles.sessionHint}>{i18n.t("heroHint")}</Text>
     </Animated.View>
   );
 }

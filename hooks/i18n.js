@@ -23,8 +23,7 @@ const i18n = new I18n({
     supportTitle: "ℹ️ الدعم الفني",
     supportMessage: "للتواصل مع الدعم:\nsmartchair.support@email.com",
     languageChangedTitle: "🌐 تم تغيير اللغة",
-    languageChangedMessage:
-      "سيتم تطبيق اللغة الجديدة بعد إعادة تشغيل التطبيق.",
+    languageChangedMessage: "سيتم تطبيق اللغة الجديدة بعد إعادة تشغيل التطبيق.",
 
     // ===== SMART CHAIR (مضاف جديد) =====
     smartChairTitle: "الكرسي الذكي",
@@ -55,7 +54,7 @@ const i18n = new I18n({
     startMonitoring: "تشغيل المراقبة",
     stopMonitoring: "إيقاف المراقبة",
     calibrate: "معايرة",
-// ===== App.js (موجودة كما هي) =====
+    // ===== App.js (موجودة كما هي) =====
     tabDashboard: "الرئيسية",
     tabStatistics: "الإحصاءات",
     tabCoach: "المساعد",
@@ -72,8 +71,83 @@ const i18n = new I18n({
     aboutDevRahaf: "رهف عديلة",
     aboutSupervisorName: "د. أحمد عبدو",
 
+    // ===}Coach  (موجودة كما هي) =====
+    coachSuggestedExercises: "تمارين مقترحة",
+    coachHistory: "سجل التمارين",
+    coachDurationSeconds: "مدة: {{seconds}} ثانية",
 
+    coachTip1: "اجلس باستقامة وحافظ على ظهر ممدود.",
+    coachTip2: "ضع قدميك بشكل مسطح على الأرض.",
+    coachTip3: "تجنب الانحناء للأمام لفترات طويلة.",
 
+    coachEx1Name: "تمديد الذراعين",
+    coachEx1Desc: "حرّك ذراعيك للأمام والخلف لمدة 30 ثانية.",
+
+    coachEx2Name: "تمرين الرقبة",
+    coachEx2Desc: "حرّك رقبتك بلطف يمينًا ويسارًا.",
+
+    coachEx3Name: "استقامة الجلوس",
+    coachEx3Desc: "اجلس باستقامة مع شد الكتفين للخلف.",
+
+    coachEx4Name: "تمديد الرقبة",
+    coachEx4Desc: "تمرين لتخفيف شد الرقبة.",
+
+    coachEx5Name: "تمديد الكتفين",
+    coachEx5Desc: "لفّ الكتفين للأعلى والخلف.",
+
+    coachBreakSuggestion: "لقد مر وقت طويل — خذ استراحة قصيرة.",
+    coachExerciseSelectDuration: "اختر المدة",
+    coachExerciseStart: "ابدأ",
+    coachExercisePause: "إيقاف مؤقت",
+    coachExerciseFinish: "إنهاء",
+    coachHeaderTitle: "المساعد الذكي – Smart Coach",
+    coachBreakText:
+      "مضى {{minutes}} دقيقة من الجلوس المتواصل – يُفضل أخذ استراحة قصيرة.",
+    modalSeconds: "{{seconds}} ثانية",
+    modalDurationSeconds: "{{seconds}} ثانية",
+    modalStart: "ابدأ",
+    modalPause: "إيقاف مؤقت",
+    modalDone: "تم الانتهاء ✅",
+    exerciseStart: "ابدأ التمرين",
+    heroYourPosture: "وضعيتك الآن:",
+    heroSessionDuration: "مدة الجلسة:",
+    heroMinutes: "دقيقة",
+    heroSessionState: "حالة الجلسة:",
+
+    heroStatePerfect: "مثالية",
+    heroStateFix: "يلزم تصحيح",
+    heroStateExercise: "تحتاج تمارين",
+    heroStateBreak: "تحتاج استراحة",
+
+    heroHint: "كلما زاد وقت الجلوس، خذ فترات استراحة قصيرة.",
+    quickTipsTitle: "نصائح سريعة",
+    quickTipsSwipe: "اسحب لليمين لرؤية المزيد",
+
+    // ===ChatBot.js (موجودة كما هي) =====
+    chatWelcome: "مرحباً! أنا مساعد الجلسة الذكي 👋",
+
+    chatPostureCorrect: "جلستك ممتازة! استمر بهذه الوضعية.",
+    chatPostureBent: "ظهرك مائل—حاول ترجع كتفيك للخلف.",
+    chatPostureTired: "أنصحك بتمارين التمدد التي تظهر أمامك.",
+    chatPostureLong: "جلستك أصبحت طويلة—خذ استراحة بسيطة.",
+    chatPostureDefault: "تستطيع سؤالي عن وضعك أو طلب نصيحة أو تمرين.",
+
+    chatAskStatus: "كيف وضعي الآن؟",
+    chatAskExercise: "أعطني تمرين.",
+    chatAskBreak: "هل أحتاج استراحة؟",
+
+    chatExerciseTired: "أنصحك بتمدد الرقبة والكتفين.",
+    chatExerciseNormal: "جرّب تمرين الذراعين أو لف الرقبة.",
+
+    chatBreakYes: "نعم! الأفضل تأخذ استراحة الآن.",
+    chatBreakNo: "لسا عندك وقت، لكن لو تعبان خذ بريك.",
+
+    chatTitle: "محادثة المساعد الذكي",
+    chatQuickStatus: "حالتي؟",
+    chatQuickExercise: "تمريني",
+    chatQuickBreak: "استراحة",
+
+    chatPlaceholder: "اكتب رسالة...",
   },
 
   en: {
@@ -133,16 +207,91 @@ const i18n = new I18n({
     aboutTitle: "About the System",
     aboutProjectName: "Posturic – Smart Posture & Attention System",
     aboutDescription:
-     "Posturic is a graduation project from Palestine Ahliya University, designed to improve posture and attention using smart sensing, camera analysis, and healthy behavior tracking. The system integrates ESP32, smart seating sensors, computer vision, and an interactive mobile application.",
+      "Posturic is a graduation project from Palestine Ahliya University, designed to improve posture and attention using smart sensing, camera analysis, and healthy behavior tracking. The system integrates ESP32, smart seating sensors, computer vision, and an interactive mobile application.",
     aboutDevelopers: "Developers",
     aboutSupervisor: "Supervisor",
     aboutDevOthman: "Othman Al-Obayyat",
     aboutDevRahaf: "Rahaf Adeelah",
     aboutSupervisorName: "Dr. Ahmed Abdou",
 
+    // ===== ِCoach.js (موجودة كما هي) =====
+    coachSuggestedExercises: "Suggested Exercises",
+    coachHistory: "Exercise History",
+    coachDurationSeconds: "Duration: {{seconds}} sec",
 
+    coachTip1: "Sit upright and keep your back straight.",
+    coachTip2: "Place both feet flat on the floor.",
+    coachTip3: "Avoid leaning forward for long periods.",
 
+    coachEx1Name: "Arm Stretch",
+    coachEx1Desc: "Move your arms forward and backward for 30 seconds.",
 
+    coachEx2Name: "Neck Exercise",
+    coachEx2Desc: "Gently move your neck left and right.",
+
+    coachEx3Name: "Posture Correction",
+    coachEx3Desc: "Sit straight and pull your shoulders back.",
+
+    coachEx4Name: "Neck Stretch",
+    coachEx4Desc: "A stretch to relieve neck tension.",
+
+    coachEx5Name: "Shoulder Stretch",
+    coachEx5Desc: "Roll your shoulders up and back.",
+
+    coachBreakSuggestion: "You've been sitting for long — take a short break.",
+    coachExerciseSelectDuration: "Select Duration",
+    coachExerciseStart: "Start",
+    coachExercisePause: "Pause",
+    coachExerciseFinish: "Finish",
+    coachHeaderTitle: "Smart Coach – Intelligent Assistant",
+    coachBreakText:
+      "{{minutes}} minutes of continuous sitting – it's recommended to take a short break.",
+    modalSeconds: "{{seconds}} sec",
+    modalDurationSeconds: "{{seconds}} sec",
+    modalStart: "Start",
+    modalPause: "Pause",
+    modalDone: "Completed ✅",
+    exerciseStart: "Start Exercise",
+    heroYourPosture: "Your posture:",
+    heroSessionDuration: "Session duration:",
+    heroMinutes: "min",
+    heroSessionState: "Session state:",
+
+    heroStatePerfect: "Perfect",
+    heroStateFix: "Needs correction",
+    heroStateExercise: "Needs exercises",
+    heroStateBreak: "Needs a break",
+
+    heroHint: "As sitting time increases, take short breaks.",
+    quickTipsTitle: "Quick Tips",
+    quickTipsSwipe: "Swipe right to see more",
+
+    // ===ChatBot.js (موجودة كما هي) =====
+    chatWelcome: "Hello! I'm your smart session assistant 👋",
+
+    chatPostureCorrect: "Your posture is great! Keep it up.",
+    chatPostureBent: "Your back is bent—try pulling your shoulders back.",
+    chatPostureTired: "I recommend the stretching exercises shown above.",
+    chatPostureLong: "You've been sitting too long—take a short break.",
+    chatPostureDefault:
+      "You can ask me about your posture or request a tip or exercise.",
+
+    chatAskStatus: "How's my posture now?",
+    chatAskExercise: "Give me an exercise.",
+    chatAskBreak: "Do I need a break?",
+
+    chatExerciseTired: "I recommend neck and shoulder stretch.",
+    chatExerciseNormal: "Try arm stretch or neck rotation.",
+
+    chatBreakYes: "Yes! You should take a break now.",
+    chatBreakNo: "You're good for now, but take a break if you're tired.",
+
+    chatTitle: "Smart Coach Chat",
+    chatQuickStatus: "My status?",
+    chatQuickExercise: "Exercise",
+    chatQuickBreak: "Break",
+
+    chatPlaceholder: "Type a message...",
   },
 });
 

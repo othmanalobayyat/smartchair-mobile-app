@@ -1,5 +1,6 @@
 // CoachScreens/BreakSuggestion.js
 import React from "react";
+import i18n from "../../hooks/i18n";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -9,7 +10,7 @@ export default function BreakSuggestion({ theme, sessionMinutes }) {
       <Ionicons name="time-outline" size={28} color={theme.primary} />
 
       <Text style={[styles.breakText, { color: theme.text }]}>
-        مضى {sessionMinutes} دقيقة من الجلوس المتواصل – يُفضل أخذ استراحة قصيرة.
+        {i18n.t("coachBreakText", { minutes: sessionMinutes })}
       </Text>
 
       <View style={styles.timeBar}>

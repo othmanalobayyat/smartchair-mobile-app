@@ -1,6 +1,7 @@
 // CoachScreens/ExerciseModal.js
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import i18n from "../../hooks/i18n";
 
 export default function ExerciseModal({
   theme,
@@ -52,7 +53,7 @@ export default function ExerciseModal({
                   },
                 ]}
               >
-                {d} ثانية
+                {i18n.t("modalDurationSeconds", { seconds: d })}
               </Text>
             </TouchableOpacity>
           ))}
@@ -60,7 +61,7 @@ export default function ExerciseModal({
 
         {/* العداد */}
         <Text style={[styles.exerciseTimer, { color: theme.primary }]}>
-          ⏱️ {exerciseSeconds} ثانية
+          ⏱️ {i18n.t("modalSeconds", { seconds: exerciseSeconds })}
         </Text>
 
         {/* شريط التقدم */}
@@ -85,7 +86,7 @@ export default function ExerciseModal({
             onPress={() => setIsExerciseRunning((prev) => !prev)}
           >
             <Text style={styles.exerciseControlText}>
-              {isExerciseRunning ? "إيقاف مؤقت" : "ابدأ"}
+              {isExerciseRunning ? i18n.t("modalPause") : i18n.t("modalStart")}
             </Text>
           </TouchableOpacity>
 
@@ -93,7 +94,7 @@ export default function ExerciseModal({
             style={styles.exerciseDone}
             onPress={handleFinishExercise}
           >
-            <Text style={styles.exerciseDoneText}>تم الانتهاء ✅</Text>
+            <Text style={styles.exerciseDoneText}>{i18n.t("modalDone")}</Text>
           </TouchableOpacity>
         </View>
       </View>

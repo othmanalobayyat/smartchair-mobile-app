@@ -13,10 +13,11 @@ import {
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
+import i18n from "../../hooks/i18n";
 
 export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
   const [messages, setMessages] = useState([
-    { from: "bot", text: "مرحباً! أنا مساعد الجلسة الذكي 👋" },
+    { from: "bot", text: i18n.t("chatWelcome") },
   ]);
   const [inputText, setInputText] = useState("");
   const [typing, setTyping] = useState(false);
@@ -27,11 +28,11 @@ export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
   const soundRef = useRef(null);
 
   const botReplies = {
-    صحيحة: "جلستك ممتازة! استمر بهذه الوضعية.",
-    منحنية: "ظهرك مائل—حاول ترجع كتفيك للخلف.",
-    تعب: "أنصحك بتمارين التمدد التي تظهر أمامك.",
-    طويلة: "جلستك أصبحت طويلة—خذ استراحة بسيطة.",
-    default: "تستطيع سؤالي عن وضعك أو طلب نصيحة أو تمرين.",
+    صحيحة: i18n.t("chatPostureCorrect"),
+    منحنية: i18n.t("chatPostureBent"),
+    تعب: i18n.t("chatPostureTired"),
+    طويلة: i18n.t("chatPostureLong"),
+    default: i18n.t("chatPostureDefault"),
   };
 
   /* ================= KEYBOARD SPACE ================= */
@@ -111,20 +112,18 @@ export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
     let botMsg = "";
 
     if (type === "status") {
-      userMsg = "كيف وضعي الآن؟";
+      userMsg = i18n.t("chatAskStatus");
       botMsg = botReplies[posture] || botReplies.default;
     } else if (type === "exercise") {
-      userMsg = "أعطني تمرين.";
+      userMsg = i18n.t("chatAskExercise");
       botMsg =
         posture === "تعب"
-          ? "أنصحك بتمدد الرقبة والكتفين."
-          : "جرّب تمرين الذراعين أو لف الرقبة.";
+          ? i18n.t("chatExerciseTired")
+          : i18n.t("chatExerciseNormal");
     } else if (type === "break") {
-      userMsg = "هل أحتاج استراحة؟";
+      userMsg = i18n.t("chatAskBreak");
       botMsg =
-        sessionMinutes >= 40
-          ? "نعم! الأفضل تأخذ استراحة الآن."
-          : "لسا عندك وقت، لكن لو تعبان خذ بريك.";
+        sessionMinutes >= 40 ? i18n.t("chatBreakYes") : i18n.t("chatBreakNo");
     }
 
     setMessages((p) => [...p, { from: "user", text: userMsg }]);
@@ -163,7 +162,7 @@ export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
             <View style={styles.botAvatar}>
               <Ionicons name="chatbubbles-outline" size={18} color="#2B4C7E" />
             </View>
-            <Text style={styles.chatTitle}>Smart Coach Chat</Text>
+            <Text style={styles.chatTitle}>{i18n.t("chatTitle")}</Text>
           </View>
         </View>
 
@@ -191,9 +190,7 @@ export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
                   style={{ marginRight: 6 }}
                 />
               )}
-              <Text
-                style={m.from === "bot" ? styles.botText : styles.userText}
-              >
+              <Text style={m.from === "bot" ? styles.botText : styles.userText}>
                 {m.text}
               </Text>
             </View>
@@ -212,19 +209,21 @@ export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
             style={styles.quickPill}
             onPress={() => handleQuickReply("status")}
           >
-            <Text style={styles.quickText}>حالتي؟</Text>
+            <Text style={styles.quickText}>{i18n.t("chatQuickStatus")}</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.quickPill}
             onPress={() => handleQuickReply("exercise")}
           >
-            <Text style={styles.quickText}>تمريني</Text>
+            <Text style={styles.quickText}>{i18n.t("chatQuickExercise")}</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.quickPill}
             onPress={() => handleQuickReply("break")}
           >
-            <Text style={styles.quickText}>استراحة</Text>
+            <Text style={styles.quickText}>{i18n.t("chatQuickBreak")}</Text>
           </TouchableOpacity>
         </View>
 
@@ -232,7 +231,7 @@ export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
         <View style={styles.inputRow}>
           <TextInput
             style={styles.inputBox}
-            placeholder="اكتب رسالة..."
+            placeholder={i18n.t("chatPlaceholder")}
             value={inputText}
             onChangeText={setInputText}
           />
@@ -241,9 +240,14 @@ export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
           </TouchableOpacity>
         </View>
 
-        {/* ✅ KEYBOARD SPACE */}
+        {/* KEYBOARD SPACE */}
         {keyboardHeight > 0 && (
-          <View style={{ height: Platform.OS === "ios" ? keyboardHeight - 20 : keyboardHeight }} />
+          <View
+            style={{
+              height:
+                Platform.OS === "ios" ? keyboardHeight - 20 : keyboardHeight,
+            }}
+          />
         )}
       </Animated.View>
     </View>

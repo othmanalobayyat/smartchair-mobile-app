@@ -2,13 +2,14 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import i18n from "../../hooks/i18n";
 
 export default function QuickTips({ theme, suggestions }) {
   return (
     <View>
       {/* العنوان */}
-      <Text style={styles.sectionHeader}>نصائح سريعة</Text>
-      <Text style={styles.sectionSub}>اسحب لليمين لرؤية المزيد</Text>
+      <Text style={styles.sectionHeader}>{i18n.t("quickTipsTitle")}</Text>
+      <Text style={styles.sectionSub}>{i18n.t("quickTipsSwipe")}</Text>
 
       {/* الكروت */}
       <ScrollView

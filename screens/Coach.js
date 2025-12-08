@@ -1,5 +1,6 @@
 // screens/Coach.js
 import React, { useState, useRef, useEffect } from "react";
+import i18n from "../hooks/i18n";
 import { useTheme } from "../hooks/ThemeContext";
 import {
   View,
@@ -24,6 +25,7 @@ import QuickTips from "./CoachScreens/QuickTips";
 import ExercisesCarousel from "./CoachScreens/ExercisesCarousel";
 import BreakSuggestion from "./CoachScreens/BreakSuggestion";
 import ExerciseModal from "./CoachScreens/ExerciseModal";
+import { useData } from "../hooks/DataContext";
 
 const EXERCISE_CARD_WIDTH = 220;
 
@@ -218,12 +220,9 @@ export default function Coach() {
   // QUICK TIPS
   // ========================
   const suggestions = [
-    { icon: "body-outline", text: "اجلس باستقامة وحافظ على ظهر ممدود." },
-    { icon: "footsteps-outline", text: "ضع قدميك بشكل مسطح على الأرض." },
-    {
-      icon: "swap-vertical-outline",
-      text: "تجنب الانحناء للأمام لفترات طويلة.",
-    },
+    { icon: "body-outline", text: i18n.t("coachTip1") },
+    { icon: "footsteps-outline", text: i18n.t("coachTip2") },
+    { icon: "swap-vertical-outline", text: i18n.t("coachTip3") },
   ];
 
   // ========================
@@ -232,36 +231,36 @@ export default function Coach() {
   const exercisesCorrect = [
     {
       id: 1,
-      name: "تمديد الذراعين",
+      name: i18n.t("coachEx1Name"),
       img: "https://cdn-icons-png.flaticon.com/512/3048/3048391.png",
-      desc: "حرّك ذراعيك للأمام والخلف لمدة 30 ثانية.",
+      desc: i18n.t("coachEx1Desc"),
     },
     {
       id: 2,
-      name: "تمرين الرقبة",
+      name: i18n.t("coachEx2Name"),
       img: "https://cdn-icons-png.flaticon.com/512/3048/3048381.png",
-      desc: "حرّك رقبتك بلطف يمينًا ويسارًا.",
+      desc: i18n.t("coachEx2Desc"),
     },
     {
       id: 3,
-      name: "استقامة الجلوس",
+      name: i18n.t("coachEx3Name"),
       img: "https://cdn-icons-png.flaticon.com/512/3048/3048387.png",
-      desc: "اجلس باستقامة مع شد الكتفين للخلف.",
+      desc: i18n.t("coachEx3Desc"),
     },
   ];
 
   const exercisesTired = [
     {
       id: 4,
-      name: "تمديد الرقبة",
+      name: i18n.t("coachEx4Name"),
       img: "https://cdn-icons-png.flaticon.com/512/3048/3048381.png",
-      desc: "تمرين لتخفيف شد الرقبة.",
+      desc: i18n.t("coachEx4Desc"),
     },
     {
       id: 5,
-      name: "تمديد الكتفين",
+      name: i18n.t("coachEx5Name"),
       img: "https://cdn-icons-png.flaticon.com/512/3048/3048394.png",
-      desc: "لفّ الكتفين للأعلى والخلف.",
+      desc: i18n.t("coachEx5Desc"),
     },
   ];
 
@@ -299,7 +298,7 @@ export default function Coach() {
 
         {/* EXERCISES */}
         <Text style={[styles.sectionHeader, { marginTop: 20 }]}>
-          تمارين مقترحة
+          {i18n.t("coachSuggestedExercises")}
         </Text>
 
         <ExercisesCarousel
@@ -319,7 +318,7 @@ export default function Coach() {
         {exerciseHistory.length > 0 && (
           <View style={[styles.historyCard, { backgroundColor: theme.card }]}>
             <Text style={[styles.historyTitle, { color: theme.text }]}>
-              سجل التمارين
+              {i18n.t("coachHistory")}
             </Text>
             {exerciseHistory.slice(0, 3).map((item) => (
               <View key={item.id} style={styles.historyRow}>
@@ -329,7 +328,7 @@ export default function Coach() {
                     {item.name}
                   </Text>
                   <Text style={[styles.historyMeta, { color: theme.muted }]}>
-                    مدة: {item.duration} ثانية
+                    {i18n.t("coachDurationSeconds", { seconds: item.duration })}
                   </Text>
                 </View>
               </View>
