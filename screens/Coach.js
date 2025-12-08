@@ -1,6 +1,6 @@
 // screens/Coach.js
-import React, { useState, useRef, useEffect } from 'react';
-import { useTheme } from '../hooks/ThemeContext';
+import React, { useState, useRef, useEffect } from "react";
+import { useTheme } from "../hooks/ThemeContext";
 import {
   View,
   Text,
@@ -11,13 +11,19 @@ import {
   TouchableOpacity,
   Animated,
   Easing,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
-import { Audio } from 'expo-av';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
+import { Audio } from "expo-av";
 
-import ChatBot from './CoachScreens/ChatBot';
+import ChatBot from "./CoachScreens/ChatBot";
+import Header from "./CoachScreens/Header";
+import HeroCard from "./CoachScreens/HeroCard";
+import QuickTips from "./CoachScreens/QuickTips";
+import ExercisesCarousel from "./CoachScreens/ExercisesCarousel";
+import BreakSuggestion from "./CoachScreens/BreakSuggestion";
+import ExerciseModal from "./CoachScreens/ExerciseModal";
 
 const EXERCISE_CARD_WIDTH = 220;
 
@@ -26,8 +32,8 @@ export default function Coach() {
   // ========================
   // STATES
   // ========================
-  const [posture, setPosture] = useState('طويلة'); // صحيحة – منحنية – تعب – طويلة
-  const [sessionMinutes, setSessionMinutes] = useState(15);
+  const [posture, setPosture] = useState("طويلة"); // صحيحة – منحنية – تعب – طويلة
+  const [sessionMinutes, setSessionMinutes] = useState(60);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   // تمرين
@@ -41,20 +47,20 @@ export default function Coach() {
   // HERO COLORS + ICONS
   // ========================
   const heroColors = {
-    صحيحة: '#4CAF50',
-    منحنية: '#FFC107',
-    تعب: '#FF9800',
-    طويلة: '#F44336',
+    صحيحة: "#4CAF50",
+    منحنية: "#FFC107",
+    تعب: "#FF9800",
+    طويلة: "#F44336",
   };
 
   const postureIcon = {
-    صحيحة: 'checkmark-circle-outline',
-    منحنية: 'alert-circle-outline',
-    تعب: 'fitness-outline',
-    طويلة: 'time-outline',
+    صحيحة: "checkmark-circle-outline",
+    منحنية: "alert-circle-outline",
+    تعب: "fitness-outline",
+    طويلة: "time-outline",
   };
 
-  const heroColor = heroColors[posture] || '#4CAF50';
+  const heroColor = heroColors[posture] || "#4CAF50";
 
   // ========================
   // ANIMATIONS
@@ -117,11 +123,11 @@ export default function Coach() {
       try {
         const { sound } = await Audio.Sound.createAsync(
           // عدّل المسار حسب مكان ملف الصوت عندك
-          require('../../../assets/exercise-beep.mp3')
+          require("../../../assets/exercise-beep.mp3")
         );
         if (isMounted) beepSoundRef.current = sound;
       } catch (e) {
-        console.log('Error loading beep sound:', e);
+        console.log("Error loading beep sound:", e);
       }
     })();
 
@@ -139,7 +145,7 @@ export default function Coach() {
         await beepSoundRef.current.replayAsync();
       }
     } catch (e) {
-      console.log('Error playing beep:', e);
+      console.log("Error playing beep:", e);
     }
   };
 
@@ -212,11 +218,11 @@ export default function Coach() {
   // QUICK TIPS
   // ========================
   const suggestions = [
-    { icon: 'body-outline', text: 'اجلس باستقامة وحافظ على ظهر ممدود.' },
-    { icon: 'footsteps-outline', text: 'ضع قدميك بشكل مسطح على الأرض.' },
+    { icon: "body-outline", text: "اجلس باستقامة وحافظ على ظهر ممدود." },
+    { icon: "footsteps-outline", text: "ضع قدميك بشكل مسطح على الأرض." },
     {
-      icon: 'swap-vertical-outline',
-      text: 'تجنب الانحناء للأمام لفترات طويلة.',
+      icon: "swap-vertical-outline",
+      text: "تجنب الانحناء للأمام لفترات طويلة.",
     },
   ];
 
@@ -224,44 +230,43 @@ export default function Coach() {
   // EXERCISES
   // ========================
   const exercisesCorrect = [
-  {
-    id: 1,
-    name: 'تمديد الذراعين',
-    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048391.png',
-    desc: 'حرّك ذراعيك للأمام والخلف لمدة 30 ثانية.',
-  },
-  {
-    id: 2,
-    name: 'تمرين الرقبة',
-    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048381.png',
-    desc: 'حرّك رقبتك بلطف يمينًا ويسارًا.',
-  },
-  {
-    id: 3,
-    name: 'استقامة الجلوس',
-    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048387.png',
-    desc: 'اجلس باستقامة مع شد الكتفين للخلف.',
-  },
-];
+    {
+      id: 1,
+      name: "تمديد الذراعين",
+      img: "https://cdn-icons-png.flaticon.com/512/3048/3048391.png",
+      desc: "حرّك ذراعيك للأمام والخلف لمدة 30 ثانية.",
+    },
+    {
+      id: 2,
+      name: "تمرين الرقبة",
+      img: "https://cdn-icons-png.flaticon.com/512/3048/3048381.png",
+      desc: "حرّك رقبتك بلطف يمينًا ويسارًا.",
+    },
+    {
+      id: 3,
+      name: "استقامة الجلوس",
+      img: "https://cdn-icons-png.flaticon.com/512/3048/3048387.png",
+      desc: "اجلس باستقامة مع شد الكتفين للخلف.",
+    },
+  ];
 
-const exercisesTired = [
-  {
-    id: 4,
-    name: 'تمديد الرقبة',
-    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048381.png',
-    desc: 'تمرين لتخفيف شد الرقبة.',
-  },
-  {
-    id: 5,
-    name: 'تمديد الكتفين',
-    img: 'https://cdn-icons-png.flaticon.com/512/3048/3048394.png',
-    desc: 'لفّ الكتفين للأعلى والخلف.',
-  },
-];
-
+  const exercisesTired = [
+    {
+      id: 4,
+      name: "تمديد الرقبة",
+      img: "https://cdn-icons-png.flaticon.com/512/3048/3048381.png",
+      desc: "تمرين لتخفيف شد الرقبة.",
+    },
+    {
+      id: 5,
+      name: "تمديد الكتفين",
+      img: "https://cdn-icons-png.flaticon.com/512/3048/3048394.png",
+      desc: "لفّ الكتفين للأعلى والخلف.",
+    },
+  ];
 
   let exercises = exercisesCorrect;
-  if (posture === 'تعب') exercises = exercisesTired;
+  if (posture === "تعب") exercises = exercisesTired;
   if (sessionMinutes > 30) exercises = exercisesTired.slice(0, 2);
 
   // ========================
@@ -276,158 +281,38 @@ const exercisesTired = [
       />
 
       {/* HEADER */}
-      <SafeAreaView
-        style={[styles.headerContainer, { backgroundColor: theme.primary }]}
-        edges={['top']}>
-        <Text style={styles.headerTitle}>Smart Coach – المساعد الذكي</Text>
-      </SafeAreaView>
+      <Header theme={theme} />
 
       {/* MAIN SCROLL */}
       <ScrollView contentContainerStyle={{ padding: 18, paddingBottom: 140 }}>
         {/* HERO CARD */}
-        <Animated.View
-          style={[
-            styles.heroCard,
-            {
-              backgroundColor: heroColor,
-              opacity: heroAnim,
-              transform: [{ scale: heroAnim }],
-            },
-          ]}>
-          <View style={styles.heroAvatar}>
-            <Ionicons name="person-outline" size={32} color={heroColor} />
-          </View>
-
-          <Text style={styles.heroTitle}>وضعيتك الآن: {posture}</Text>
-          <Text style={styles.heroSmall}>
-            مدة الجلسة: {sessionMinutes} دقيقة
-          </Text>
-          <Text style={styles.heroSmall}>
-            حالة الجلسة:{' '}
-            {posture === 'صحيحة'
-              ? 'مثالية'
-              : posture === 'منحنية'
-              ? 'يلزم تصحيح'
-              : posture === 'تعب'
-              ? 'تحتاج تمارين'
-              : 'تحتاج استراحة'}
-          </Text>
-
-          <Ionicons
-            name={postureIcon[posture]}
-            size={28}
-            color="white"
-            style={{ marginTop: 10 }}
-          />
-
-          {/* شريط تقدّم الجلسة */}
-          <View style={styles.sessionBar}>
-            <View
-              style={[
-                styles.sessionFill,
-                { width: `${Math.min((sessionMinutes / 60) * 100, 100)}%` },
-              ]}
-            />
-          </View>
-          <Text style={styles.sessionHint}>
-            كلما زاد وقت الجلوس، خذ فترات استراحة قصيرة.
-          </Text>
-        </Animated.View>
+        <HeroCard
+          posture={posture}
+          sessionMinutes={sessionMinutes}
+          heroColor={heroColor}
+          postureIcon={postureIcon}
+          heroAnim={heroAnim}
+        />
 
         {/* QUICK TIPS */}
-        <Text style={styles.sectionHeader}>نصائح سريعة</Text>
-        <Text style={styles.sectionSub}>اسحب لليمين لرؤية المزيد</Text>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 4 }}>
-          {suggestions.map((s, i) => (
-            <View
-              key={i}
-              style={[styles.tipCard, { backgroundColor: theme.card }]}>
-              <Ionicons name={s.icon} size={26} color={theme.primary} />
-              <Text style={[styles.tipText, { color: theme.text }]}>
-                {s.text}
-              </Text>
-            </View>
-          ))}
-        </ScrollView>
+        <QuickTips theme={theme} suggestions={suggestions} />
 
         {/* EXERCISES */}
         <Text style={[styles.sectionHeader, { marginTop: 20 }]}>
           تمارين مقترحة
         </Text>
 
-        <Animated.ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={EXERCISE_CARD_WIDTH}
-          decelerationRate="fast"
-          scrollEventThrottle={16}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: true }
-          )}>
-          {exercises.map((ex, index) => {
-            const scale = scrollX.interpolate({
-              inputRange: [
-                (index - 1) * EXERCISE_CARD_WIDTH,
-                index * EXERCISE_CARD_WIDTH,
-                (index + 1) * EXERCISE_CARD_WIDTH,
-              ],
-              outputRange: [0.9, 1, 0.9],
-              extrapolate: 'clamp',
-            });
-
-            return (
-              <Animated.View
-                key={ex.id}
-                style={[
-                  styles.exerciseCard,
-                  {
-                    backgroundColor: theme.card,
-                    transform: [{ scale }],
-                    marginRight: index === exercises.length - 1 ? 60 : 14,
-                  },
-                ]}>
-                <View style={styles.exerciseImageWrapper}>
-  <Image source={{ uri: ex.img }} style={styles.exerciseImg} />
-</View>
-                <Text style={[styles.exerciseName, { color: theme.text }]}>
-                  {ex.name}
-                </Text>
-                <Text style={[styles.exerciseDesc, { color: theme.muted }]}>
-                  {ex.desc}
-                </Text>
-                <TouchableOpacity
-                  style={styles.exerciseBtn}
-                  onPress={() => handleStartExercise(ex)}>
-                  <Text style={styles.exerciseBtnText}>ابدأ التمرين</Text>
-                </TouchableOpacity>
-              </Animated.View>
-            );
-          })}
-        </Animated.ScrollView>
+        <ExercisesCarousel
+          exercises={exercises}
+          theme={theme}
+          scrollX={scrollX}
+          EXERCISE_CARD_WIDTH={EXERCISE_CARD_WIDTH}
+          handleStartExercise={handleStartExercise}
+        />
 
         {/* BREAK SUGGESTION */}
         {sessionMinutes >= 40 && (
-          <View style={[styles.breakCard, { backgroundColor: theme.card }]}>
-            <Ionicons name="time-outline" size={28} color={theme.primary} />
-            <Text style={[styles.breakText, { color: theme.text }]}>
-              مضى {sessionMinutes} دقيقة من الجلوس المتواصل – يُفضل أخذ استراحة
-              قصيرة.
-            </Text>
-
-            <View style={styles.timeBar}>
-              <View
-                style={[
-                  styles.timeFill,
-                  { width: `${Math.min(sessionMinutes * 2, 100)}%` },
-                ]}
-              />
-            </View>
-          </View>
+          <BreakSuggestion theme={theme} sessionMinutes={sessionMinutes} />
         )}
 
         {/* HISTORY */}
@@ -457,7 +342,8 @@ const exercisesTired = [
       <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
         <TouchableOpacity
           style={[styles.chatButton, { backgroundColor: theme.primary }]}
-          onPress={() => setIsChatOpen(true)}>
+          onPress={() => setIsChatOpen(true)}
+        >
           <Ionicons name="chatbubbles-sharp" size={28} color="white" />
           <View style={styles.chatBadge}>
             <Text style={styles.chatBadgeText}>AI</Text>
@@ -466,80 +352,16 @@ const exercisesTired = [
       </Animated.View>
 
       {/* EXERCISE MODAL */}
-      {activeExercise && (
-        <View style={styles.exerciseOverlay}>
-          <View style={[styles.exerciseModal, { backgroundColor: theme.card }]}>
-            <Text style={[styles.exerciseModalTitle, { color: theme.text }]}>
-              {activeExercise.name}
-            </Text>
-            <Image
-              source={{ uri: activeExercise.img }}
-              style={styles.exerciseModalImg}
-            />
-            <Text style={[styles.exerciseModalDesc, { color: theme.muted }]}>
-              {activeExercise.desc}
-            </Text>
-
-            {/* اختيار مدة التمرين */}
-            <View style={styles.durationRow}>
-              {[15, 30, 60].map((d) => (
-                <TouchableOpacity
-                  key={d}
-                  style={[
-                    styles.durationChip,
-                    exerciseDuration === d && styles.durationChipActive,
-                  ]}
-                  onPress={() => handleSelectDuration(d)}>
-                  <Text
-                    style={[
-                      styles.durationChipText,
-                      {
-                        color: exerciseDuration === d ? 'white' : theme.text,
-                      },
-                    ]}>
-                    {d} ثانية
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            {/* عدّاد + شريط */}
-            <Text style={[styles.exerciseTimer, { color: theme.primary }]}>
-              >⏱️ {exerciseSeconds} ثانية
-            </Text>
-            <View style={styles.timerBar}>
-              <View
-                style={[
-                  styles.timerFill,
-                  { width: `${(exerciseSeconds / exerciseDuration) * 100}%` },
-                ]}
-              />
-            </View>
-
-            {/* أزرار التحكم */}
-            <View style={styles.exerciseControlsRow}>
-              <TouchableOpacity
-                style={[
-                  styles.exerciseControlBtn,
-                  isExerciseRunning
-                    ? styles.exerciseControlPause
-                    : styles.exerciseControlStart,
-                ]}
-                onPress={() => setIsExerciseRunning((prev) => !prev)}>
-                <Text style={styles.exerciseControlText}>
-                  {isExerciseRunning ? 'إيقاف مؤقت' : 'ابدأ'}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.exerciseDone}
-                onPress={handleFinishExercise}>
-                <Text style={styles.exerciseDoneText}>تم الانتهاء ✅</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      )}
+      <ExerciseModal
+        theme={theme}
+        activeExercise={activeExercise}
+        exerciseDuration={exerciseDuration}
+        exerciseSeconds={exerciseSeconds}
+        isExerciseRunning={isExerciseRunning}
+        handleSelectDuration={handleSelectDuration}
+        handleFinishExercise={handleFinishExercise}
+        setIsExerciseRunning={setIsExerciseRunning}
+      />
 
       {/* CHATBOT COMPONENT */}
       <ChatBot
@@ -558,54 +380,54 @@ const exercisesTired = [
 const styles = StyleSheet.create({
   headerContainer: {
     paddingBottom: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
-  headerTitle: { color: 'white', fontSize: 20, fontWeight: '700' },
+  headerTitle: { color: "white", fontSize: 20, fontWeight: "700" },
 
   heroCard: {
     borderRadius: 24,
     padding: 22,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 22,
   },
   heroAvatar: {
     width: 54,
     height: 54,
     borderRadius: 27,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  heroTitle: { color: 'white', fontSize: 20, fontWeight: '700', marginTop: 6 },
-  heroSmall: { color: 'white', fontSize: 15, marginTop: 4 },
+  heroTitle: { color: "white", fontSize: 20, fontWeight: "700", marginTop: 6 },
+  heroSmall: { color: "white", fontSize: 15, marginTop: 4 },
 
   sessionBar: {
-    width: '100%',
+    width: "100%",
     height: 8,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: "rgba(255,255,255,0.3)",
     borderRadius: 6,
     marginTop: 12,
   },
   sessionFill: {
-    height: '100%',
-    backgroundColor: '#ffffff',
+    height: "100%",
+    backgroundColor: "#ffffff",
     borderRadius: 6,
   },
   sessionHint: {
     marginTop: 6,
     fontSize: 12,
-    color: 'white',
+    color: "white",
     opacity: 0.9,
   },
 
   sectionHeader: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#1e3a8a',
+    fontWeight: "700",
+    color: "#1e3a8a",
     marginBottom: 4,
   },
   sectionSub: {
     fontSize: 13,
-    color: '#64748b',
+    color: "#64748b",
     marginBottom: 6,
   },
 
@@ -614,13 +436,13 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 16,
     marginRight: 12,
-    alignItems: 'center',
+    alignItems: "center",
     elevation: 3,
   },
   tipText: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 6,
-    color: '#1e2a3b',
+    color: "#1e2a3b",
     fontSize: 14,
   },
 
@@ -632,105 +454,105 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   exerciseIndex: {
-    position: 'absolute',
+    position: "absolute",
     top: 8,
     right: 10,
     fontSize: 12,
-    color: '#64748b',
+    color: "#64748b",
   },
   exerciseImg: {
-    width: '100%',
+    width: "100%",
     height: 130,
     borderRadius: 12,
   },
   exerciseName: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#1e3a8a',
+    fontWeight: "700",
+    color: "#1e3a8a",
     marginTop: 8,
   },
   exerciseDesc: {
     fontSize: 14,
-    color: '#1e293b',
+    color: "#1e293b",
     marginTop: 4,
   },
 
   exerciseBtn: {
     marginTop: 8,
-    backgroundColor: '#2B4C7E',
+    backgroundColor: "#2B4C7E",
     borderRadius: 14,
     paddingVertical: 6,
   },
   exerciseBtnText: {
-    color: 'white',
-    fontWeight: '600',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "600",
+    textAlign: "center",
   },
 
   breakCard: {
     marginTop: 20,
     padding: 14,
     borderRadius: 16,
-    alignItems: 'center',
+    alignItems: "center",
     elevation: 3,
   },
   breakText: {
     marginTop: 6,
     fontSize: 15,
-    color: '#1e293b',
-    textAlign: 'center',
+    color: "#1e293b",
+    textAlign: "center",
   },
   timeBar: {
-    width: '100%',
+    width: "100%",
     height: 6,
-    backgroundColor: '#E7EEFF',
+    backgroundColor: "#E7EEFF",
     borderRadius: 4,
     marginTop: 8,
   },
   timeFill: {
-    height: '100%',
-    backgroundColor: '#2B4C7E',
+    height: "100%",
+    backgroundColor: "#2B4C7E",
     borderRadius: 4,
   },
 
   chatButton: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 28,
     right: 30,
     width: 74,
     height: 74,
-    backgroundColor: '#2B4C7E',
+    backgroundColor: "#2B4C7E",
     borderRadius: 37,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     elevation: 8,
   },
   chatBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: -4,
     right: -4,
-    backgroundColor: '#22c55e',
+    backgroundColor: "#22c55e",
     borderRadius: 10,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   chatBadgeText: {
-    color: 'white',
+    color: "white",
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 
   exerciseOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0,0,0,0.35)",
+    justifyContent: "flex-end",
   },
   exerciseModal: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 18,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -738,105 +560,105 @@ const styles = StyleSheet.create({
   },
   exerciseModalTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 8,
-    color: '#1e3a8a',
-    textAlign: 'center',
+    color: "#1e3a8a",
+    textAlign: "center",
   },
   exerciseModalImg: {
-    width: '100%',
+    width: "100%",
     height: 180,
     borderRadius: 14,
     marginBottom: 10,
   },
   exerciseModalDesc: {
     fontSize: 15,
-    color: '#1e293b',
-    textAlign: 'center',
+    color: "#1e293b",
+    textAlign: "center",
   },
 
   durationRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 8,
     marginBottom: 4,
   },
   durationChip: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#cbd5e1',
+    borderColor: "#cbd5e1",
     paddingVertical: 6,
     paddingHorizontal: 10,
     marginHorizontal: 4,
   },
   durationChipActive: {
-    backgroundColor: '#2B4C7E',
-    borderColor: '#2B4C7E',
+    backgroundColor: "#2B4C7E",
+    borderColor: "#2B4C7E",
   },
   durationChipText: {
     fontSize: 13,
-    color: '#1e293b',
+    color: "#1e293b",
   },
   durationChipTextActive: {
-    color: 'white',
-    fontWeight: '700',
+    color: "white",
+    fontWeight: "700",
   },
 
   exerciseTimer: {
     fontSize: 22,
-    fontWeight: '700',
-    color: '#2B4C7E',
+    fontWeight: "700",
+    color: "#2B4C7E",
     marginTop: 6,
-    textAlign: 'center',
+    textAlign: "center",
   },
   timerBar: {
-    width: '100%',
+    width: "100%",
     height: 6,
-    backgroundColor: '#E7EEFF',
+    backgroundColor: "#E7EEFF",
     borderRadius: 4,
     marginTop: 6,
   },
   timerFill: {
-    height: '100%',
-    backgroundColor: '#22c55e',
+    height: "100%",
+    backgroundColor: "#22c55e",
     borderRadius: 4,
   },
 
   exerciseControlsRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 14,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   exerciseControlBtn: {
     flex: 1,
     paddingVertical: 10,
     borderRadius: 14,
-    alignItems: 'center',
+    alignItems: "center",
     marginRight: 8,
   },
   exerciseControlStart: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: "#3b82f6",
   },
   exerciseControlPause: {
-    backgroundColor: '#f97316',
+    backgroundColor: "#f97316",
   },
   exerciseControlText: {
-    color: 'white',
-    fontWeight: '700',
+    color: "white",
+    fontWeight: "700",
     fontSize: 15,
   },
 
   exerciseDone: {
     flex: 1,
-    backgroundColor: '#22c55e',
+    backgroundColor: "#22c55e",
     paddingVertical: 10,
     borderRadius: 14,
-    alignItems: 'center',
+    alignItems: "center",
     marginLeft: 8,
   },
   exerciseDoneText: {
-    color: 'white',
-    fontWeight: '700',
+    color: "white",
+    fontWeight: "700",
     fontSize: 15,
   },
 
@@ -849,38 +671,34 @@ const styles = StyleSheet.create({
   },
   historyTitle: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#1e3a8a',
+    fontWeight: "700",
+    color: "#1e3a8a",
     marginBottom: 8,
   },
   historyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 6,
   },
   historyName: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#111827',
+    fontWeight: "600",
+    color: "#111827",
   },
   historyMeta: {
     fontSize: 12,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   exerciseImageWrapper: {
-  backgroundColor: '#F1F5FF',
-  borderRadius: 14,
-  padding: 8,
-  marginBottom: 8,
-},
+    backgroundColor: "#F1F5FF",
+    borderRadius: 14,
+    padding: 8,
+    marginBottom: 8,
+  },
 
-exerciseImg: {
-  width: '100%',
-  height: 120,
-  resizeMode: 'contain',
-},
-
-
+  exerciseImg: {
+    width: "100%",
+    height: 120,
+    resizeMode: "contain",
+  },
 });
-
-
