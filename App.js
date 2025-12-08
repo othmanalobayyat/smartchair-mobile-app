@@ -26,7 +26,7 @@ import Historical from "./screens/StatisticsScreens/Historical";
 import Account from "./screens/SettingsScreens/Account";
 import About from "./screens/SettingsScreens/About";
 import Support from "./screens/SettingsScreens/Support";
-
+import ChairProvisioning from "./screens/SettingsScreens/ChairProvisioning";
 
 // شاشات الـ Auth
 import Login from "./screens/Auth/Login";
@@ -61,12 +61,12 @@ function Tabs() {
               );
 
             if (route.name === "Statistics")
-              return (
-                <Ionicons name="stats-chart" size={size} color={color} />
-              );
+              return <Ionicons name="stats-chart" size={size} color={color} />;
 
             if (route.name === "Coach")
-              return <FontAwesome5 name="heartbeat" size={size} color={color} />;
+              return (
+                <FontAwesome5 name="heartbeat" size={size} color={color} />
+              );
 
             if (route.name === "Settings")
               return <Ionicons name="settings" size={size} color={color} />;
@@ -124,7 +124,7 @@ function AppStackNavigator() {
       <Stack.Screen name="Account" component={Account} />
       <Stack.Screen name="About" component={About} />
       <Stack.Screen name="Support" component={Support} />
-
+      <Stack.Screen name="ChairProvisioning" component={ChairProvisioning} />
     </Stack.Navigator>
   );
 }

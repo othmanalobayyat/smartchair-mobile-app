@@ -61,7 +61,7 @@ export default function Settings({ navigation }) {
   };
 
   const handleAbout = () => {
-   navigation.navigate("About");
+    navigation.navigate("About");
   };
 
   const getBatteryColor = (level) => {
@@ -73,7 +73,11 @@ export default function Settings({ navigation }) {
   // ====================== UI ======================
   return (
     <View style={[s.container, { backgroundColor: theme.background }]}>
-      <StatusBar translucent barStyle="light-content" backgroundColor="transparent" />
+      <StatusBar
+        translucent
+        barStyle="light-content"
+        backgroundColor="transparent"
+      />
 
       {/* HEADER */}
       <SafeAreaView
@@ -93,10 +97,15 @@ export default function Settings({ navigation }) {
         </Text>
 
         {/* PROFILE CARD - مميز */}
-        <View style={[s.profileCard, { 
-          backgroundColor: theme.primary,
-          shadowColor: theme.primary,
-        }]}>
+        <View
+          style={[
+            s.profileCard,
+            {
+              backgroundColor: theme.primary,
+              shadowColor: theme.primary,
+            },
+          ]}
+        >
           <View style={s.profileTop}>
             <View style={s.profileAvatar}>
               <Ionicons name="person" size={28} color="#FFF" />
@@ -105,7 +114,7 @@ export default function Settings({ navigation }) {
               <Text style={s.profileName}>أحمد محمد</Text>
               <Text style={s.profileEmail}>ahmed@example.com</Text>
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => navigation.navigate("Account")}
               style={s.editBtn}
             >
@@ -134,10 +143,13 @@ export default function Settings({ navigation }) {
         {/* CLOUD SYNC - مميز */}
         <TouchableOpacity
           onPress={handleCloudSync}
-          style={[s.cloudCard, { 
-            backgroundColor: theme.card, 
-            borderColor: theme.success,
-          }]}
+          style={[
+            s.cloudCard,
+            {
+              backgroundColor: theme.card,
+              borderColor: theme.success,
+            },
+          ]}
         >
           <View style={s.cloudBadge}>
             <MaterialCommunityIcons name="cloud-check" size={14} color="#FFF" />
@@ -145,8 +157,14 @@ export default function Settings({ navigation }) {
           </View>
 
           <View style={s.cloudContent}>
-            <View style={[s.cloudIcon, { backgroundColor: theme.success + "20" }]}>
-              <Ionicons name="cloud-upload-outline" size={24} color={theme.success} />
+            <View
+              style={[s.cloudIcon, { backgroundColor: theme.success + "20" }]}
+            >
+              <Ionicons
+                name="cloud-upload-outline"
+                size={24}
+                color={theme.success}
+              />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={[s.cloudTitle, { color: theme.text }]}>
@@ -156,14 +174,23 @@ export default function Settings({ navigation }) {
                 آخر مزامنة: منذ 5 دقائق
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={theme.textSecondary} />
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={theme.textSecondary}
+            />
           </View>
 
           <View style={[s.progressBar, { backgroundColor: theme.border }]}>
-            <View style={[s.progressFill, { 
-              width: "85%", 
-              backgroundColor: theme.success 
-            }]} />
+            <View
+              style={[
+                s.progressFill,
+                {
+                  width: "85%",
+                  backgroundColor: theme.success,
+                },
+              ]}
+            />
           </View>
           <Text style={[s.progressText, { color: theme.textSecondary }]}>
             85% • 2.4 MB / 2.8 MB
@@ -176,7 +203,12 @@ export default function Settings({ navigation }) {
         </Text>
 
         {/* CONNECTION + BATTERY */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <View
+          style={[
+            s.card,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
+        >
           <View style={s.row}>
             <Ionicons
               name={connected ? "bluetooth" : "bluetooth-outline"}
@@ -189,7 +221,11 @@ export default function Settings({ navigation }) {
           </View>
 
           <View style={[s.row, { marginTop: 12 }]}>
-            <Ionicons name="battery-half" size={20} color={getBatteryColor(batteryLevel)} />
+            <Ionicons
+              name="battery-half"
+              size={20}
+              color={getBatteryColor(batteryLevel)}
+            />
             <Text style={[s.label, { color: theme.text }]}>
               طاقة البطارية: {batteryLevel}%
             </Text>
@@ -209,19 +245,34 @@ export default function Settings({ navigation }) {
         </View>
 
         {/* CAMERA */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <View
+          style={[
+            s.card,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
+        >
           <View style={s.row}>
-            <MaterialCommunityIcons name="video" size={20} color={theme.primary} />
-            <Text style={[s.label, { color: theme.text }]}>{i18n.t("cameraToggle")}</Text>
+            <MaterialCommunityIcons
+              name="video"
+              size={20}
+              color={theme.primary}
+            />
+            <Text style={[s.label, { color: theme.text }]}>
+              {i18n.t("cameraToggle")}
+            </Text>
             <Switch value={cameraEnabled} onValueChange={setCameraEnabled} />
           </View>
         </View>
 
         <TouchableOpacity
-          onPress={handleTestConnection}
+          onPress={() => navigation.navigate("ChairProvisioning")}
           style={[s.mainBtn, { backgroundColor: theme.secondary }]}
         >
-          <MaterialCommunityIcons name="bluetooth-connect" size={20} color="#FFF" />
+          <MaterialCommunityIcons
+            name="bluetooth-connect"
+            size={20}
+            color="#FFF"
+          />
           <Text style={s.mainBtnTxt}>{i18n.t("testConnection")}</Text>
         </TouchableOpacity>
 
@@ -231,9 +282,18 @@ export default function Settings({ navigation }) {
         </Text>
 
         {/* ALERT TIMEOUT */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <View
+          style={[
+            s.card,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
+        >
           <View style={s.timeoutHeader}>
-            <MaterialCommunityIcons name="clock-alert-outline" size={20} color={theme.primary} />
+            <MaterialCommunityIcons
+              name="clock-alert-outline"
+              size={20}
+              color={theme.primary}
+            />
             <Text style={[s.label, { color: theme.text }]}>
               {i18n.t("alertTimeout")}
             </Text>
@@ -247,7 +307,9 @@ export default function Settings({ navigation }) {
               <Text style={s.btnTxt}>-</Text>
             </TouchableOpacity>
 
-            <View style={[s.timeoutDisplay, { backgroundColor: theme.primary }]}>
+            <View
+              style={[s.timeoutDisplay, { backgroundColor: theme.primary }]}
+            >
               <Text style={s.timeoutValue}>{alertTimeout}</Text>
               <Text style={s.timeoutUnit}>{i18n.t("minutes")}</Text>
             </View>
@@ -262,10 +324,17 @@ export default function Settings({ navigation }) {
         </View>
 
         {/* LANGUAGE + DARK MODE */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <View
+          style={[
+            s.card,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
+        >
           <TouchableOpacity style={s.row} onPress={toggleLanguage}>
             <Ionicons name="language" size={20} color={theme.primary} />
-            <Text style={[s.label, { color: theme.text }]}>{i18n.t("language")}</Text>
+            <Text style={[s.label, { color: theme.text }]}>
+              {i18n.t("language")}
+            </Text>
             <Text style={[s.value, { color: theme.secondary }]}>
               {lang === "ar" ? "العربية" : "English"}
             </Text>
@@ -279,15 +348,26 @@ export default function Settings({ navigation }) {
               size={20}
               color={isDark ? theme.warning : theme.primary}
             />
-            <Text style={[s.label, { color: theme.text }]}>{i18n.t("darkMode")}</Text>
+            <Text style={[s.label, { color: theme.text }]}>
+              {i18n.t("darkMode")}
+            </Text>
             <Switch value={isDark} onValueChange={toggleTheme} />
           </View>
         </View>
 
         {/* SOUND + VIBRATION */}
-        <View style={[s.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <View
+          style={[
+            s.card,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
+        >
           <View style={s.row}>
-            <MaterialCommunityIcons name="volume-high" size={20} color={theme.secondary} />
+            <MaterialCommunityIcons
+              name="volume-high"
+              size={20}
+              color={theme.secondary}
+            />
             <Text style={[s.label, { color: theme.text }]}>تشغيل الصوت</Text>
             <Switch value={soundEnabled} onValueChange={setSoundEnabled} />
           </View>
@@ -295,9 +375,16 @@ export default function Settings({ navigation }) {
           <View style={[s.divider, { backgroundColor: theme.border }]} />
 
           <View style={s.row}>
-            <MaterialCommunityIcons name="vibrate" size={20} color={theme.secondary} />
+            <MaterialCommunityIcons
+              name="vibrate"
+              size={20}
+              color={theme.secondary}
+            />
             <Text style={[s.label, { color: theme.text }]}>تفعيل الاهتزاز</Text>
-            <Switch value={vibrationEnabled} onValueChange={setVibrationEnabled} />
+            <Switch
+              value={vibrationEnabled}
+              onValueChange={setVibrationEnabled}
+            />
           </View>
         </View>
 
@@ -316,7 +403,10 @@ export default function Settings({ navigation }) {
 
         <TouchableOpacity
           onPress={handleAbout}
-          style={[s.mainBtn, { backgroundColor: theme.primary, marginBottom: 40 }]}
+          style={[
+            s.mainBtn,
+            { backgroundColor: theme.primary, marginBottom: 40 },
+          ]}
         >
           <Ionicons name="help-circle-outline" size={20} color="#FFF" />
           <Text style={s.mainBtnTxt}>حول النظام</Text>
