@@ -148,6 +148,30 @@ const i18n = new I18n({
     chatQuickBreak: "استراحة",
 
     chatPlaceholder: "اكتب رسالة...",
+    // ===== AUTH (Login & Register) =====
+    loginTitle: "تسجيل الدخول",
+    loginSubtitle: "تسجيل الدخول لمتابعة وضعيتك وصحتك",
+    loginButton: "تسجيل الدخول",
+    loginButtonLoading: "جاري تسجيل الدخول...",
+    loginEmail: "البريد الإلكتروني",
+    loginPassword: "كلمة المرور",
+    loginPlaceholderEmail: "example@email.com",
+    loginPlaceholderPassword: "••••••••",
+    loginNoAccount: "لا تملك حساباً؟",
+    loginCreateAccount: "إنشاء حساب جديد",
+    loginErrorEmpty: "يرجى إدخال البريد الإلكتروني وكلمة المرور",
+    loginFooter: "بياناتك تُستخدم لتحسين تجربتك الصحية فقط.",
+
+    registerTitle: "إنشاء حساب جديد",
+    registerSubtitle: "اربط حسابك بذكاء مع كرسيك الصحي",
+    registerName: "الاسم",
+    registerPlaceholderName: "الاسم الكامل",
+    registerButton: "إنشاء حساب",
+    registerButtonLoading: "جاري إنشاء الحساب...",
+    registerSuccess: "تم إنشاء الحساب بنجاح، يمكنك الآن تسجيل الدخول.",
+    registerErrorEmpty: "يرجى إدخال الاسم والبريد الإلكتروني وكلمة المرور",
+    registerHaveAccount: "لديك حساب بالفعل؟",
+    registerLogin: "تسجيل الدخول",
   },
 
   en: {
@@ -292,6 +316,30 @@ const i18n = new I18n({
     chatQuickBreak: "Break",
 
     chatPlaceholder: "Type a message...",
+    // ===== AUTH (Login & Register) =====
+    loginTitle: "Login",
+    loginSubtitle: "Sign in to track your posture and health",
+    loginButton: "Login",
+    loginButtonLoading: "Signing in...",
+    loginEmail: "Email",
+    loginPassword: "Password",
+    loginPlaceholderEmail: "example@email.com",
+    loginPlaceholderPassword: "••••••••",
+    loginNoAccount: "Don't have an account?",
+    loginCreateAccount: "Create a new account",
+    loginErrorEmpty: "Please enter email and password",
+    loginFooter: "Your data is used only to improve your health experience.",
+
+    registerTitle: "Create a New Account",
+    registerSubtitle: "Link your account smartly with your healthy chair",
+    registerName: "Name",
+    registerPlaceholderName: "Full Name",
+    registerButton: "Create Account",
+    registerButtonLoading: "Creating account...",
+    registerSuccess: "Account created successfully. You can now login.",
+    registerErrorEmpty: "Please enter name, email, and password",
+    registerHaveAccount: "Already have an account?",
+    registerLogin: "Login",
   },
 });
 

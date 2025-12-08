@@ -16,6 +16,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../hooks/ThemeContext";
 import { useAuth } from "../../hooks/AuthContext";
+import i18n from "../../hooks/i18n";
 
 export default function Register({ navigation }) {
   const { theme, isDark } = useTheme();
@@ -33,18 +34,16 @@ export default function Register({ navigation }) {
     setSuccessMsg("");
 
     if (!name || !email || !password) {
-      setErrorMsg("يرجى إدخال الاسم والبريد الإلكتروني وكلمة المرور");
+      setErrorMsg(i18n.t("registerErrorEmpty"));
       return;
     }
 
     setSubmitting(true);
     try {
       await register(name.trim(), email.trim(), password);
-      setSuccessMsg("تم إنشاء الحساب بنجاح، يمكنك الآن تسجيل الدخول.");
-      // يمكن أيضاً نقل المستخدم مباشرةً
-      // navigation.navigate("Login");
+      setSuccessMsg(i18n.t("registerSuccess"));
     } catch (e) {
-      setErrorMsg(e.message || "فشل إنشاء الحساب");
+      setErrorMsg(e.message || i18n.t("registerErrorGeneric"));
     } finally {
       setSubmitting(false);
     }
@@ -72,11 +71,13 @@ export default function Register({ navigation }) {
               <View style={styles.logoCircle}>
                 <Ionicons name="person-add-outline" size={30} color="#FFF" />
               </View>
+
               <Text style={[styles.appName, { color: theme.text }]}>
-                إنشاء حساب جديد
+                {i18n.t("registerTitle")}
               </Text>
+
               <Text style={[styles.appSubtitle, { color: theme.muted }]}>
-                اربط حسابك بذكاء مع كرسيك الصحي
+                {i18n.t("registerSubtitle")}
               </Text>
             </View>
 
@@ -93,7 +94,10 @@ export default function Register({ navigation }) {
               ]}
             >
               {/* Name */}
-              <Text style={[styles.label, { color: theme.muted }]}>الاسم</Text>
+              <Text style={[styles.label, { color: theme.muted }]}>
+                {i18n.t("registerName")}
+              </Text>
+
               <View
                 style={[
                   styles.inputWrapper,
@@ -109,9 +113,10 @@ export default function Register({ navigation }) {
                   color={theme.muted}
                   style={{ marginHorizontal: 8 }}
                 />
+
                 <TextInput
                   style={[styles.input, { color: theme.text }]}
-                  placeholder="الاسم الكامل"
+                  placeholder={i18n.t("registerPlaceholderName")}
                   placeholderTextColor={theme.muted}
                   value={name}
                   onChangeText={setName}
@@ -120,8 +125,9 @@ export default function Register({ navigation }) {
 
               {/* Email */}
               <Text style={[styles.label, { color: theme.muted }]}>
-                البريد الإلكتروني
+                {i18n.t("loginEmail")}
               </Text>
+
               <View
                 style={[
                   styles.inputWrapper,
@@ -137,9 +143,10 @@ export default function Register({ navigation }) {
                   color={theme.muted}
                   style={{ marginHorizontal: 8 }}
                 />
+
                 <TextInput
                   style={[styles.input, { color: theme.text }]}
-                  placeholder="example@email.com"
+                  placeholder={i18n.t("loginPlaceholderEmail")}
                   placeholderTextColor={theme.muted}
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -150,8 +157,9 @@ export default function Register({ navigation }) {
 
               {/* Password */}
               <Text style={[styles.label, { color: theme.muted }]}>
-                كلمة المرور
+                {i18n.t("loginPassword")}
               </Text>
+
               <View
                 style={[
                   styles.inputWrapper,
@@ -167,9 +175,10 @@ export default function Register({ navigation }) {
                   color={theme.muted}
                   style={{ marginHorizontal: 8 }}
                 />
+
                 <TextInput
                   style={[styles.input, { color: theme.text }]}
-                  placeholder="••••••••"
+                  placeholder={i18n.t("loginPlaceholderPassword")}
                   placeholderTextColor={theme.muted}
                   secureTextEntry
                   value={password}
@@ -177,6 +186,7 @@ export default function Register({ navigation }) {
                 />
               </View>
 
+              {/* Error / Success */}
               {errorMsg ? (
                 <Text style={styles.errorText}>{errorMsg}</Text>
               ) : null}
@@ -190,28 +200,30 @@ export default function Register({ navigation }) {
                 style={[
                   styles.mainBtn,
                   {
-                    backgroundColor: submitting ? "#64748B" : "#2B4C7E",
+                    backgroundColor: submitting ? "#64748B" : theme.primary,
                   },
                 ]}
                 onPress={handleRegister}
                 disabled={submitting}
               >
                 <Ionicons name="person-add-outline" size={20} color="#FFF" />
+
                 <Text style={styles.mainBtnTxt}>
-                  {submitting ? "جاري إنشاء الحساب..." : "إنشاء حساب"}
+                  {submitting
+                    ? i18n.t("registerButtonLoading")
+                    : i18n.t("registerButton")}
                 </Text>
               </TouchableOpacity>
 
               {/* Link to Login */}
               <View style={styles.bottomRow}>
                 <Text style={{ color: theme.muted, fontSize: 13 }}>
-                  لديك حساب بالفعل؟
+                  {i18n.t("registerHaveAccount")}
                 </Text>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Login")}
-                >
+
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                   <Text style={[styles.linkText, { color: theme.secondary }]}>
-                    تسجيل الدخول
+                    {i18n.t("registerLogin")}
                   </Text>
                 </TouchableOpacity>
               </View>

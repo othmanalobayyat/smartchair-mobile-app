@@ -16,6 +16,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../hooks/ThemeContext";
 import { useAuth } from "../../hooks/AuthContext";
+import i18n from "../../hooks/i18n";
 
 export default function Login({ navigation }) {
   const { theme, isDark } = useTheme();
@@ -28,16 +29,15 @@ export default function Login({ navigation }) {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setErrorMsg("يرجى إدخال البريد الإلكتروني وكلمة المرور");
+      setErrorMsg(i18n.t("loginErrorEmpty"));
       return;
     }
     setErrorMsg("");
     setSubmitting(true);
     try {
       await login(email.trim(), password);
-      // عند النجاح، RootNavigator سينقل تلقائياً للـ Tabs
     } catch (e) {
-      setErrorMsg(e.message || "فشل تسجيل الدخول");
+      setErrorMsg(e.message || i18n.t("loginErrorGeneric"));
     } finally {
       setSubmitting(false);
     }
@@ -65,11 +65,13 @@ export default function Login({ navigation }) {
               <View style={styles.logoCircle}>
                 <Ionicons name="fitness-outline" size={34} color="#FFF" />
               </View>
+
               <Text style={[styles.appName, { color: theme.text }]}>
                 Smart Chair
               </Text>
+
               <Text style={[styles.appSubtitle, { color: theme.muted }]}>
-                تسجيل الدخول لمتابعة وضعيتك وصحتك
+                {i18n.t("loginSubtitle")}
               </Text>
             </View>
 
@@ -86,13 +88,14 @@ export default function Login({ navigation }) {
               ]}
             >
               <Text style={[styles.cardTitle, { color: theme.text }]}>
-                تسجيل الدخول
+                {i18n.t("loginTitle")}
               </Text>
 
               {/* Email */}
               <Text style={[styles.label, { color: theme.muted }]}>
-                البريد الإلكتروني
+                {i18n.t("loginEmail")}
               </Text>
+
               <View
                 style={[
                   styles.inputWrapper,
@@ -108,9 +111,10 @@ export default function Login({ navigation }) {
                   color={theme.muted}
                   style={{ marginHorizontal: 8 }}
                 />
+
                 <TextInput
                   style={[styles.input, { color: theme.text }]}
-                  placeholder="example@email.com"
+                  placeholder={i18n.t("loginPlaceholderEmail")}
                   placeholderTextColor={theme.muted}
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -121,8 +125,9 @@ export default function Login({ navigation }) {
 
               {/* Password */}
               <Text style={[styles.label, { color: theme.muted }]}>
-                كلمة المرور
+                {i18n.t("loginPassword")}
               </Text>
+
               <View
                 style={[
                   styles.inputWrapper,
@@ -138,9 +143,10 @@ export default function Login({ navigation }) {
                   color={theme.muted}
                   style={{ marginHorizontal: 8 }}
                 />
+
                 <TextInput
                   style={[styles.input, { color: theme.text }]}
-                  placeholder="••••••••"
+                  placeholder={i18n.t("loginPlaceholderPassword")}
                   placeholderTextColor={theme.muted}
                   secureTextEntry
                   value={password}
@@ -166,28 +172,31 @@ export default function Login({ navigation }) {
               >
                 <Ionicons name="log-in-outline" size={20} color="#FFF" />
                 <Text style={styles.mainBtnTxt}>
-                  {submitting ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+                  {submitting
+                    ? i18n.t("loginButtonLoading")
+                    : i18n.t("loginButton")}
                 </Text>
               </TouchableOpacity>
 
               {/* Link to Register */}
               <View style={styles.bottomRow}>
                 <Text style={{ color: theme.muted, fontSize: 13 }}>
-                  لا تملك حساباً؟
+                  {i18n.t("loginNoAccount")}
                 </Text>
+
                 <TouchableOpacity
                   onPress={() => navigation.navigate("Register")}
                 >
                   <Text style={[styles.linkText, { color: theme.secondary }]}>
-                    إنشاء حساب جديد
+                    {i18n.t("loginCreateAccount")}
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
 
-            {/* Small footer */}
+            {/* Footer */}
             <Text style={[styles.footer, { color: theme.muted }]}>
-              بياناتك تُستخدم لتحسين تجربتك الصحية فقط.
+              {i18n.t("loginFooter")}
             </Text>
           </ScrollView>
         </KeyboardAvoidingView>
