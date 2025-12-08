@@ -172,6 +172,26 @@ const i18n = new I18n({
     registerErrorEmpty: "يرجى إدخال الاسم والبريد الإلكتروني وكلمة المرور",
     registerHaveAccount: "لديك حساب بالفعل؟",
     registerLogin: "تسجيل الدخول",
+    // ===== STATISTICS =====
+    statsTitle: "الإحصاءات",
+    dailySummary: "ملخص النشاط اليومي",
+    session: "الجلسة",
+    duration: "المدة",
+    minutesUnit: "دقيقة",
+    correctPercent: "النسبة الصحيحة",
+    alertsCount: "عدد التنبيهات",
+    dailyScore: "التقييم اليومي",
+    tipTitle: "معلومة اليوم",
+    historyBtn: "عرض التاريخ السابق",
+
+    // ===== Historical  =====
+    historyTitle: "عرض التاريخ السابق",
+    averagePerformance: "متوسط الأداء",
+    prevDaysResults: "نتائج الأيام السابقة",
+    motivationHigh: "🌟 أداء ممتاز! استمر بنفس الوتيرة.",
+    motivationMedium: "💪 أداء جيد جدًا، يمكنك الوصول للأفضل قريبًا.",
+    motivationLow: "🚀 لا تقلق، التحسّن يأتي بالمداومة!",
+    shareResults: "مشاركة النتائج",
   },
 
   en: {
@@ -340,6 +360,26 @@ const i18n = new I18n({
     registerErrorEmpty: "Please enter name, email, and password",
     registerHaveAccount: "Already have an account?",
     registerLogin: "Login",
+    // ===== STATISTICS =====
+    statsTitle: "Statistics",
+    dailySummary: "Daily Activity Summary",
+    session: "Session",
+    duration: "Duration",
+    minutesUnit: "min",
+    correctPercent: "Correct Posture",
+    alertsCount: "Alerts Count",
+    dailyScore: "Daily Score",
+    tipTitle: "Today's Tip",
+    historyBtn: "View History",
+
+    // ===== Historical  =====
+    historyTitle: "History",
+    averagePerformance: "Average Performance",
+    prevDaysResults: "Previous Days Results",
+    motivationHigh: "🌟 Excellent performance! Keep going.",
+    motivationMedium: "💪 Very good performance, you're improving.",
+    motivationLow: "🚀 Don't worry, improvement comes with consistency!",
+    shareResults: "Share Results",
   },
 });
 

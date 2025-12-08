@@ -1,5 +1,5 @@
 // screens/Statistics.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
@@ -15,13 +15,25 @@ import { useTheme } from "../hooks/ThemeContext";
 import {
   Ionicons,
   MaterialCommunityIcons,
-  FontAwesome5,
   MaterialIcons,
 } from "@expo/vector-icons";
 
+import i18n from "../hooks/i18n";
+
 export default function Statistics() {
   const { theme, isDark } = useTheme();
-  const navigation = useNavigation(); // ✅ ضروري للتنقل إلى Historical
+  const navigation = useNavigation();
+
+  // ⭐ حل بسيط لإعادة تحديث الصفحة عند تغيير اللغة
+  const [, forceRerender] = useState(false);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // عندما تتغير i18n.locale → سيؤثر على render
+      forceRerender((v) => !v);
+    }, 400);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const [sessions] = useState([
     { id: 1, duration: 45, correct: 82, alerts: 3 },
@@ -30,7 +42,10 @@ export default function Statistics() {
   ]);
 
   const dailyScore = 84;
-  const tip = "ميلك للأمام زاد اليوم 20% عن أمس.";
+
+  const tip = i18n.locale.startsWith("ar")
+    ? "ميلك للأمام زاد اليوم 20% عن أمس."
+    : "Your forward leaning increased by 20% today.";
 
   const colorByScore = (x) =>
     x >= 80 ? "#27AE60" : x >= 60 ? "#4C89C8" : "#E74C3C";
@@ -45,19 +60,20 @@ export default function Statistics() {
         },
       ]}
     >
-      <StatusBar translucent barStyle="light-content" backgroundColor="transparent" />
+      <StatusBar
+        translucent
+        barStyle="light-content"
+        backgroundColor="transparent"
+      />
 
+      {/* HEADER */}
       <SafeAreaView style={s.headerContainer} edges={["top"]}>
-        <Text style={s.headerTitle}>الإحصاءات</Text>
+        <Text style={s.headerTitle}>{i18n.t("statsTitle")}</Text>
       </SafeAreaView>
 
-      <Text
-        style={[
-          s.title,
-          { color: isDark || theme.mode === "dark" ? "#D6E4FF" : "#2B4C7E" },
-        ]}
-      >
-        ملخص النشاط اليومي
+      {/* PAGE TITLE */}
+      <Text style={[s.title, { color: isDark ? "#D6E4FF" : "#2B4C7E" }]}>
+        {i18n.t("dailySummary")}
       </Text>
 
       <ScrollView
@@ -71,35 +87,25 @@ export default function Statistics() {
             style={[
               s.card,
               {
-                backgroundColor:
-                  isDark || theme.mode === "dark" ? "#1C2433" : "#FFF",
-                shadowOpacity: isDark || theme.mode === "dark" ? 0 : 0.08,
-                borderColor:
-                  isDark || theme.mode === "dark" ? "#2E3A50" : "#E0E5EE",
+                backgroundColor: isDark ? "#1C2433" : "#FFF",
+                shadowOpacity: isDark ? 0 : 0.08,
+                borderColor: isDark ? "#2E3A50" : "#E0E5EE",
                 borderWidth: 1,
               },
             ]}
           >
             <Text
-              style={[
-                s.cardTitle,
-                {
-                  color:
-                    isDark || theme.mode === "dark" ? "#AFCBFF" : "#2B4C7E",
-                },
-              ]}
+              style={[s.cardTitle, { color: isDark ? "#AFCBFF" : "#2B4C7E" }]}
             >
-              الجلسة {sess.id}
+              {i18n.t("session")} {sess.id}
             </Text>
 
             <View
               style={[
                 s.table,
                 {
-                  backgroundColor:
-                    isDark || theme.mode === "dark" ? "#242E42" : "#FAFBFD",
-                  borderColor:
-                    isDark || theme.mode === "dark" ? "#303A52" : "#E0E5EE",
+                  backgroundColor: isDark ? "#242E42" : "#FAFBFD",
+                  borderColor: isDark ? "#303A52" : "#E0E5EE",
                 },
               ]}
             >
@@ -114,11 +120,11 @@ export default function Statistics() {
                   <Text
                     style={[s.label, { color: isDark ? "#E8ECF3" : "#333" }]}
                   >
-                    المدة
+                    {i18n.t("duration")}
                   </Text>
                 </View>
                 <Text style={[s.value, { color: isDark ? "#E8ECF3" : "#333" }]}>
-                  {sess.duration} دقيقة
+                  {sess.duration} {i18n.t("minutesUnit")}
                 </Text>
               </View>
 
@@ -140,7 +146,7 @@ export default function Statistics() {
                   <Text
                     style={[s.label, { color: isDark ? "#E8ECF3" : "#333" }]}
                   >
-                    النسبة الصحيحة
+                    {i18n.t("correctPercent")}
                   </Text>
                 </View>
                 <Text style={[s.value, { color: colorByScore(sess.correct) }]}>
@@ -158,11 +164,15 @@ export default function Statistics() {
               {/* عدد التنبيهات */}
               <View style={s.row}>
                 <View style={s.iconText}>
-                  <MaterialIcons name="warning-amber" size={20} color="#E67E22" />
+                  <MaterialIcons
+                    name="warning-amber"
+                    size={20}
+                    color="#E67E22"
+                  />
                   <Text
                     style={[s.label, { color: isDark ? "#E8ECF3" : "#333" }]}
                   >
-                    عدد التنبيهات
+                    {i18n.t("alertsCount")}
                   </Text>
                 </View>
                 <Text style={[s.value, { color: "#E67E22" }]}>
@@ -178,10 +188,8 @@ export default function Statistics() {
           style={[
             s.scoreCard,
             {
-              backgroundColor:
-                isDark || theme.mode === "dark" ? "#1C2433" : "#FFF",
-              borderColor:
-                isDark || theme.mode === "dark" ? "#2E3A50" : "#E0E5EE",
+              backgroundColor: isDark ? "#1C2433" : "#FFF",
+              borderColor: isDark ? "#2E3A50" : "#E0E5EE",
               borderWidth: 1,
             },
           ]}
@@ -189,8 +197,9 @@ export default function Statistics() {
           <Text
             style={[s.scoreTitle, { color: isDark ? "#AFCBFF" : "#2B4C7E" }]}
           >
-            التقييم اليومي
+            {i18n.t("dailyScore")}
           </Text>
+
           <View
             style={[
               s.barBg,
@@ -207,12 +216,13 @@ export default function Statistics() {
               ]}
             />
           </View>
+
           <Text style={[s.scoreText, { color: isDark ? "#E8ECF3" : "#333" }]}>
             {dailyScore}/100
           </Text>
         </View>
 
-        {/* الملاحظة */}
+        {/* نص الملاحظة */}
         <View
           style={[
             s.tipBox,
@@ -235,10 +245,10 @@ export default function Statistics() {
           </Text>
         </View>
 
-        {/* الزر */}
+        {/* زر التاريخ */}
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={() => navigation.navigate("Historical")} // ✅ التنقل الصحيح
+          onPress={() => navigation.navigate("Historical")}
           style={[
             s.btn,
             {
@@ -255,13 +265,14 @@ export default function Statistics() {
             color="#FFF"
             style={{ marginRight: 6 }}
           />
-          <Text style={s.btnTxt}>عرض التاريخ السابق</Text>
+          <Text style={s.btnTxt}>{i18n.t("historyBtn")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
   );
 }
 
+// ====================== STYLES (كما هي بدون أي تعديل) ======================
 const s = StyleSheet.create({
   container: { flex: 1, alignItems: "center" },
   headerContainer: {
@@ -297,7 +308,7 @@ const s = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    writingDirection: I18nManager.isRTL ? "rtl" : "rtl",
+    writingDirection: "rtl",
   },
   row: {
     flexDirection: "row",

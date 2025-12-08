@@ -1,4 +1,4 @@
-//Historical screen
+// Historical screen
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -9,19 +9,20 @@ import {
   StatusBar,
   Dimensions,
   Animated,
-  Platform,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../hooks/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import { LineChart } from "react-native-chart-kit";
-import Constants from "expo-constants";
+import i18n from "../../hooks/i18n";
 
 export default function Historical({ navigation }) {
   const { theme, isDark } = useTheme();
   const viewRef = useRef();
 
+  // SAMPLE HISTORY (replace with real data)
   const [history] = useState([
     { date: "2025-11-05", score: 84 },
     { date: "2025-11-04", score: 77 },
@@ -33,17 +34,24 @@ export default function Historical({ navigation }) {
   const colorByScore = (x) =>
     x >= 80 ? "#27AE60" : x >= 60 ? "#4C89C8" : "#E74C3C";
 
-  const avg = Math.round(history.reduce((a, b) => a + b.score, 0) / history.length);
+  const avg = Math.round(
+    history.reduce((a, b) => a + b.score, 0) / history.length
+  );
+
   const motivation =
     avg >= 85
-      ? "🌟 أداء ممتاز! استمر بنفس الوتيرة."
+      ? i18n.t("motivationHigh")
       : avg >= 70
-      ? "💪 أداء جيد جدًا، يمكنك الوصول للأفضل قريبًا."
-      : "🚀 لا تقلق، التحسّن يأتي بالمداومة!";
+      ? i18n.t("motivationMedium")
+      : i18n.t("motivationLow");
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }).start();
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 600,
+      useNativeDriver: true,
+    }).start();
   }, []);
 
   const handleShare = async () => {
@@ -52,37 +60,23 @@ export default function Historical({ navigation }) {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: isDark || theme.mode === "dark" ? "#0F172A" : theme.background,
-      }}
-    >
-      {/* ✅ شريط علوي مضبوط تمامًا */}
-      <StatusBar barStyle="light-content" backgroundColor="#2B4C7E" />
-      <View
-        style={{
-          backgroundColor: "#2B4C7E",
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: 16,
-          paddingTop: Platform.OS === "ios" ? Constants.statusBarHeight : 0, // إضافة حقيقية لفراغ النوتش
-          height: 56 + (Platform.OS === "ios" ? Constants.statusBarHeight : 0),
-        }}
-      >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 8 }}>
+    <View style={[s.container, { backgroundColor: theme.background }]}>
+      <StatusBar
+        translucent
+        barStyle="light-content"
+        backgroundColor="transparent"
+      />
+
+      {/* FIXED HEADER */}
+      <SafeAreaView style={s.header} edges={["top"]}>
+        <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#FFF" />
         </TouchableOpacity>
-        <Text style={{ color: "#FFF", fontSize: 18, fontWeight: "700" }}>
-          عرض التاريخ السابق
-        </Text>
-      </View>
+        <Text style={s.headerTitle}>{i18n.t("historyTitle")}</Text>
+      </SafeAreaView>
 
       <ScrollView
-        contentContainerStyle={{
-          paddingBottom: 40,
-          alignItems: "center",
-        }}
+        contentContainerStyle={{ paddingBottom: 40, alignItems: "center" }}
         showsVerticalScrollIndicator={true}
       >
         <ViewShot
@@ -93,7 +87,7 @@ export default function Historical({ navigation }) {
             backgroundColor: isDark ? "#0F172A" : theme.background,
           }}
         >
-          {/* المتوسط */}
+          {/* AVERAGE PERFORMANCE */}
           <View
             style={[
               s.avgBox,
@@ -103,13 +97,17 @@ export default function Historical({ navigation }) {
               },
             ]}
           >
-            <Text style={[s.avgLabel, { color: isDark ? "#AFCBFF" : "#2B4C7E" }]}>
-              متوسط الأداء
+            <Text
+              style={[s.avgLabel, { color: isDark ? "#AFCBFF" : "#2B4C7E" }]}
+            >
+              {i18n.t("averagePerformance")}
             </Text>
-            <Text style={[s.avgValue, { color: colorByScore(avg) }]}>{avg}%</Text>
+            <Text style={[s.avgValue, { color: colorByScore(avg) }]}>
+              {avg}%
+            </Text>
           </View>
 
-          {/* الرسم البياني */}
+          {/* LINE CHART */}
           <View style={s.chartBox}>
             <LineChart
               data={{
@@ -132,11 +130,12 @@ export default function Historical({ navigation }) {
             />
           </View>
 
-          {/* البطاقات */}
+          {/* TITLE */}
           <Text style={[s.title, { color: isDark ? "#D6E4FF" : "#2B4C7E" }]}>
-            نتائج الأيام السابقة
+            {i18n.t("prevDaysResults")}
           </Text>
 
+          {/* CARDS */}
           {history.map((d, i) => (
             <Animated.View
               key={i}
@@ -167,18 +166,26 @@ export default function Historical({ navigation }) {
                     size={20}
                     color={isDark ? "#AFCBFF" : "#2B4C7E"}
                   />
-                  <Text style={[s.dateText, { color: isDark ? "#F5F7FA" : "#333" }]}>
+                  <Text
+                    style={[s.dateText, { color: isDark ? "#F5F7FA" : "#333" }]}
+                  >
                     {d.date}
                   </Text>
                 </View>
 
                 <View
-                  style={[s.barBg, { backgroundColor: isDark ? "#303A52" : "#E0E5EE" }]}
+                  style={[
+                    s.barBg,
+                    { backgroundColor: isDark ? "#303A52" : "#E0E5EE" },
+                  ]}
                 >
                   <View
                     style={[
                       s.barFill,
-                      { width: `${d.score}%`, backgroundColor: colorByScore(d.score) },
+                      {
+                        width: `${d.score}%`,
+                        backgroundColor: colorByScore(d.score),
+                      },
                     ]}
                   />
                 </View>
@@ -190,16 +197,24 @@ export default function Historical({ navigation }) {
             </Animated.View>
           ))}
 
-          {/* الملاحظة + مشاركة */}
-          <View style={[s.footerBox, { backgroundColor: isDark ? "#1E3A5F" : "#EAF2FA" }]}>
-            <Text style={[s.footerTxt, { color: isDark ? "#B9D4F5" : "#2B4C7E" }]}>
+          {/* FOOTER */}
+          <View
+            style={[
+              s.footerBox,
+              { backgroundColor: isDark ? "#1E3A5F" : "#EAF2FA" },
+            ]}
+          >
+            <Text
+              style={[s.footerTxt, { color: isDark ? "#B9D4F5" : "#2B4C7E" }]}
+            >
               {motivation}
             </Text>
           </View>
 
+          {/* SHARE BUTTON */}
           <TouchableOpacity onPress={handleShare} style={s.shareBtn}>
             <Ionicons name="share-social" size={20} color="#FFF" />
-            <Text style={s.shareTxt}>مشاركة النتائج</Text>
+            <Text style={s.shareTxt}>{i18n.t("shareResults")}</Text>
           </TouchableOpacity>
         </ViewShot>
       </ScrollView>
@@ -208,6 +223,29 @@ export default function Historical({ navigation }) {
 }
 
 const s = StyleSheet.create({
+  container: { flex: 1 },
+
+  header: {
+    backgroundColor: "#2B4C7E",
+    width: "100%",
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+
+  backBtn: {
+    paddingVertical: 6,
+    paddingRight: 10,
+  },
+
+  headerTitle: {
+    color: "#FFF",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+
   avgBox: {
     width: "90%",
     borderRadius: 14,
@@ -220,7 +258,12 @@ const s = StyleSheet.create({
   avgLabel: { fontSize: 15, fontWeight: "600" },
   avgValue: { fontSize: 20, fontWeight: "800", marginTop: 4 },
   chartBox: { marginTop: 14, alignItems: "center" },
-  title: { fontSize: 20, fontWeight: "800", marginVertical: 16, textAlign: "center" },
+  title: {
+    fontSize: 20,
+    fontWeight: "800",
+    marginVertical: 16,
+    textAlign: "center",
+  },
   card: {
     width: "90%",
     borderRadius: 16,
