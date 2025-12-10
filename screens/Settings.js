@@ -1,4 +1,4 @@
-// screens/Settings.js - محسّن مع الحفاظ على الهوية
+// screens/Settings.js - نسخة معاد تصميمها بالكامل مع الحفاظ على كل الوظائف
 import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { I18nManager } from "react-native";
@@ -75,7 +75,7 @@ export default function Settings({ navigation }) {
     <View style={[s.container, { backgroundColor: theme.background }]}>
       <StatusBar
         translucent
-        barStyle="light-content"
+        barStyle={isDark ? "light-content" : "dark-content"}
         backgroundColor="transparent"
       />
 
@@ -84,167 +84,178 @@ export default function Settings({ navigation }) {
         style={[s.headerContainer, { backgroundColor: theme.primary }]}
         edges={["top"]}
       >
-        <Text style={s.headerTitle}>{i18n.t("settingsTitle")}</Text>
+        <View style={s.headerInner}>
+          <Text style={s.headerTitle}>{i18n.t("settingsTitle")}</Text>
+          <Text style={s.headerSubtitle}>{i18n.t("headerSubtitle")}</Text>
+        </View>
       </SafeAreaView>
 
       <ScrollView
         contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* ==================== ACCOUNT (بارز) ==================== */}
+        {/* ==================== ACCOUNT ==================== */}
         <Text style={[s.sectionTitle, { color: theme.text }]}>
           {i18n.t("accountCloud")}
         </Text>
 
-        {/* PROFILE CARD - مميز */}
-        <View
+        {/* PROFILE CARD (مبسّط وحديث) */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Account")}
           style={[
             s.profileCard,
-            {
-              backgroundColor: theme.primary,
-              shadowColor: theme.primary,
-            },
+            { backgroundColor: theme.card, borderColor: theme.border },
           ]}
         >
-          <View style={s.profileTop}>
-            <View style={s.profileAvatar}>
-              <Ionicons name="person" size={28} color="#FFF" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={s.profileName}>أحمد محمد</Text>
-              <Text style={s.profileEmail}>ahmed@example.com</Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Account")}
-              style={s.editBtn}
-            >
-              <Ionicons name="create-outline" size={18} color="#FFF" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={s.statsRow}>
-            <View style={s.stat}>
-              <Text style={s.statNum}>247</Text>
-              <Text style={s.statLabel}>ساعات</Text>
-            </View>
-            <View style={s.statDivider} />
-            <View style={s.stat}>
-              <Text style={s.statNum}>32</Text>
-              <Text style={s.statLabel}>تنبيهات</Text>
-            </View>
-            <View style={s.statDivider} />
-            <View style={s.stat}>
-              <Text style={s.statNum}>98%</Text>
-              <Text style={s.statLabel}>التزام</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* CLOUD SYNC - مميز */}
-        <TouchableOpacity
-          onPress={handleCloudSync}
-          style={[
-            s.cloudCard,
-            {
-              backgroundColor: theme.card,
-              borderColor: theme.success,
-            },
-          ]}
-        >
-          <View style={s.cloudBadge}>
-            <MaterialCommunityIcons name="cloud-check" size={14} color="#FFF" />
-            <Text style={s.cloudBadgeText}>متزامن</Text>
-          </View>
-
-          <View style={s.cloudContent}>
+          <View style={s.row}>
             <View
-              style={[s.cloudIcon, { backgroundColor: theme.success + "20" }]}
+              style={[
+                s.avatar,
+                { backgroundColor: isDark ? "#FFFFFF10" : "#00000008" },
+              ]}
             >
-              <Ionicons
-                name="cloud-upload-outline"
-                size={24}
-                color={theme.success}
-              />
+              <Ionicons name="person" size={26} color={theme.primary} />
             </View>
+
             <View style={{ flex: 1 }}>
-              <Text style={[s.cloudTitle, { color: theme.text }]}>
-                مزامنة البيانات
+              <Text style={[s.profileName, { color: theme.text }]}>
+                أحمد محمد
               </Text>
-              <Text style={[s.cloudSub, { color: theme.textSecondary }]}>
-                آخر مزامنة: منذ 5 دقائق
+              <Text
+                style={[s.profileEmail, { color: theme.textSecondary }]}
+                numberOfLines={1}
+              >
+                ahmed@example.com
               </Text>
             </View>
+
             <Ionicons
               name="chevron-forward"
               size={20}
               color={theme.textSecondary}
             />
           </View>
+        </TouchableOpacity>
 
-          <View style={[s.progressBar, { backgroundColor: theme.border }]}>
+        {/* CLOUD SYNC (تصميم نظيف جدًا) */}
+        <View
+          style={[
+            s.cloudCard,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
+        >
+          <View style={s.row}>
             <View
               style={[
-                s.progressFill,
-                {
-                  width: "85%",
-                  backgroundColor: theme.success,
-                },
+                s.cloudIcon,
+                { backgroundColor: isDark ? "#FFFFFF08" : "#00000006" },
               ]}
-            />
+            >
+              <Ionicons name="cloud-outline" size={22} color={theme.primary} />
+            </View>
+
+            <View style={{ flex: 1 }}>
+              <Text style={[s.cloudTitle, { color: theme.text }]}>
+                {i18n.t("cloudSyncTitle")}
+              </Text>
+              <Text style={[s.cloudSub, { color: theme.textSecondary }]}>
+                {`${i18n.t("cloudSyncLast")} منذ 5 دقائق`}
+              </Text>
+            </View>
+
+            <TouchableOpacity onPress={handleCloudSync} style={s.syncBtn}>
+              <Text style={s.syncBtnTxt}>{i18n.t("cloudSyncNow")}</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={[s.progressText, { color: theme.textSecondary }]}>
-            85% • 2.4 MB / 2.8 MB
-          </Text>
-        </TouchableOpacity>
+        </View>
 
         {/* ==================== CHAIR ==================== */}
         <Text style={[s.sectionTitle, { color: theme.text }]}>
           {i18n.t("chairSettings")}
         </Text>
 
-        {/* CONNECTION + BATTERY */}
+        {/* CONNECTION + BATTERY CARD */}
         <View
           style={[
             s.card,
             { backgroundColor: theme.card, borderColor: theme.border },
           ]}
         >
-          <View style={s.row}>
+          <View style={s.rowLeft}>
             <Ionicons
               name={connected ? "bluetooth" : "bluetooth-outline"}
               size={20}
               color={connected ? theme.success : theme.error}
             />
-            <Text style={[s.label, { color: theme.text }]}>
-              {connected ? "متصل بالكرسي" : "غير متصل"}
-            </Text>
+            <View style={{ marginLeft: 10 }}>
+              <Text style={[s.cardTitle, { color: theme.text }]}>
+                {connected ? "متصل بالكرسي" : "غير متصل بالكرسي"}
+              </Text>
+              <Text style={[s.cardSub, { color: theme.textSecondary }]}>
+                {connected
+                  ? i18n.t("chairConnectedDescription")
+                  : i18n.t("chairDisconnectedDescription")}
+              </Text>
+            </View>
           </View>
 
-          <View style={[s.row, { marginTop: 12 }]}>
-            <Ionicons
-              name="battery-half"
-              size={20}
-              color={getBatteryColor(batteryLevel)}
-            />
-            <Text style={[s.label, { color: theme.text }]}>
-              طاقة البطارية: {batteryLevel}%
-            </Text>
-          </View>
+          <View style={s.batteryRow}>
+            <View style={s.rowLeft}>
+              <Ionicons
+                name="battery-half"
+                size={20}
+                color={getBatteryColor(batteryLevel)}
+              />
+              <Text style={[s.batteryText, { color: theme.text }]}>
+                طاقة البطارية: {batteryLevel}%
+              </Text>
+            </View>
 
-          <View style={[s.batteryBarBg, { backgroundColor: theme.border }]}>
             <View
               style={[
-                s.batteryBarFill,
-                {
-                  width: `${batteryLevel}%`,
-                  backgroundColor: getBatteryColor(batteryLevel),
-                },
+                s.batteryBarBg,
+                { backgroundColor: theme.border || "#00000010" },
               ]}
-            />
+            >
+              <View
+                style={[
+                  s.batteryBarFill,
+                  {
+                    width: `${batteryLevel}%`,
+                    backgroundColor: getBatteryColor(batteryLevel),
+                  },
+                ]}
+              />
+            </View>
           </View>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ChairProvisioning")}
+            style={[
+              s.secondaryBtn,
+              {
+                borderColor: theme.secondary,
+                backgroundColor: isDark ? "#FFFFFF05" : "#00000003",
+              },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name="bluetooth-connect"
+              size={18}
+              color={theme.secondary}
+            />
+            <Text
+              style={[
+                s.secondaryBtnTxt,
+                { color: theme.secondary, marginLeft: 6 },
+              ]}
+            >
+              {i18n.t("testConnection")}
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        {/* CAMERA */}
+        {/* CAMERA CARD */}
         <View
           style={[
             s.card,
@@ -252,59 +263,60 @@ export default function Settings({ navigation }) {
           ]}
         >
           <View style={s.row}>
-            <MaterialCommunityIcons
-              name="video"
-              size={20}
-              color={theme.primary}
-            />
-            <Text style={[s.label, { color: theme.text }]}>
-              {i18n.t("cameraToggle")}
-            </Text>
+            <View style={s.rowLeft}>
+              <MaterialCommunityIcons
+                name="video"
+                size={20}
+                color={theme.primary}
+              />
+              <View style={{ marginLeft: 8 }}>
+                <Text style={[s.cardTitle, { color: theme.text }]}>
+                  {i18n.t("cameraToggle")}
+                </Text>
+                <Text style={[s.cardSub, { color: theme.textSecondary }]}>
+                  {i18n.t("cameraDescription")}
+                </Text>
+              </View>
+            </View>
+
             <Switch value={cameraEnabled} onValueChange={setCameraEnabled} />
           </View>
         </View>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ChairProvisioning")}
-          style={[s.mainBtn, { backgroundColor: theme.secondary }]}
-        >
-          <MaterialCommunityIcons
-            name="bluetooth-connect"
-            size={20}
-            color="#FFF"
-          />
-          <Text style={s.mainBtnTxt}>{i18n.t("testConnection")}</Text>
-        </TouchableOpacity>
 
         {/* ==================== GENERAL ==================== */}
         <Text style={[s.sectionTitle, { color: theme.text }]}>
           {i18n.t("generalSettings")}
         </Text>
 
-        {/* ALERT TIMEOUT */}
+        {/* ALERT TIMEOUT CARD */}
         <View
           style={[
             s.card,
             { backgroundColor: theme.card, borderColor: theme.border },
           ]}
         >
-          <View style={s.timeoutHeader}>
+          <View style={s.rowLeft}>
             <MaterialCommunityIcons
               name="clock-alert-outline"
               size={20}
               color={theme.primary}
             />
-            <Text style={[s.label, { color: theme.text }]}>
-              {i18n.t("alertTimeout")}
-            </Text>
+            <View style={{ marginLeft: 8 }}>
+              <Text style={[s.cardTitle, { color: theme.text }]}>
+                {i18n.t("alertTimeout")}
+              </Text>
+              <Text style={[s.cardSub, { color: theme.textSecondary }]}>
+                {i18n.t("alertTimeoutDescription")}
+              </Text>
+            </View>
           </View>
 
           <View style={s.btnRow}>
             <TouchableOpacity
-              style={[s.btn, { backgroundColor: theme.secondary }]}
+              style={[s.iconBtn, { backgroundColor: theme.secondary }]}
               onPress={() => setAlertTimeout((p) => Math.max(1, p - 1))}
             >
-              <Text style={s.btnTxt}>-</Text>
+              <Text style={s.iconBtnTxt}>-</Text>
             </TouchableOpacity>
 
             <View
@@ -315,15 +327,15 @@ export default function Settings({ navigation }) {
             </View>
 
             <TouchableOpacity
-              style={[s.btn, { backgroundColor: theme.secondary }]}
+              style={[s.iconBtn, { backgroundColor: theme.secondary }]}
               onPress={() => setAlertTimeout((p) => p + 1)}
             >
-              <Text style={s.btnTxt}>+</Text>
+              <Text style={s.iconBtnTxt}>+</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* LANGUAGE + DARK MODE */}
+        {/* LANGUAGE + DARK MODE CARD */}
         <View
           style={[
             s.card,
@@ -331,31 +343,46 @@ export default function Settings({ navigation }) {
           ]}
         >
           <TouchableOpacity style={s.row} onPress={toggleLanguage}>
-            <Ionicons name="language" size={20} color={theme.primary} />
-            <Text style={[s.label, { color: theme.text }]}>
-              {i18n.t("language")}
-            </Text>
+            <View style={s.rowLeft}>
+              <Ionicons name="language" size={20} color={theme.primary} />
+              <Text style={[s.cardTitle, { color: theme.text, marginLeft: 8 }]}>
+                {i18n.t("language")}
+              </Text>
+            </View>
             <Text style={[s.value, { color: theme.secondary }]}>
               {lang === "ar" ? "العربية" : "English"}
             </Text>
           </TouchableOpacity>
 
-          <View style={[s.divider, { backgroundColor: theme.border }]} />
+          <View
+            style={[
+              s.divider,
+              { backgroundColor: theme.border || "#00000015" },
+            ]}
+          />
 
           <View style={s.row}>
-            <Ionicons
-              name={isDark ? "moon" : "sunny"}
-              size={20}
-              color={isDark ? theme.warning : theme.primary}
-            />
-            <Text style={[s.label, { color: theme.text }]}>
-              {i18n.t("darkMode")}
-            </Text>
+            <View style={s.rowLeft}>
+              <Ionicons
+                name={isDark ? "moon" : "sunny"}
+                size={20}
+                color={isDark ? theme.warning : theme.primary}
+              />
+              <View style={{ marginLeft: 8 }}>
+                <Text style={[s.cardTitle, { color: theme.text }]}>
+                  {i18n.t("darkMode")}
+                </Text>
+                <Text style={[s.cardSub, { color: theme.textSecondary }]}>
+                  {i18n.t("darkModeDescription")}
+                </Text>
+              </View>
+            </View>
+
             <Switch value={isDark} onValueChange={toggleTheme} />
           </View>
         </View>
 
-        {/* SOUND + VIBRATION */}
+        {/* SOUND + VIBRATION CARD */}
         <View
           style={[
             s.card,
@@ -363,24 +390,49 @@ export default function Settings({ navigation }) {
           ]}
         >
           <View style={s.row}>
-            <MaterialCommunityIcons
-              name="volume-high"
-              size={20}
-              color={theme.secondary}
-            />
-            <Text style={[s.label, { color: theme.text }]}>تشغيل الصوت</Text>
+            <View style={s.rowLeft}>
+              <MaterialCommunityIcons
+                name="volume-high"
+                size={20}
+                color={theme.secondary}
+              />
+              <View style={{ marginLeft: 8 }}>
+                <Text style={[s.cardTitle, { color: theme.text }]}>
+                  تشغيل الصوت
+                </Text>
+                <Text style={[s.cardSub, { color: theme.textSecondary }]}>
+                  {i18n.t("soundDescription")}
+                </Text>
+              </View>
+            </View>
+
             <Switch value={soundEnabled} onValueChange={setSoundEnabled} />
           </View>
 
-          <View style={[s.divider, { backgroundColor: theme.border }]} />
+          <View
+            style={[
+              s.divider,
+              { backgroundColor: theme.border || "#00000015" },
+            ]}
+          />
 
           <View style={s.row}>
-            <MaterialCommunityIcons
-              name="vibrate"
-              size={20}
-              color={theme.secondary}
-            />
-            <Text style={[s.label, { color: theme.text }]}>تفعيل الاهتزاز</Text>
+            <View style={s.rowLeft}>
+              <MaterialCommunityIcons
+                name="vibrate"
+                size={20}
+                color={theme.secondary}
+              />
+              <View style={{ marginLeft: 8 }}>
+                <Text style={[s.cardTitle, { color: theme.text }]}>
+                  تفعيل الاهتزاز
+                </Text>
+                <Text style={[s.cardSub, { color: theme.textSecondary }]}>
+                  {i18n.t("vibrationDescription")}
+                </Text>
+              </View>
+            </View>
+
             <Switch
               value={vibrationEnabled}
               onValueChange={setVibrationEnabled}
@@ -420,207 +472,185 @@ export default function Settings({ navigation }) {
 // STYLES
 // =====================
 const s = StyleSheet.create({
-  container: { flex: 1 },
-  scrollContent: { alignItems: "center", paddingVertical: 20 },
-
-  headerContainer: {
-    paddingBottom: 10,
-    width: "100%",
-    alignItems: "center",
+  container: {
+    flex: 1,
   },
-  headerTitle: { color: "#FFF", fontSize: 20, fontWeight: "700" },
+  scrollContent: {
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingBottom: 40,
+  },
+
+  // HEADER
+  headerContainer: {
+    width: "100%",
+    paddingBottom: 10,
+    alignItems: "flex-start",
+    justifyContent: "flex-end",
+  },
+  headerInner: {
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingTop: 6,
+    paddingBottom: 6,
+  },
+  headerTitle: {
+    color: "#FFF",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  headerSubtitle: {
+    color: "#FFFFFFCC",
+    fontSize: 12,
+    marginTop: 4,
+  },
 
   sectionTitle: {
     width: "92%",
     fontSize: 12,
     fontWeight: "700",
     marginBottom: 6,
-    marginTop: 16,
-    opacity: 0.5,
+    marginTop: 18,
+    opacity: 0.6,
   },
 
-  // PROFILE CARD (محسّن)
-  profileCard: {
-    width: "92%",
-    borderRadius: 20,
-    padding: 18,
-    marginBottom: 14,
-    elevation: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-  },
-  profileTop: {
+  // GENERIC
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
-    gap: 12,
+    justifyContent: "space-between",
   },
-  profileAvatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    backgroundColor: "#FFFFFF20",
+  rowLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  value: {
+    fontSize: 15,
+    fontWeight: "700",
+  },
+
+  // PROFILE CARD
+  profileCard: {
+    width: "92%",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#FFFFFF30",
   },
   profileName: {
-    color: "#FFF",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "700",
   },
   profileEmail: {
-    color: "#FFFFFF90",
     fontSize: 13,
     marginTop: 2,
   },
-  editBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: "#FFFFFF20",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  statsRow: {
-    flexDirection: "row",
-    backgroundColor: "#FFFFFF20",
-    borderRadius: 14,
-    padding: 14,
-  },
-  stat: {
-    flex: 1,
-    alignItems: "center",
-  },
-  statNum: {
-    color: "#FFF",
-    fontSize: 20,
-    fontWeight: "800",
-  },
-  statLabel: {
-    color: "#FFFFFF80",
-    fontSize: 11,
-    marginTop: 2,
-  },
-  statDivider: {
-    width: 1,
-    backgroundColor: "#FFFFFF30",
-  },
 
-  // CLOUD CARD (محسّن)
+  // CLOUD CARD
   cloudCard: {
     width: "92%",
     borderRadius: 16,
     padding: 16,
-    marginBottom: 14,
-    borderWidth: 2,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-  },
-  cloudBadge: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#10B981",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 10,
-    gap: 4,
-  },
-  cloudBadgeText: {
-    color: "#FFF",
-    fontSize: 10,
-    fontWeight: "700",
-  },
-  cloudContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    marginBottom: 12,
+    marginBottom: 16,
+    borderWidth: 1,
   },
   cloudIcon: {
-    width: 48,
-    height: 48,
+    width: 40,
+    height: 40,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
   },
   cloudTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
   },
   cloudSub: {
     fontSize: 12,
     marginTop: 2,
   },
-  progressBar: {
-    height: 6,
-    borderRadius: 3,
-    overflow: "hidden",
-    marginTop: 4,
+  syncBtn: {
+    backgroundColor: "#3B82F6",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
-  progressFill: {
-    height: "100%",
-    borderRadius: 3,
-  },
-  progressText: {
-    fontSize: 10,
-    marginTop: 4,
+  syncBtnTxt: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 13,
   },
 
-  // REGULAR CARDS
+  // GENERIC CARD
   card: {
     width: "92%",
     borderRadius: 16,
     padding: 16,
     marginBottom: 14,
     borderWidth: 1,
-    elevation: 3,
   },
-
-  label: { fontSize: 16, fontWeight: "600" },
-  value: { fontSize: 15, fontWeight: "700" },
-
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+  cardTitle: {
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  cardSub: {
+    fontSize: 12,
+    marginTop: 2,
   },
 
   divider: {
     height: 1,
     marginVertical: 10,
+    width: "100%",
+  },
+
+  // BATTERY
+  batteryRow: {
+    marginTop: 14,
+  },
+  batteryText: {
+    fontSize: 13,
+    marginLeft: 8,
+  },
+  batteryBarBg: {
+    width: "100%",
+    height: 8,
+    borderRadius: 5,
+    marginTop: 8,
+    overflow: "hidden",
+  },
+  batteryBarFill: {
+    height: "100%",
+    borderRadius: 5,
   },
 
   // TIMEOUT
-  timeoutHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 12,
-  },
   btnRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 14,
     gap: 12,
   },
-  btn: {
+  iconBtn: {
     width: 44,
     height: 44,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
   },
-  btnTxt: { color: "#FFF", fontSize: 20, fontWeight: "700" },
+  iconBtnTxt: {
+    color: "#FFF",
+    fontSize: 20,
+    fontWeight: "700",
+  },
   timeoutDisplay: {
     paddingHorizontal: 24,
     paddingVertical: 10,
@@ -634,11 +664,13 @@ const s = StyleSheet.create({
     fontWeight: "800",
   },
   timeoutUnit: {
-    color: "#FFFFFF90",
+    color: "#FFFFFFCC",
     fontSize: 11,
     fontWeight: "600",
+    marginTop: 2,
   },
 
+  // BUTTONS
   mainBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -649,16 +681,24 @@ const s = StyleSheet.create({
     marginTop: 14,
     gap: 6,
   },
-  mainBtnTxt: { color: "#FFF", fontWeight: "700", fontSize: 15 },
-
-  batteryBarBg: {
-    width: "100%",
-    height: 8,
-    borderRadius: 5,
-    marginTop: 10,
+  mainBtnTxt: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 15,
   },
-  batteryBarFill: {
-    height: "100%",
-    borderRadius: 5,
+
+  secondaryBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginTop: 14,
+    borderWidth: 1,
+  },
+  secondaryBtnTxt: {
+    fontSize: 13,
+    fontWeight: "700",
   },
 });

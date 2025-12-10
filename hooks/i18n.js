@@ -24,6 +24,22 @@ const i18n = new I18n({
     supportMessage: "للتواصل مع الدعم:\nsmartchair.support@email.com",
     languageChangedTitle: "🌐 تم تغيير اللغة",
     languageChangedMessage: "سيتم تطبيق اللغة الجديدة بعد إعادة تشغيل التطبيق.",
+    headerSubtitle: "اضبط تجربتك مع الكرسي الذكي كما يناسبك",
+
+    cloudSyncTitle: "مزامنة البيانات",
+    cloudSyncLast: "آخر مزامنة:",
+    cloudSyncNow: "مزامنة الآن",
+
+    chairConnectedDescription: "يمكنك بدء جلسة ومراقبة الوضعية الآن",
+    chairDisconnectedDescription: "قم بالاتصال بالكرسي لبدء التتبع",
+
+    cameraDescription: "استخدام الكاميرا لتحليل الانتباه والتعب",
+
+    darkModeDescription: "تبديل بين الوضع الفاتح والداكن للتطبيق",
+
+    soundDescription: "تنبيهات صوتية عند سوء الوضعية أو انتهاء الجلسة",
+    vibrationDescription: "اهتزاز بسيط مع التنبيه (على الأجهزة الداعمة)",
+    generalSettings: "الإعدادات العامة",
 
     // ===== SMART CHAIR (مضاف جديد) =====
     smartChairTitle: "الكرسي الذكي",
@@ -211,6 +227,32 @@ const i18n = new I18n({
     languageChangedTitle: "🌐 Language Changed",
     languageChangedMessage:
       "The new language will apply after restarting the app.",
+    headerSubtitle: "Tune your Smart Chair experience",
+    chairDisconnectedDescription: "Connect to the chair to start tracking",
+    cameraDescription: "Use camera for attention & fatigue detection",
+    generalSettings: "General Settings",
+    alertTimeoutDescription: "Minutes before bad posture alert",
+    darkModeDescription: "Toggle light / dark mode",
+
+    cloudSyncTitle: "Cloud Sync",
+    cloudSyncLast: "Last sync:",
+    cloudSyncNow: "Sync Now",
+    cloudSyncNow: "Sync",
+    chairSettings: "Chair Settings",
+    chairConnectedDescription: "You can start a session and monitor posture",
+
+    chairConnectedDescription:
+      "You can start a session and monitor posture now",
+    chairDisconnectedDescription: "Connect to the chair to start tracking",
+
+    cameraDescription: "Use the camera for attention and fatigue analysis",
+
+    darkModeDescription: "Toggle between light and dark themes",
+
+    soundDescription: "Audio alerts for posture or break notifications",
+    vibrationDescription: "Small vibration alert (if supported)",
+    accountCloud: "Account & Cloud Sync",
+    cloudSyncTitle: "Cloud Sync",
 
     // ===== SMART CHAIR (مضاف جديد) =====
     smartChairTitle: "Smart Chair",
