@@ -10,8 +10,8 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);      // { id, name, email }
-  const [token, setToken] = useState(null);    // JWT
+  const [user, setUser] = useState(null); // { id, name, email }
+  const [token, setToken] = useState(null); // JWT
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -75,6 +75,40 @@ export function AuthProvider({ children }) {
     await AsyncStorage.removeItem("authToken");
   };
 
+  const updateProfile = async (name, email) => {
+    const res = await fetch(`${API_BASE}/auth/update-profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name, email }),
+    });
+
+    const data = await res.json();
+    if (!res.ok)
+      throw new Error(data.message || "حدث خطأ أثناء تعديل البيانات");
+
+    setUser(data.user);
+    await AsyncStorage.setItem("userInfo", JSON.stringify(data.user));
+  };
+
+  const changePassword = async (oldPassword, newPassword) => {
+    const res = await fetch(`${API_BASE}/auth/change-password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "خطأ في تغيير كلمة المرور");
+
+    return true;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -84,6 +118,8 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
+        updateProfile, // ← جديد
+        changePassword, // ← جديد
       }}
     >
       {children}

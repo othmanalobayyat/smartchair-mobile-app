@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// screens/SettingsScreens/Account.js
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,37 +9,34 @@ import {
   StatusBar,
   Alert,
   ScrollView,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../../hooks/ThemeContext';
-import { useAuth } from '../../hooks/AuthContext';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../../hooks/ThemeContext";
+import { useAuth } from "../../hooks/AuthContext";
 
 export default function Account({ navigation }) {
   const { theme, isDark } = useTheme();
   const { logout } = useAuth(); // ← أهم إضافة
 
   const [user, setUser] = useState({
-    name: 'عثمان العُبيّات',
-    email: 'othman@pau.edu.ps',
+    name: "عثمان العُبيّات",
+    email: "othman@pau.edu.ps",
   });
 
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const saved = await AsyncStorage.getItem('userInfo');
+        const saved = await AsyncStorage.getItem("userInfo");
         if (saved) setUser(JSON.parse(saved));
       } catch {}
     };
     loadUser();
   }, []);
 
-  const handleEdit = () =>
-    Alert.alert('✏️', 'ميزة تعديل البيانات ستتوفر لاحقًا');
-
-  const handlePassword = () =>
-    Alert.alert('🔐', 'ميزة تغيير كلمة المرور ستتوفر قريبًا');
+  const handleEdit = () => navigation.navigate("EditProfile");
+  const handlePassword = () => navigation.navigate("ChangePassword");
 
   // 🔥 هنا logout الصحيح 100%
   const handleLogout = async () => {
@@ -46,7 +44,7 @@ export default function Account({ navigation }) {
 
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Login' }], // يرجع المستخدم لشاشة الـ Login
+      routes: [{ name: "Login" }], // يرجع المستخدم لشاشة الـ Login
     });
   };
 
@@ -54,7 +52,7 @@ export default function Account({ navigation }) {
     <View
       style={[
         s.container,
-        { backgroundColor: isDark ? '#0F172A' : theme.background },
+        { backgroundColor: isDark ? "#0F172A" : theme.background },
       ]}
     >
       <StatusBar
@@ -64,7 +62,7 @@ export default function Account({ navigation }) {
       />
 
       {/* HEADER */}
-      <SafeAreaView style={s.header} edges={['top']}>
+      <SafeAreaView style={s.header} edges={["top"]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
           <Ionicons name="arrow-back" size={24} color="#FFF" />
         </TouchableOpacity>
@@ -74,15 +72,17 @@ export default function Account({ navigation }) {
       {/* CONTENT */}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ alignItems: 'center', paddingVertical: 25 }}
+        contentContainerStyle={{ alignItems: "center", paddingVertical: 25 }}
       >
         {/* الصورة + الاسم */}
         <Image
-          source={{ uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}
+          source={{
+            uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+          }}
           style={s.avatar}
         />
         <Text style={[s.name, { color: theme.text }]}>{user.name}</Text>
-        <Text style={[s.email, { color: isDark ? '#AFCBFF' : '#4C89C8' }]}>
+        <Text style={[s.email, { color: isDark ? "#AFCBFF" : "#4C89C8" }]}>
           {user.email}
         </Text>
 
@@ -91,8 +91,8 @@ export default function Account({ navigation }) {
           style={[
             s.card,
             {
-              backgroundColor: isDark ? '#1C2433' : '#FFF',
-              borderColor: isDark ? '#2E3A50' : '#E0E5EE',
+              backgroundColor: isDark ? "#1C2433" : "#FFF",
+              borderColor: isDark ? "#2E3A50" : "#E0E5EE",
             },
           ]}
         >
@@ -117,7 +117,7 @@ export default function Account({ navigation }) {
         <TouchableOpacity
           onPress={handleLogout}
           activeOpacity={0.8}
-          style={[s.mainBtn, { backgroundColor: '#E74C3C' }]}
+          style={[s.mainBtn, { backgroundColor: "#E74C3C" }]}
         >
           <Ionicons name="log-out-outline" size={20} color="#FFF" />
           <Text style={s.mainBtnTxt}>تسجيل الخروج</Text>
@@ -133,12 +133,12 @@ const s = StyleSheet.create({
   container: { flex: 1 },
 
   header: {
-    backgroundColor: '#2B4C7E',
-    width: '100%',
+    backgroundColor: "#2B4C7E",
+    width: "100%",
     paddingBottom: 12,
     paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
 
@@ -148,9 +148,9 @@ const s = StyleSheet.create({
   },
 
   headerTitle: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 
   avatar: {
@@ -162,17 +162,17 @@ const s = StyleSheet.create({
 
   name: {
     fontSize: 19,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 
   email: {
     fontSize: 14,
     marginBottom: 22,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   card: {
-    width: '92%',
+    width: "92%",
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
@@ -181,29 +181,29 @@ const s = StyleSheet.create({
   },
 
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
     paddingVertical: 4,
   },
 
   label: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   divider: {
     height: 1,
-    backgroundColor: '#D3D8E0',
+    backgroundColor: "#D3D8E0",
     marginVertical: 12,
     opacity: 0.5,
   },
 
   mainBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '92%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "92%",
     borderRadius: 12,
     paddingVertical: 14,
     marginTop: 10,
@@ -211,8 +211,8 @@ const s = StyleSheet.create({
   },
 
   mainBtnTxt: {
-    color: '#FFF',
-    fontWeight: '700',
+    color: "#FFF",
+    fontWeight: "700",
     fontSize: 15,
   },
 });

@@ -27,6 +27,8 @@ import Account from "./screens/SettingsScreens/Account";
 import About from "./screens/SettingsScreens/About";
 import Support from "./screens/SettingsScreens/Support";
 import ChairProvisioning from "./screens/SettingsScreens/ChairProvisioning";
+import EditProfile from "./screens/SettingsScreens/EditProfile";
+import ChangePassword from "./screens/SettingsScreens/ChangePassword";
 
 // شاشات الـ Auth
 import Login from "./screens/Auth/Login";
@@ -125,6 +127,8 @@ function AppStackNavigator() {
       <Stack.Screen name="About" component={About} />
       <Stack.Screen name="Support" component={Support} />
       <Stack.Screen name="ChairProvisioning" component={ChairProvisioning} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
     </Stack.Navigator>
   );
 }

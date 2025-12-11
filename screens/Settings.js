@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "../hooks/ThemeContext";
 import i18n from "../hooks/i18n";
+import { useAuth } from "../hooks/AuthContext";
 
 export default function Settings({ navigation }) {
   const { theme, isDark, toggleTheme } = useTheme();
@@ -70,6 +71,8 @@ export default function Settings({ navigation }) {
     return theme.error;
   };
 
+  const { user } = useAuth();
+
   // ====================== UI ======================
   return (
     <View style={[s.container, { backgroundColor: theme.background }]}>
@@ -119,13 +122,14 @@ export default function Settings({ navigation }) {
 
             <View style={{ flex: 1 }}>
               <Text style={[s.profileName, { color: theme.text }]}>
-                أحمد محمد
+                {user?.name || "—"}
               </Text>
+
               <Text
                 style={[s.profileEmail, { color: theme.textSecondary }]}
                 numberOfLines={1}
               >
-                ahmed@example.com
+                {user?.email || "—"}
               </Text>
             </View>
 
