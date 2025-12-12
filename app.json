@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "graduation-project-app",
+    "name": "Posturic - Smart chair app",
     "slug": "snack-55bfac8d-8f69-4fb3-8fe1-c996e0e26b17",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -31,9 +31,6 @@
         "projectId": "25445782-93c8-41b3-8d01-b7eca2a1498f"
       }
     },
-    "plugins": [
-      "expo-font",
-      "react-native-ble-plx"
-    ]
+    "plugins": ["expo-font", "react-native-ble-plx"]
   }
 }

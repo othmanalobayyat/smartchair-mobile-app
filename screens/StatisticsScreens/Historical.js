@@ -1,4 +1,4 @@
-// Historical screen
+// screens/StatisticsScreens/Historical screen
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,

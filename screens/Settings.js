@@ -1,5 +1,5 @@
 // screens/Settings.js - نسخة معاد تصميمها بالكامل مع الحفاظ على كل الوظائف
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { I18nManager } from "react-native";
 import * as Updates from "expo-updates";
@@ -23,7 +23,7 @@ import { useData } from "../hooks/DataContext";
 
 export default function Settings({ navigation }) {
   const { theme, isDark, toggleTheme } = useTheme();
-  const { chairBattery, chairPressures } = useData();
+  const { chairBattery, chairPressures, camActive } = useData();
   const [cameraEnabled, setCameraEnabled] = useState(true);
   const [alertTimeout, setAlertTimeout] = useState(5);
   const [lang, setLang] = useState(i18n.locale.startsWith("ar") ? "ar" : "en");
@@ -74,6 +74,14 @@ export default function Settings({ navigation }) {
   };
 
   const { user } = useAuth();
+
+  const [cameraPaired, setCameraPaired] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem("CAMERA_PAIRED").then((v) => {
+      setCameraPaired(v === "true");
+    });
+  }, []);
 
   // ====================== UI ======================
   return (
@@ -272,12 +280,14 @@ export default function Settings({ navigation }) {
         </View>
 
         {/* CAMERA CARD */}
+        {/* CAMERA CARD */}
         <View
           style={[
             s.card,
             { backgroundColor: theme.card, borderColor: theme.border },
           ]}
         >
+          {/* الجزء الأصلي — لا نلمسه */}
           <View style={s.row}>
             <View style={s.rowLeft}>
               <MaterialCommunityIcons
@@ -296,6 +306,64 @@ export default function Settings({ navigation }) {
             </View>
 
             <Switch value={cameraEnabled} onValueChange={setCameraEnabled} />
+          </View>
+
+          {/* ===== إضافة جديدة فقط ===== */}
+          <View
+            style={[
+              s.divider,
+              {
+                backgroundColor: theme.border || "#00000015",
+                marginVertical: 12,
+              },
+            ]}
+          />
+
+          <View style={s.row}>
+            <View style={s.rowLeft}>
+              <MaterialCommunityIcons
+                name={camActive ? "check-circle" : "close-circle"}
+                size={18}
+                color={camActive ? theme.success : theme.error}
+              />
+              <Text
+                style={{
+                  marginLeft: 8,
+                  fontSize: 13,
+                  fontWeight: "700",
+                  color: camActive ? theme.success : theme.error,
+                }}
+              >
+                {camActive ? "الكاميرا متصلة" : "الكاميرا غير متصلة"}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate("CameraPairing")}
+              style={[
+                s.secondaryBtn,
+                {
+                  borderColor: theme.primary,
+                  backgroundColor: isDark ? "#FFFFFF05" : "#00000003",
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                },
+              ]}
+            >
+              <MaterialCommunityIcons
+                name="qrcode-scan"
+                size={16}
+                color={theme.primary}
+              />
+              <Text
+                style={[
+                  s.secondaryBtnTxt,
+                  { color: theme.primary, marginLeft: 6 },
+                ]}
+              >
+                ربط الكاميرا
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
