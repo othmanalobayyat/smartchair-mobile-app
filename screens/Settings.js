@@ -18,17 +18,18 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "../hooks/ThemeContext";
 import i18n from "../hooks/i18n";
 import { useAuth } from "../hooks/AuthContext";
+import { useData } from "../hooks/DataContext";
 
 export default function Settings({ navigation }) {
   const { theme, isDark, toggleTheme } = useTheme();
-
+  const { chairBattery, chairPressures } = useData();
   const [cameraEnabled, setCameraEnabled] = useState(true);
   const [alertTimeout, setAlertTimeout] = useState(5);
   const [lang, setLang] = useState(i18n.locale.startsWith("ar") ? "ar" : "en");
-  const [connected] = useState(true);
-  const [batteryLevel] = useState(82);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(false);
+  const connected = chairPressures !== null;
+  const batteryLevel = chairBattery ?? 0;
 
   // ====================== HANDLERS ======================
   const toggleLanguage = async () => {
