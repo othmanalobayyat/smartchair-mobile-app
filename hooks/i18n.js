@@ -40,6 +40,9 @@ const i18n = new I18n({
     soundDescription: "تنبيهات صوتية عند سوء الوضعية أو انتهاء الجلسة",
     vibrationDescription: "اهتزاز بسيط مع التنبيه (على الأجهزة الداعمة)",
     generalSettings: "الإعدادات العامة",
+    accountCloud: "الحساب والمزامنة",
+    supportAbout: "من نحن ؟ بحاجة إلى دعم؟",
+    chairSettings: "ضبط الكرسي والكاميرا",
 
     // ===== SMART CHAIR (مضاف جديد) =====
     smartChairTitle: "الكرسي الذكي",
@@ -238,7 +241,7 @@ const i18n = new I18n({
     cloudSyncLast: "Last sync:",
     cloudSyncNow: "Sync Now",
     cloudSyncNow: "Sync",
-    chairSettings: "Chair Settings",
+    chairSettings: "Chair & Camera Settings",
     chairConnectedDescription: "You can start a session and monitor posture",
 
     chairConnectedDescription:
@@ -253,6 +256,7 @@ const i18n = new I18n({
     vibrationDescription: "Small vibration alert (if supported)",
     accountCloud: "Account & Cloud Sync",
     cloudSyncTitle: "Cloud Sync",
+    supportAbout: "About us & support",
 
     // ===== SMART CHAIR (مضاف جديد) =====
     smartChairTitle: "Smart Chair",
