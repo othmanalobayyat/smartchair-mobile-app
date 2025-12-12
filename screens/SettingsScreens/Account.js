@@ -1,5 +1,5 @@
 // screens/SettingsScreens/Account.js
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -10,42 +10,43 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../hooks/ThemeContext";
 import { useAuth } from "../../hooks/AuthContext";
+import {
+  pickImageFromLibrary,
+  uploadImageToCloudinary,
+} from "../../utils/cloudinary";
 
 export default function Account({ navigation }) {
   const { theme, isDark } = useTheme();
-  const { logout } = useAuth(); // ← أهم إضافة
-
-  const [user, setUser] = useState({
-    name: "عثمان العُبيّات",
-    email: "othman@pau.edu.ps",
-  });
-
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const saved = await AsyncStorage.getItem("userInfo");
-        if (saved) setUser(JSON.parse(saved));
-      } catch {}
-    };
-    loadUser();
-  }, []);
+  const { user, logout, updateProfile } = useAuth();
 
   const handleEdit = () => navigation.navigate("EditProfile");
   const handlePassword = () => navigation.navigate("ChangePassword");
 
-  // 🔥 هنا logout الصحيح 100%
   const handleLogout = async () => {
-    await logout(); // يمسح user + token + AsyncStorage داخل AuthContext
-
+    await logout();
     navigation.reset({
       index: 0,
-      routes: [{ name: "Login" }], // يرجع المستخدم لشاشة الـ Login
+      routes: [{ name: "Login" }],
     });
+  };
+
+  const handleChangeAvatar = async () => {
+    try {
+      const uri = await pickImageFromLibrary();
+      if (!uri) return;
+
+      const avatarUrl = await uploadImageToCloudinary(uri);
+
+      await updateProfile(user.name, user.email, avatarUrl);
+
+      Alert.alert("تم", "تم تحديث صورة البروفايل بنجاح");
+    } catch (e) {
+      Alert.alert("خطأ", e.message || "فشل تحديث الصورة");
+    }
   };
 
   return (
@@ -74,16 +75,24 @@ export default function Account({ navigation }) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ alignItems: "center", paddingVertical: 25 }}
       >
-        {/* الصورة + الاسم */}
-        <Image
-          source={{
-            uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-          }}
-          style={s.avatar}
-        />
-        <Text style={[s.name, { color: theme.text }]}>{user.name}</Text>
+        {/* AVATAR */}
+        <TouchableOpacity onPress={handleChangeAvatar}>
+          <Image
+            source={{
+              uri:
+                user?.avatar ||
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+            }}
+            style={s.avatar}
+          />
+        </TouchableOpacity>
+
+        {/* NAME */}
+        <Text style={[s.name, { color: theme.text }]}>{user?.name || "—"}</Text>
+
+        {/* EMAIL */}
         <Text style={[s.email, { color: isDark ? "#AFCBFF" : "#4C89C8" }]}>
-          {user.email}
+          {user?.email || "—"}
         </Text>
 
         {/* OPTIONS CARD */}
@@ -113,7 +122,7 @@ export default function Account({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Logout Button */}
+        {/* LOGOUT */}
         <TouchableOpacity
           onPress={handleLogout}
           activeOpacity={0.8}

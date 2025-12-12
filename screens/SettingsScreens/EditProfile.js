@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// screens/SettingsScreens/EditProfile.js
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -21,6 +22,14 @@ export default function EditProfile({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const [msgType, setMsgType] = useState("error");
+
+  // 🔥 مزامنة الـ state مع AuthContext.user
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+    }
+  }, [user]);
 
   const isUnchanged =
     name.trim() === user?.name && email.trim() === user?.email;
@@ -48,6 +57,11 @@ export default function EditProfile({ navigation }) {
       await updateProfile(name.trim(), email.trim());
       setMsgType("success");
       setMsg("تم تحديث البيانات بنجاح");
+
+      // ⬇️ رجوع تلقائي بعد نجاح التحديث (اختياري لكنه UX أفضل)
+      setTimeout(() => {
+        navigation.goBack();
+      }, 800);
     } catch (e) {
       setMsgType("error");
       setMsg(e.message || "حدث خطأ أثناء التحديث");

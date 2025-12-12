@@ -10,7 +10,7 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); // { id, name, email }
+  const [user, setUser] = useState(null); // { id, name, email, avatar }
   const [token, setToken] = useState(null); // JWT
   const [loading, setLoading] = useState(true);
 
@@ -75,14 +75,14 @@ export function AuthProvider({ children }) {
     await AsyncStorage.removeItem("authToken");
   };
 
-  const updateProfile = async (name, email) => {
+  const updateProfile = async (name, email, avatar) => {
     const res = await fetch(`${API_BASE}/auth/update-profile`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ name, email }),
+      body: JSON.stringify({ name, email, avatar }),
     });
 
     const data = await res.json();

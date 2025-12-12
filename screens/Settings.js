@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -115,10 +116,20 @@ export default function Settings({ navigation }) {
             <View
               style={[
                 s.avatar,
-                { backgroundColor: isDark ? "#FFFFFF10" : "#00000008" },
+                {
+                  backgroundColor: isDark ? "#FFFFFF10" : "#00000008",
+                  overflow: "hidden",
+                },
               ]}
             >
-              <Ionicons name="person" size={26} color={theme.primary} />
+              {user?.avatar ? (
+                <Image
+                  source={{ uri: user.avatar }}
+                  style={{ width: "100%", height: "100%" }}
+                />
+              ) : (
+                <Ionicons name="person" size={26} color={theme.primary} />
+              )}
             </View>
 
             <View style={{ flex: 1 }}>
