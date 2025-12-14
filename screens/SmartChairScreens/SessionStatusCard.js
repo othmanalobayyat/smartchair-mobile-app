@@ -7,8 +7,7 @@ import i18n from "../../hooks/i18n";
 export default function SessionStatusCard({
   posture,
   attentionText,
-  hours,
-  minutes,
+  timeLabel,
   isPresent,
   drowsy,
   theme,
@@ -39,7 +38,10 @@ export default function SessionStatusCard({
         <View
           style={[
             s.iconBubble,
-            { backgroundColor: posture === "صحيحة" ? theme.success : theme.error },
+            {
+              backgroundColor:
+                posture === "صحيحة" ? theme.success : theme.error,
+            },
           ]}
         >
           <MaterialCommunityIcons name="seat" size={18} color="#fff" />
@@ -147,9 +149,7 @@ export default function SessionStatusCard({
               { color: theme.text, textAlign: i18n.isRTL ? "right" : "left" },
             ]}
           >
-            {hours > 0
-              ? `${hours} ${i18n.t("hours")} ${minutes} ${i18n.t("minutes")}`
-              : `${minutes} ${i18n.t("minutes")}`}
+            {timeLabel}
           </Text>
         </View>
       </View>

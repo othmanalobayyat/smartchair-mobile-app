@@ -99,11 +99,13 @@ export function DataProvider({ children }) {
         // ================================
         //  🎥 CAMERA FULL DATA STREAM
         // ================================
-        setCamActive(true);
-        setAttention(data.attention_level);
-        setIsPresent(data.is_present);
-        setDrowsy(data.drowsy);
-        setWorkSeconds(data.working_duration_seconds);
+        if (data.type === "camera_frame") {
+          setCamActive(true);
+          setAttention(data.attention_level);
+          setIsPresent(data.is_present);
+          setDrowsy(data.drowsy);
+          setWorkSeconds(data.working_duration_seconds);
+        }
       } catch (e) {
         console.log("❌ JSON error", e);
       }

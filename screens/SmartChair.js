@@ -82,8 +82,26 @@ export default function SmartChair() {
   const attentionText =
     attention == null ? "—" : attention > 60 ? "مركز" : "مشتت";
 
-  const hours = Math.floor(workSeconds / 3600);
-  const minutes = Math.floor((workSeconds % 3600) / 60);
+  let timeLabel = "00:00";
+
+  if (workSeconds > 0) {
+    if (workSeconds < 3600) {
+      // أقل من ساعة → دقائق : ثواني
+      const minutes = Math.floor(workSeconds / 60);
+      const seconds = workSeconds % 60;
+      timeLabel = `${String(minutes).padStart(2, "0")}:${String(
+        seconds
+      ).padStart(2, "0")}`;
+    } else {
+      // ساعة أو أكثر → ساعات : دقائق
+      const hours = Math.floor(workSeconds / 3600);
+      const minutes = Math.floor((workSeconds % 3600) / 60);
+      timeLabel = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+        2,
+        "0"
+      )}`;
+    }
+  }
 
   return (
     <LinearGradient colors={theme.gradient} style={s.container}>
@@ -147,8 +165,7 @@ export default function SmartChair() {
         <SessionStatusCard
           posture={posture}
           attentionText={attentionText}
-          hours={hours}
-          minutes={minutes}
+          timeLabel={timeLabel}
           isPresent={isPresent}
           drowsy={drowsy}
           theme={theme}
