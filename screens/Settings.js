@@ -23,8 +23,14 @@ import { useData } from "../hooks/DataContext";
 
 export default function Settings({ navigation }) {
   const { theme, isDark, toggleTheme } = useTheme();
-  const { chairBattery, chairPressures, camActive } = useData();
-  const [cameraEnabled, setCameraEnabled] = useState(true);
+  const {
+    chairBattery,
+    chairPressures,
+    camActive,
+    cameraEnabled,
+    setCameraEnabled,
+  } = useData();
+
   const [alertTimeout, setAlertTimeout] = useState(5);
   const [lang, setLang] = useState(i18n.locale.startsWith("ar") ? "ar" : "en");
   const [soundEnabled, setSoundEnabled] = useState(true);

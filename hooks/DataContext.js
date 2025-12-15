@@ -20,11 +20,17 @@ let cameraTimeout = null;
 
 export function DataProvider({ children }) {
   // CAMERA STATES
-  const [camActive, setCamActive] = useState(false);
+  const [camOnline, setCamOnline] = useState(false);
   const [attention, setAttention] = useState(null);
   const [isPresent, setIsPresent] = useState(false);
   const [drowsy, setDrowsy] = useState(false);
   const [workSeconds, setWorkSeconds] = useState(0);
+
+  // PRIVACY (زر toggle)
+  const [cameraEnabled, setCameraEnabled] = useState(true);
+
+  // PAIRING (مؤقت)
+  const [cameraPaired, setCameraPaired] = useState(true);
 
   // CHAIR STATES (NEW)
   const [chairPressures, setChairPressures] = useState(null);
@@ -38,7 +44,6 @@ export function DataProvider({ children }) {
   // RESET EVERYTHING WHEN DEVICE DISCONNECTS
   const resetData = () => {
     // camera
-    setCamActive(false);
     setAttention(null);
     setIsPresent(false);
     setDrowsy(false);
@@ -58,6 +63,14 @@ export function DataProvider({ children }) {
 
     wsRef.current.onopen = () => {
       console.log(`✅ Connected to ${url}`);
+
+      // أرسل حالة الخصوصية الحالية فور الاتصال
+      wsRef.current.send(
+        JSON.stringify({
+          type: "camera_control",
+          action: cameraEnabled ? "start" : "stop",
+        })
+      );
     };
 
     wsRef.current.onmessage = (event) => {
@@ -88,10 +101,13 @@ export function DataProvider({ children }) {
         // ================================
         if (data.type === "camera_status") {
           if (data.active) {
+            setCamOnline(true);
             if (cameraTimeout) clearTimeout(cameraTimeout);
-            setCamActive(true);
           } else {
-            cameraTimeout = setTimeout(() => resetData(), 3000);
+            cameraTimeout = setTimeout(() => {
+              setCamOnline(false);
+              resetData();
+            }, 3000);
           }
           return;
         }
@@ -100,7 +116,7 @@ export function DataProvider({ children }) {
         //  🎥 CAMERA FULL DATA STREAM
         // ================================
         if (data.type === "camera_frame") {
-          setCamActive(true);
+          setCamOnline(true);
           setAttention(data.attention_level);
           setIsPresent(data.is_present);
           setDrowsy(data.drowsy);
@@ -134,17 +150,34 @@ export function DataProvider({ children }) {
       if (cameraTimeout) clearTimeout(cameraTimeout);
     };
   }, []);
+  // FINAL CAMERA STATE (derived, NOT a state)
+  const camActive = cameraPaired && camOnline && cameraEnabled;
+  useEffect(() => {
+    if (!cameraPaired) return;
+    if (!wsRef.current) return;
+    if (wsRef.current.readyState !== WebSocket.OPEN) return;
+
+    wsRef.current.send(
+      JSON.stringify({
+        type: "camera_control",
+        action: cameraEnabled ? "start" : "stop",
+      })
+    );
+  }, [cameraEnabled, cameraPaired]);
 
   return (
     <DataContext.Provider
       value={{
         camActive,
+        camOnline,
+        cameraEnabled,
+        setCameraEnabled,
+
         attention,
         isPresent,
         drowsy,
         workSeconds,
 
-        // CHAIR DATA (NEW)
         chairPressures,
         chairPosture,
         chairBattery,

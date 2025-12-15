@@ -29,6 +29,7 @@ export default function SmartChair() {
   const {
     attention,
     camActive,
+    camOnline,
     isPresent,
     drowsy,
     workSeconds,
@@ -141,7 +142,11 @@ export default function SmartChair() {
               color={statusColor(camActive)}
             />
             <Text style={[s.statusText, { color: theme.text }]}>
-              {camActive ? i18n.t("camActive") : i18n.t("camOff")}
+              {!camOnline
+                ? i18n.t("camDisconnected")
+                : camActive
+                ? i18n.t("camActive")
+                : i18n.t("camDisabled")}
             </Text>
           </View>
         </View>

@@ -49,7 +49,8 @@ const i18n = new I18n({
     chairConnected: "الكرسي متصل",
     chairInactive: "الكرسي غير متصل",
     camActive: "الكاميرا مفعّلة",
-    camOff: "الكاميرا متوقفة",
+    camDisconnected: "الكاميرا غير متصلة",
+    camDisabled: "الكاميرا غير مفعلة",
 
     sensorsReadings: "قراءات الحساسات",
     sessionStatus: "حالة الجلسة",
@@ -263,7 +264,8 @@ const i18n = new I18n({
     chairConnected: "Chair Connected",
     chairInactive: "Chair Inactive",
     camActive: "Camera Active",
-    camOff: "Camera Off",
+    camDisconnected: "Camera Disconnected",
+    camDisabled: "Camera Disable",
 
     sensorsReadings: "Sensor Readings",
     sessionStatus: "Session Status",
