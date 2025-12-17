@@ -1,3 +1,5 @@
+// constants/theme.js
+
 export const lightTheme = {
   mode: "light",
 
@@ -13,9 +15,23 @@ export const lightTheme = {
   error: "#E74C3C",
 
   border: "#E0E5EE",
-  muted: "#64748B",
+  muted: "#94A3B8",
 
-  // ✅ ألوان متدرجة ناعمة من نفس الثيم
+  // 🟦 NEW
+  surface: "#FFFFFF",
+  surfaceAlt: "#F8FAFC",
+  chairBase: "#656D78",
+
+  icon: "#475569",
+  iconOnPrimary: "#FFFFFF",
+
+  disabled: "#CBD5E1",
+
+  statusSuccessBg: "#D4EDDA",
+  statusErrorBg: "#F8D7DA",
+
+  shadow: "rgba(0,0,0,0.1)",
+
   gradient: ["#F4F6FA", "#E6EBF5"],
 };
 
@@ -36,6 +52,20 @@ export const darkTheme = {
   border: "#2E3A50",
   muted: "#94A3B8",
 
-  // ✅ نفس روح الـ dark بكل التطبيق
+  // 🟦 NEW
+  surface: "#1C2433",
+  surfaceAlt: "#111827",
+  chairBase: "#4B5563",
+
+  icon: "#CBD5E1",
+  iconOnPrimary: "#FFFFFF",
+
+  disabled: "#475569",
+
+  statusSuccessBg: "rgba(46, 204, 113, 0.18)",
+  statusErrorBg: "rgba(231, 76, 60, 0.18)",
+
+  shadow: "rgba(0,0,0,0.6)",
+
   gradient: ["#0F172A", "#1C2433"],
 };

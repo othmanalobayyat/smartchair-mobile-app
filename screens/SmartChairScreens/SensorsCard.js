@@ -1,4 +1,4 @@
-// components/SmartChair/SensorsCard.js
+// screens/SmartChairScreens/SensorsCard.js
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import i18n from "../../hooks/i18n";
@@ -8,8 +8,13 @@ export default function SensorsCard({ pressures, theme, isDark }) {
     <View
       style={[
         s.card,
-        isDark ? s.cardDark : s.cardLight,
-        { shadowColor: "#000", elevation: 4 },
+        {
+          backgroundColor: theme.card,
+          borderWidth: isDark ? 1 : 0,
+          borderColor: isDark ? theme.border : "transparent",
+          shadowColor: theme.shadow,
+          elevation: 4,
+        },
       ]}
     >
       <Text style={[s.title, { color: theme.text }]}>
@@ -37,9 +42,9 @@ const s = StyleSheet.create({
     marginTop: 20,
     width: "90%",
     alignItems: "center",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
-  cardDark: { backgroundColor: "#2C2F33" },
-  cardLight: { backgroundColor: "#FFF" },
   title: { fontSize: 18, fontWeight: "700", marginBottom: 10 },
   readingsGrid: {
     width: "100%",

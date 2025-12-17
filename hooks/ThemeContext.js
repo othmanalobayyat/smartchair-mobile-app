@@ -1,6 +1,6 @@
-//ThemeContext.js
-import React, { createContext, useState, useContext } from 'react';
-import { lightTheme, darkTheme } from '../constants/theme';
+//auth/ThemeContext.js
+import React, { createContext, useState, useContext } from "react";
+import { lightTheme, darkTheme } from "../constants/theme";
 
 const ThemeContext = createContext();
 

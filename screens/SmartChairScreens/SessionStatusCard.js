@@ -1,4 +1,4 @@
-// components/SmartChair/SessionStatusCard.js
+// screens/SmartChairScreens/SessionStatusCard.js
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -21,6 +21,7 @@ export default function SessionStatusCard({
           backgroundColor: theme.card,
           borderWidth: isDark ? 1 : 0,
           borderColor: isDark ? theme.border : "transparent",
+          shadowColor: theme.shadow,
         },
       ]}
     >
@@ -92,7 +93,7 @@ export default function SessionStatusCard({
           <Ionicons
             name={attentionText === "مركز" ? "eye" : "eye-off"}
             size={18}
-            color="#fff"
+            color={theme.iconOnPrimary}
           />
         </View>
 
@@ -194,12 +195,15 @@ export default function SessionStatusCard({
         </View>
       </View>
 
-      {/* نعاس */}
+      {/* تنبيه النعاس */}
       {drowsy && (
         <View
           style={[
             s.alertRow,
-            { flexDirection: i18n.isRTL ? "row-reverse" : "row" },
+            {
+              borderColor: theme.border,
+              flexDirection: i18n.isRTL ? "row-reverse" : "row",
+            },
           ]}
         >
           <Ionicons name="warning" size={18} color={theme.error} />
@@ -229,7 +233,6 @@ const s = StyleSheet.create({
     marginTop: 20,
     width: "90%",
     alignItems: "center",
-    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 4,
@@ -243,7 +246,6 @@ const s = StyleSheet.create({
 
   infoRow: {
     width: "100%",
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
     marginVertical: 14,
@@ -278,8 +280,6 @@ const s = StyleSheet.create({
     marginTop: 18,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderColor: "rgba(0,0,0,0.08)",
-    flexDirection: "row",
     alignItems: "center",
   },
 

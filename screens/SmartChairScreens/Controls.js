@@ -1,4 +1,4 @@
-// components/SmartChair/Controls.js
+// screens/SmartChairScreens/Controls.js
 import React from "react";
 import { View, Pressable, Text, StyleSheet } from "react-native";
 import i18n from "../../hooks/i18n";
@@ -13,13 +13,15 @@ export default function Controls({ monitoring, setMonitoring, theme }) {
           { backgroundColor: monitoring ? theme.primary : theme.muted },
         ]}
       >
-        <Text style={s.btnTxt}>
+        <Text style={[s.btnTxt, { color: theme.iconOnPrimary }]}>
           {monitoring ? i18n.t("stopMonitoring") : i18n.t("startMonitoring")}
         </Text>
       </Pressable>
 
       <Pressable style={[s.btn, { backgroundColor: theme.secondary }]}>
-        <Text style={s.btnTxt}>{i18n.t("calibrate")}</Text>
+        <Text style={[s.btnTxt, { color: theme.iconOnPrimary }]}>
+          {i18n.t("calibrate")}
+        </Text>
       </Pressable>
     </View>
   );
@@ -38,7 +40,6 @@ const s = StyleSheet.create({
   },
 
   btnTxt: {
-    color: "#FFF",
     fontWeight: "700",
   },
 });

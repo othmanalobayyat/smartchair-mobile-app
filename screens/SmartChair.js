@@ -66,15 +66,13 @@ export default function SmartChair() {
     return () => clearInterval(id);
   }, []);
 
-  const statusBg = (active) => {
-    if (!isDark) return active ? "#D4EDDA" : "#F5C6CB";
-    return active ? "rgba(46, 204, 113, 0.18)" : "rgba(231, 76, 60, 0.18)";
-  };
+  const statusBg = (active) =>
+    active ? theme.statusSuccessBg : theme.statusErrorBg;
 
   const statusColor = (active) => (active ? theme.success : theme.error);
 
   const getColor = (v) => {
-    if (!monitoring) return "#BDC3C7";
+    if (!monitoring) return theme.disabled;
     if (v > 10) return theme.error;
     if (v > 6) return theme.warning;
     return theme.success;
