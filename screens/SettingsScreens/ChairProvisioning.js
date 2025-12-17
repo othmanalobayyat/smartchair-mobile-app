@@ -1,6 +1,4 @@
-// screens/SettingsScreens/ChairProvisioning.js
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,103 +10,87 @@ import {
   Platform,
   StatusBar,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { BleManager } from "react-native-ble-plx";
+import AppHeader from "../../components/AppHeader";
 import { useTheme } from "../../hooks/ThemeContext";
+import { useData } from "../../hooks/DataContext";
 
 const manager = new BleManager();
 
 export default function ChairProvisioning({ navigation }) {
   const { theme } = useTheme();
+  const { chairOnline } = useData();
 
+  // ===== STEPPER STATE (فقط عند عدم الاتصال) =====
+  const [step, setStep] = useState(1);
   const [scanning, setScanning] = useState(false);
   const [devices, setDevices] = useState([]);
   const [selected, setSelected] = useState(null);
   const [ssid, setSsid] = useState("");
   const [password, setPassword] = useState("");
   const [sending, setSending] = useState(false);
-  const [done, setDone] = useState(false);
 
-  // ------------------------------------------------------
-  // 1) Request Android permissions
-  // ------------------------------------------------------
+  // تنظيف scan عند الخروج
+  useEffect(() => {
+    return () => {
+      manager.stopDeviceScan();
+    };
+  }, []);
+
+  // ================= PERMISSIONS =================
   const requestBlePermissions = async () => {
     if (Platform.OS !== "android") return true;
 
-    try {
-      const granted = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      ]);
+    const granted = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    ]);
 
-      const allGranted = Object.values(granted).every(
-        (v) => v === PermissionsAndroid.RESULTS.GRANTED
-      );
-
-      return allGranted;
-    } catch {
-      return false;
-    }
+    return Object.values(granted).every(
+      (v) => v === PermissionsAndroid.RESULTS.GRANTED
+    );
   };
 
-  // ------------------------------------------------------
-  // 2) Scan for SmartChair BLE devices
-  // ------------------------------------------------------
+  // ================= SCAN =================
   const handleScan = async () => {
     const perms = await requestBlePermissions();
-    if (!perms) {
-      alert("يجب السماح بالأذونات لتشغيل البلوتوث.");
-      return;
-    }
+    if (!perms) return;
 
-    manager.stopDeviceScan();
     setDevices([]);
     setScanning(true);
 
     manager.startDeviceScan(null, null, (error, device) => {
       if (error) {
-        console.log("SCAN ERROR:", error);
         setScanning(false);
         return;
       }
 
-      if (device && device.name && device.name.startsWith("SmartChair")) {
-        setDevices((prev) => {
-          if (prev.find((d) => d.id === device.id)) return prev;
-          return [...prev, device];
-        });
+      if (device?.name?.startsWith("SmartChair")) {
+        setDevices((p) =>
+          p.find((d) => d.id === device.id) ? p : [...p, device]
+        );
       }
     });
 
     setTimeout(() => {
       manager.stopDeviceScan();
       setScanning(false);
-    }, 6000);
+    }, 5000);
   };
 
-  // ------------------------------------------------------
-  // 3) Send WiFi credentials over BLE (USING global.btoa)
-  // ------------------------------------------------------
+  // ================= SEND WIFI =================
   const WIFI_SERVICE_UUID = "12345678-1234-1234-1234-1234567890ab";
   const WIFI_CHARACTERISTIC_UUID = "abcd1234-5678-90ab-cdef-1234567890ab";
 
   const handleSend = async () => {
-    if (!ssid || !password) {
-      alert("أدخل اسم الشبكة وكلمة المرور");
-      return;
-    }
-
-    if (!selected) {
-      alert("اختر كرسي من القائمة");
-      return;
-    }
+    if (!ssid || !password || !selected) return;
 
     setSending(true);
 
     try {
       const device = devices.find((d) => d.id === selected);
-
       const connected = await manager.connectToDevice(device.id);
       await connected.discoverAllServicesAndCharacteristics();
 
@@ -117,122 +99,168 @@ export default function ChairProvisioning({ navigation }) {
         (s) => s.uuid.toUpperCase() === WIFI_SERVICE_UUID.toUpperCase()
       );
 
-      if (!service) throw new Error("Service not found");
-
-      const characteristics = await connected.characteristicsForService(
-        service.uuid
-      );
-
-      const characteristic = characteristics.find(
+      const chars = await connected.characteristicsForService(service.uuid);
+      const char = chars.find(
         (c) => c.uuid.toUpperCase() === WIFI_CHARACTERISTIC_UUID.toUpperCase()
       );
 
-      if (!characteristic) throw new Error("Characteristic not found");
+      const payload = global.btoa(
+        unescape(encodeURIComponent(JSON.stringify({ ssid, password })))
+      );
 
-      // -----------------------------
-      // BASE64 ENCODING WITHOUT LIB
-      // -----------------------------
-      const json = JSON.stringify({ ssid, password });
+      await char.writeWithResponse(payload);
 
-      // استخدم global.btoa بدل مكتبات خارجية
-      const base64Payload = global.btoa(unescape(encodeURIComponent(json)));
-
-      console.log("BASE64:", base64Payload);
-
-      await characteristic.writeWithResponse(base64Payload);
-
+      setStep(3); // ننتظر الاتصال الحقيقي من السيرفر
+    } catch {
+      alert("فشل إرسال الإعدادات");
+    } finally {
       setSending(false);
-      setDone(true);
-    } catch (err) {
-      console.log("SEND ERROR:", err);
-      setSending(false);
-      alert("حدث خطأ أثناء إرسال البيانات");
     }
   };
 
-  // ------------------------------------------------------
-  // UI
-  // ------------------------------------------------------
+  // ================= UI =================
   return (
     <View style={[s.container, { backgroundColor: theme.background }]}>
-      <StatusBar
-        translucent
-        barStyle="light-content"
-        backgroundColor="transparent"
+      <StatusBar translucent backgroundColor="transparent" />
+      <AppHeader
+        title="إعداد اتصال الكرسي"
+        onBack={() => navigation.goBack()}
       />
 
-      <SafeAreaView style={s.header} edges={["top"]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#FFF" />
-        </TouchableOpacity>
-        <Text style={s.headerTitle}>إعداد اتصال الكرسي</Text>
-      </SafeAreaView>
-
-      <TouchableOpacity
-        onPress={handleScan}
-        style={[s.btn, { backgroundColor: theme.primary }]}
-      >
-        <Text style={s.btnTxt}>بحث عن الكرسي</Text>
-      </TouchableOpacity>
-
-      {scanning && (
-        <ActivityIndicator color={theme.primary} style={{ marginTop: 10 }} />
-      )}
-
-      {devices.map((d) => (
-        <TouchableOpacity
-          key={d.id}
+      {/* ===================== CASE 1: CONNECTED ===================== */}
+      {chairOnline && (
+        <View
           style={[
-            s.device,
-            { borderColor: selected === d.id ? theme.primary : theme.border },
+            s.heroCard,
+            {
+              borderColor: theme.success,
+              backgroundColor: "#22c55e20",
+            },
           ]}
-          onPress={() => setSelected(d.id)}
         >
-          <Text style={{ color: theme.text }}>{d.name}</Text>
-          <Text style={{ color: theme.textSecondary, fontSize: 12 }}>
-            {d.id}
+          <Ionicons name="wifi" size={40} color={theme.success} />
+
+          <Text style={[s.heroTitle, { color: theme.success }]}>
+            الكرسي متصل وجاهز
           </Text>
-        </TouchableOpacity>
-      ))}
 
-      {selected && (
-        <>
-          <Text style={[s.label, { color: theme.text }]}>اسم الشبكة</Text>
-          <TextInput
-            style={[s.input, { borderColor: theme.border, color: theme.text }]}
-            placeholder="SSID"
-            placeholderTextColor="#999"
-            value={ssid}
-            onChangeText={setSsid}
-          />
-
-          <Text style={[s.label, { color: theme.text }]}>كلمة المرور</Text>
-          <TextInput
-            style={[s.input, { borderColor: theme.border, color: theme.text }]}
-            placeholder="Password"
-            placeholderTextColor="#999"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <TouchableOpacity
-            onPress={handleSend}
-            style={[s.btn, { backgroundColor: theme.secondary }]}
-          >
-            {sending ? (
-              <ActivityIndicator color="#FFF" />
-            ) : (
-              <Text style={s.btnTxt}>إرسال الإعدادات</Text>
-            )}
-          </TouchableOpacity>
-        </>
+          <Text style={[s.heroSub, { color: theme.textSecondary }]}>
+            اتصال إنترنت مستقر · يتم إرسال البيانات الآن
+          </Text>
+        </View>
       )}
 
-      {done && (
-        <Text style={[s.success, { color: theme.success }]}>
-          تم ربط الكرسي بالشبكة بنجاح! 🎉
-        </Text>
+      {/* ===================== CASE 2: NOT CONNECTED ===================== */}
+      {!chairOnline && (
+        <>
+          {/* STEPPER */}
+          <View style={s.stepper}>
+            {["Bluetooth", "Wi-Fi", "جاهز"].map((t, i) => (
+              <View key={i} style={s.stepItem}>
+                <View
+                  style={[
+                    s.stepCircle,
+                    {
+                      backgroundColor:
+                        step > i + 1
+                          ? theme.success
+                          : step === i + 1
+                          ? theme.primary
+                          : theme.border,
+                    },
+                  ]}
+                >
+                  <Text style={s.stepNum}>{i + 1}</Text>
+                </View>
+                <Text style={[s.stepLabel, { color: theme.text }]}>{t}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* STEP 1 */}
+          {step === 1 && (
+            <View style={s.card}>
+              <TouchableOpacity
+                onPress={handleScan}
+                style={[s.mainBtn, { backgroundColor: theme.primary }]}
+              >
+                <Ionicons name="bluetooth" size={20} color="#FFF" />
+                <Text style={s.btnTxt}>بحث عن الكرسي</Text>
+              </TouchableOpacity>
+
+              {scanning && <ActivityIndicator style={{ marginTop: 10 }} />}
+
+              {devices.map((d) => (
+                <TouchableOpacity
+                  key={d.id}
+                  onPress={() => {
+                    setSelected(d.id);
+                    setStep(2);
+                  }}
+                  style={[
+                    s.device,
+                    {
+                      borderColor:
+                        selected === d.id ? theme.primary : theme.border,
+                    },
+                  ]}
+                >
+                  <Ionicons name="bluetooth" size={18} color={theme.primary} />
+                  <Text style={{ marginLeft: 10, color: theme.text }}>
+                    {d.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+
+          {/* STEP 2 */}
+          {step === 2 && (
+            <View style={s.card}>
+              <TextInput
+                placeholder="Wi-Fi SSID"
+                value={ssid}
+                onChangeText={setSsid}
+                style={s.input}
+              />
+              <TextInput
+                placeholder="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+                style={s.input}
+              />
+
+              <TouchableOpacity
+                onPress={handleSend}
+                style={[s.mainBtn, { backgroundColor: theme.secondary }]}
+              >
+                {sending ? (
+                  <ActivityIndicator color="#FFF" />
+                ) : (
+                  <>
+                    <MaterialCommunityIcons
+                      name="wifi"
+                      size={18}
+                      color="#FFF"
+                    />
+                    <Text style={s.btnTxt}>إرسال الإعدادات</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* STEP 3 */}
+          {step === 3 && (
+            <View style={s.successCard}>
+              <ActivityIndicator size="large" color={theme.primary} />
+              <Text style={s.successTxt}>
+                جارِ إعادة اتصال الكرسي بالشبكة...
+              </Text>
+            </View>
+          )}
+        </>
       )}
     </View>
   );
@@ -240,48 +268,89 @@ export default function ChairProvisioning({ navigation }) {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
-  header: {
-    backgroundColor: "#2B4C7E",
-    width: "100%",
-    paddingBottom: 12,
-    paddingHorizontal: 16,
+
+  // STATUS
+  statusCard: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderRadius: 16,
+    margin: 16,
   },
-  backBtn: {
-    paddingVertical: 6,
-    paddingRight: 10,
+
+  // STEPPER
+  stepper: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 20,
   },
-  headerTitle: {
-    color: "#FFF",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  btn: {
-    padding: 14,
-    borderRadius: 10,
+  stepItem: { alignItems: "center" },
+  stepCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 20,
     alignItems: "center",
-    marginVertical: 10,
+    justifyContent: "center",
   },
-  btnTxt: { color: "#FFF", fontSize: 15, fontWeight: "700" },
+  stepNum: { color: "#FFF", fontWeight: "700" },
+  stepLabel: { fontSize: 12, marginTop: 6 },
+
+  card: {
+    margin: 16,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: "#FFFFFF10",
+  },
   device: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 14,
-    borderWidth: 2,
-    borderRadius: 10,
+    borderWidth: 1,
+    borderRadius: 12,
     marginTop: 10,
   },
-  label: { marginTop: 20, marginBottom: 6 },
   input: {
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 12,
-    marginBottom: 10,
+    marginBottom: 12,
   },
-  success: {
-    marginTop: 20,
-    fontSize: 16,
-    textAlign: "center",
+  mainBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 14,
+    borderRadius: 12,
+    gap: 8,
+  },
+  btnTxt: { color: "#FFF", fontWeight: "700" },
+
+  successCard: {
+    alignItems: "center",
+    marginTop: 60,
+  },
+  successTxt: {
+    marginTop: 16,
+    fontSize: 14,
     fontWeight: "700",
+  },
+  heroCard: {
+    margin: 16,
+    paddingVertical: 26,
+    paddingHorizontal: 20,
+    borderRadius: 22,
+    alignItems: "center",
+    borderWidth: 1,
+  },
+  heroTitle: {
+    marginTop: 12,
+    fontSize: 18,
+    fontWeight: "800",
+  },
+  heroSub: {
+    marginTop: 6,
+    fontSize: 13,
+    textAlign: "center",
   },
 });
