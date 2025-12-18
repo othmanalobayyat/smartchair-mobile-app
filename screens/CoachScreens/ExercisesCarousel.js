@@ -53,7 +53,10 @@ export default function ExercisesCarousel({
             ]}
           >
             <View style={styles.exerciseImageWrapper}>
-              <Image source={{ uri: ex.img }} style={styles.exerciseImg} />
+              <Image
+                source={typeof ex.img === "string" ? { uri: ex.img } : ex.img}
+                style={styles.exerciseImg}
+              />
             </View>
 
             <Text style={[styles.exerciseName, { color: theme.text }]}>

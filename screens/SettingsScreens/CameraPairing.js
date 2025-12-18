@@ -1,3 +1,4 @@
+// screens/SettingsScreens/CameraPairing.js
 import React, { useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -5,6 +6,7 @@ import QRCode from "react-native-qrcode-svg";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../hooks/ThemeContext";
 import { useAuth } from "../../hooks/AuthContext";
+import AppHeader from "../../components/AppHeader";
 
 export default function CameraPairing({ navigation }) {
   const { theme, isDark } = useTheme();
@@ -34,28 +36,22 @@ export default function CameraPairing({ navigation }) {
 
   return (
     <View style={[s.container, { backgroundColor: theme.background }]}>
-      <SafeAreaView
-        edges={["top"]}
-        style={[s.header, { backgroundColor: theme.primary }]}
-      >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="chevron-back" size={22} color="#fff" />
-        </TouchableOpacity>
-
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle}>Pair Camera</Text>
-          <Text style={s.headerSub}>Scan this QR from desktop camera app</Text>
-        </View>
-
-        <TouchableOpacity onPress={onHelp} style={s.helpBtn}>
-          <Ionicons name="help-circle-outline" size={22} color="#fff" />
-        </TouchableOpacity>
-      </SafeAreaView>
+      <AppHeader
+        title="Pair Camera"
+        subtitle="Scan this QR from desktop camera app"
+        onBack={() => navigation.goBack()}
+        rightIcon="help-circle-outline"
+        onRightPress={onHelp}
+      />
 
       <View
         style={[
           s.card,
-          { backgroundColor: theme.card, borderColor: theme.border },
+          {
+            backgroundColor: theme.card,
+            borderColor: theme.border,
+            shadowColor: theme.shadow,
+          },
         ]}
       >
         {!payload ? (
@@ -63,7 +59,7 @@ export default function CameraPairing({ navigation }) {
             <Text style={[s.title, { color: theme.text }]}>
               لا يوجد User ID
             </Text>
-            <Text style={[s.desc, { color: theme.muted }]}>
+            <Text style={[s.desc, { color: theme.textSecondary }]}>
               يبدو أن بيانات المستخدم غير مكتملة. جرّب تسجيل الخروج ثم تسجيل
               الدخول.
             </Text>
@@ -71,20 +67,20 @@ export default function CameraPairing({ navigation }) {
         ) : (
           <>
             <Text style={[s.title, { color: theme.text }]}>QR جاهز للمسح</Text>
-            <Text style={[s.desc, { color: theme.muted }]}>
+            <Text style={[s.desc, { color: theme.textSecondary }]}>
               امسح الرمز من تطبيق الكاميرا على الكمبيوتر لربطها بحسابك.
             </Text>
 
             <View
               style={[
                 s.qrWrap,
-                { backgroundColor: isDark ? "#FFFFFF10" : "#00000008" },
+                { backgroundColor: isDark ? theme.surfaceAlt : theme.surface },
               ]}
             >
               <QRCode value={payload} size={220} />
             </View>
 
-            <Text style={[s.small, { color: theme.muted }]}>
+            <Text style={[s.small, { color: theme.textSecondary }]}>
               User: {userId}
             </Text>
           </>
@@ -96,17 +92,6 @@ export default function CameraPairing({ navigation }) {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  backBtn: { padding: 6, marginRight: 6 },
-  helpBtn: { padding: 6, marginLeft: 6 },
-  headerTitle: { color: "#fff", fontSize: 16, fontWeight: "800" },
-  headerSub: { color: "#FFFFFFCC", fontSize: 12, marginTop: 2 },
-
   card: {
     marginTop: 18,
     marginHorizontal: 16,

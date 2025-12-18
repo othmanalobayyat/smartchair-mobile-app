@@ -33,6 +33,15 @@ export const lightTheme = {
   shadow: "rgba(0,0,0,0.1)",
 
   gradient: ["#F4F6FA", "#E6EBF5"],
+
+  textSecondary: "#64748B", // light
+
+  // lightTheme
+  iconPrimary: "#2B4C7E",
+  iconSecondary: "#4C89C8",
+
+  softBg: "#EEF2F7", // خلفيات أيقونات خفيفة
+  softBorder: "#D0D7E2",
 };
 
 export const darkTheme = {
@@ -68,4 +77,13 @@ export const darkTheme = {
   shadow: "rgba(0,0,0,0.6)",
 
   gradient: ["#0F172A", "#1C2433"],
+
+  textSecondary: "#94A3B8", // dark
+
+  // lightTheme
+  iconPrimary: "#2B4C7E",
+  iconSecondary: "#4C89C8",
+
+  softBg: "#EEF2F7", // خلفيات أيقونات خفيفة
+  softBorder: "#D0D7E2",
 };

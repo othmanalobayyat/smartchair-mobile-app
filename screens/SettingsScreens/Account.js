@@ -12,12 +12,14 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import i18n from "../../hooks/i18n";
 import { useTheme } from "../../hooks/ThemeContext";
 import { useAuth } from "../../hooks/AuthContext";
 import {
   pickImageFromLibrary,
   uploadImageToCloudinary,
 } from "../../utils/cloudinary";
+import AppHeader from "../../components/AppHeader";
 
 export default function Account({ navigation }) {
   const { theme, isDark } = useTheme();
@@ -43,32 +45,19 @@ export default function Account({ navigation }) {
 
       await updateProfile(user.name, user.email, avatarUrl);
 
-      Alert.alert("تم", "تم تحديث صورة البروفايل بنجاح");
+      Alert.alert(i18n.t("success"), i18n.t("avatarUpdated"));
     } catch (e) {
-      Alert.alert("خطأ", e.message || "فشل تحديث الصورة");
+      Alert.alert(i18n.t("error"), e.message || i18n.t("avatarUpdateFailed"));
     }
   };
 
   return (
-    <View
-      style={[
-        s.container,
-        { backgroundColor: isDark ? "#0F172A" : theme.background },
-      ]}
-    >
-      <StatusBar
-        translucent
-        barStyle="light-content"
-        backgroundColor="transparent"
-      />
-
+    <View style={[s.container, { backgroundColor: theme.background }]}>
       {/* HEADER */}
-      <SafeAreaView style={s.header} edges={["top"]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#FFF" />
-        </TouchableOpacity>
-        <Text style={s.headerTitle}> إعدادات الحساب</Text>
-      </SafeAreaView>
+      <AppHeader
+        title={i18n.t("accountSettingsTitle")}
+        onBack={() => navigation.goBack()}
+      />
 
       {/* CONTENT */}
       <ScrollView
@@ -91,7 +80,7 @@ export default function Account({ navigation }) {
         <Text style={[s.name, { color: theme.text }]}>{user?.name || "—"}</Text>
 
         {/* EMAIL */}
-        <Text style={[s.email, { color: isDark ? "#AFCBFF" : "#4C89C8" }]}>
+        <Text style={[s.email, { color: theme.secondary }]}>
           {user?.email || "—"}
         </Text>
 
@@ -100,24 +89,28 @@ export default function Account({ navigation }) {
           style={[
             s.card,
             {
-              backgroundColor: isDark ? "#1C2433" : "#FFF",
-              borderColor: isDark ? "#2E3A50" : "#E0E5EE",
+              backgroundColor: theme.card,
+              borderColor: theme.border,
             },
           ]}
         >
           <TouchableOpacity onPress={handleEdit} style={s.row}>
-            <Ionicons name="create-outline" size={22} color="#4C89C8" />
+            <Ionicons name="create-outline" size={22} color={theme.secondary} />
             <Text style={[s.label, { color: theme.text }]}>
-              تعديل البيانات الشخصية
+              {i18n.t("editProfile")}
             </Text>
           </TouchableOpacity>
 
           <View style={s.divider} />
 
           <TouchableOpacity onPress={handlePassword} style={s.row}>
-            <Ionicons name="lock-closed-outline" size={22} color="#4C89C8" />
+            <Ionicons
+              name="lock-closed-outline"
+              size={22}
+              color={theme.secondary}
+            />
             <Text style={[s.label, { color: theme.text }]}>
-              تغيير كلمة المرور
+              {i18n.t("changePassword")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -126,10 +119,10 @@ export default function Account({ navigation }) {
         <TouchableOpacity
           onPress={handleLogout}
           activeOpacity={0.8}
-          style={[s.mainBtn, { backgroundColor: "#E74C3C" }]}
+          style={[s.mainBtn, { backgroundColor: theme.error }]}
         >
           <Ionicons name="log-out-outline" size={20} color="#FFF" />
-          <Text style={s.mainBtnTxt}>تسجيل الخروج</Text>
+          <Text style={s.mainBtnTxt}>{i18n.t("logout")}</Text>
         </TouchableOpacity>
 
         <View style={{ height: 50 }} />
@@ -140,28 +133,6 @@ export default function Account({ navigation }) {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
-
-  header: {
-    backgroundColor: "#2B4C7E",
-    width: "100%",
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-
-  backBtn: {
-    paddingVertical: 6,
-    paddingRight: 10,
-  },
-
-  headerTitle: {
-    color: "#FFF",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-
   avatar: {
     width: 110,
     height: 110,

@@ -33,6 +33,8 @@ export function DataProvider({ children }) {
   const [cameraPaired, setCameraPaired] = useState(true);
 
   // CHAIR STATES (NEW)
+  const [chairOnline, setChairOnline] = useState(false);
+  const chairTimeoutRef = useRef(null);
   const [chairPressures, setChairPressures] = useState(null);
   const [chairPosture, setChairPosture] = useState(null);
   const [chairBattery, setChairBattery] = useState(null);
@@ -81,19 +83,24 @@ export function DataProvider({ children }) {
         //  🪑  CHAIR LIVE DATA
         // ================================
         if (data.type === "chair_data") {
-          if (Array.isArray(data.pressures)) {
-            setChairPressures(data.pressures);
-          }
+          setChairOnline(true);
 
-          if (data.posture) {
-            setChairPosture(data.posture);
-          }
+          if (chairTimeoutRef.current) clearTimeout(chairTimeoutRef.current);
 
-          if (typeof data.battery === "number") {
-            setChairBattery(data.battery);
-          }
+          chairTimeoutRef.current = setTimeout(() => {
+            setChairOnline(false);
+            setChairPressures(null);
+            setChairPosture(null);
+            setChairBattery(null);
+          }, 3000);
 
-          return; // مهم جدًا
+          setChairPressures(data.pressures || null);
+          setChairPosture(data.posture || null);
+          setChairBattery(
+            typeof data.battery === "number" ? data.battery : null
+          );
+
+          return;
         }
 
         // ================================
@@ -177,7 +184,7 @@ export function DataProvider({ children }) {
         isPresent,
         drowsy,
         workSeconds,
-
+        chairOnline,
         chairPressures,
         chairPosture,
         chairBattery,

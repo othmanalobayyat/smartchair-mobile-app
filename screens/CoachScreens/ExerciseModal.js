@@ -25,7 +25,11 @@ export default function ExerciseModal({
 
         {/* الصورة */}
         <Image
-          source={{ uri: activeExercise.img }}
+          source={
+            typeof activeExercise.img === "string"
+              ? { uri: activeExercise.img }
+              : activeExercise.img
+          }
           style={styles.exerciseModalImg}
         />
 

@@ -1,3 +1,4 @@
+// screens/SettingsScreens/ChangePassword.js
 import React, { useState } from "react";
 import {
   View,
@@ -11,6 +12,8 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { useAuth } from "../../hooks/AuthContext";
 import { useTheme } from "../../hooks/ThemeContext";
+import i18n from "../../hooks/i18n";
+import AppHeader from "../../components/AppHeader";
 
 export default function ChangePassword({ navigation }) {
   const { changePassword } = useAuth();
@@ -29,28 +32,28 @@ export default function ChangePassword({ navigation }) {
 
     if (!oldPassword || !newPassword || !confirmPassword) {
       setMsgType("error");
-      setMsg("جميع الحقول مطلوبة");
+      setMsg(i18n.t("cpAllFieldsRequired"));
       setLoading(false);
       return;
     }
 
     if (newPassword.length < 8) {
       setMsgType("error");
-      setMsg("كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل");
+      setMsg(i18n.t("cpMinLength"));
       setLoading(false);
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setMsgType("error");
-      setMsg("كلمتا المرور غير متطابقتين");
+      setMsg(i18n.t("cpNotMatch"));
       setLoading(false);
       return;
     }
 
     if (oldPassword === newPassword) {
       setMsgType("error");
-      setMsg("كلمة المرور الجديدة يجب أن تختلف عن الحالية");
+      setMsg(i18n.t("cpSameAsOld"));
       setLoading(false);
       return;
     }
@@ -58,13 +61,13 @@ export default function ChangePassword({ navigation }) {
     try {
       await changePassword(oldPassword, newPassword);
       setMsgType("success");
-      setMsg("تم تغيير كلمة المرور بنجاح");
+      setMsg(i18n.t("cpSuccess"));
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (e) {
       setMsgType("error");
-      setMsg(e.message || "حدث خطأ أثناء تغيير كلمة المرور");
+      setMsg(e.message || i18n.t("cpGenericError"));
     }
 
     setLoading(false);
@@ -81,12 +84,10 @@ export default function ChangePassword({ navigation }) {
       ]}
     >
       {/* HEADER */}
-      <SafeAreaView style={s.header} edges={["top"]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#FFF" />
-        </TouchableOpacity>
-        <Text style={s.headerTitle}>تغيير كلمة المرور</Text>
-      </SafeAreaView>
+      <AppHeader
+        title={i18n.t("changePasswordTitle") ?? "تغيير كلمة المرور"}
+        onBack={() => navigation.goBack()}
+      />
 
       <View style={s.body}>
         {/* OLD PASSWORD */}
@@ -94,7 +95,7 @@ export default function ChangePassword({ navigation }) {
           <Ionicons name="lock-closed-outline" size={20} color={iconColor} />
           <TextInput
             style={[s.input, { color: theme.text }]}
-            placeholder="كلمة المرور الحالية"
+            placeholder={i18n.t("currentPassword")}
             placeholderTextColor="#999"
             secureTextEntry
             value={oldPassword}
@@ -108,7 +109,7 @@ export default function ChangePassword({ navigation }) {
           <Ionicons name="key-outline" size={20} color={iconColor} />
           <TextInput
             style={[s.input, { color: theme.text }]}
-            placeholder="كلمة المرور الجديدة"
+            placeholder={i18n.t("newPassword")}
             placeholderTextColor="#999"
             secureTextEntry
             value={newPassword}
@@ -126,7 +127,7 @@ export default function ChangePassword({ navigation }) {
           />
           <TextInput
             style={[s.input, { color: theme.text }]}
-            placeholder="تأكيد كلمة المرور الجديدة"
+            placeholder={i18n.t("confirmNewPassword")}
             placeholderTextColor="#999"
             secureTextEntry
             value={confirmPassword}
@@ -148,7 +149,11 @@ export default function ChangePassword({ navigation }) {
           onPress={handleChange}
           disabled={loading}
         >
-          <Text style={s.btnTxt}>{loading ? "جارٍ الحفظ..." : "تغيير"}</Text>
+          <Text style={s.btnTxt}>
+            {loading
+              ? i18n.t("changePasswordSaving")
+              : i18n.t("changePasswordBtn")}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

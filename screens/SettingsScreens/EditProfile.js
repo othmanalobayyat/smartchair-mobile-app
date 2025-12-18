@@ -12,10 +12,12 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { useAuth } from "../../hooks/AuthContext";
 import { useTheme } from "../../hooks/ThemeContext";
+import i18n from "../../hooks/i18n";
+import AppHeader from "../../components/AppHeader";
 
 export default function EditProfile({ navigation }) {
   const { user, updateProfile } = useAuth();
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
 
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -40,7 +42,7 @@ export default function EditProfile({ navigation }) {
 
     if (!name.trim() || !email.trim()) {
       setMsgType("error");
-      setMsg("جميع الحقول مطلوبة");
+      setMsg(i18n.t("profileAllFieldsRequired"));
       setLoading(false);
       return;
     }
@@ -48,7 +50,7 @@ export default function EditProfile({ navigation }) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       setMsgType("error");
-      setMsg("صيغة البريد الإلكتروني غير صحيحة");
+      setMsg(i18n.t("profileInvalidEmail"));
       setLoading(false);
       return;
     }
@@ -56,7 +58,7 @@ export default function EditProfile({ navigation }) {
     try {
       await updateProfile(name.trim(), email.trim());
       setMsgType("success");
-      setMsg("تم تحديث البيانات بنجاح");
+      setMsg(i18n.t("profileUpdateSuccess"));
 
       // ⬇️ رجوع تلقائي بعد نجاح التحديث (اختياري لكنه UX أفضل)
       setTimeout(() => {
@@ -64,29 +66,22 @@ export default function EditProfile({ navigation }) {
       }, 800);
     } catch (e) {
       setMsgType("error");
-      setMsg(e.message || "حدث خطأ أثناء التحديث");
+      setMsg(e.message || i18n.t("profileUpdateError"));
     }
 
     setLoading(false);
   };
 
-  const inputBorder = isDark ? "#334155" : "#ccc";
-  const iconColor = isDark ? "#CBD5E1" : "#64748B";
+  const inputBorder = theme.border;
+  const iconColor = theme.icon;
 
   return (
-    <View
-      style={[
-        s.container,
-        { backgroundColor: isDark ? "#0F172A" : theme.background },
-      ]}
-    >
+    <View style={[s.container, { backgroundColor: theme.background }]}>
       {/* HEADER */}
-      <SafeAreaView style={s.header} edges={["top"]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#FFF" />
-        </TouchableOpacity>
-        <Text style={s.headerTitle}>تعديل البيانات</Text>
-      </SafeAreaView>
+      <AppHeader
+        title={i18n.t("editProfileTitle")}
+        onBack={() => navigation.goBack()}
+      />
 
       <View style={s.body}>
         {/* NAME */}
@@ -94,8 +89,8 @@ export default function EditProfile({ navigation }) {
           <Ionicons name="person-outline" size={20} color={iconColor} />
           <TextInput
             style={[s.input, { color: theme.text }]}
-            placeholder="الاسم"
-            placeholderTextColor="#999"
+            placeholder={i18n.t("profileName")}
+            placeholderTextColor={theme.textSecondary}
             value={name}
             onChangeText={setName}
             autoCapitalize="words"
@@ -107,8 +102,8 @@ export default function EditProfile({ navigation }) {
           <Ionicons name="mail-outline" size={20} color={iconColor} />
           <TextInput
             style={[s.input, { color: theme.text }]}
-            placeholder="الإيميل"
-            placeholderTextColor="#999"
+            placeholder={i18n.t("profileEmail")}
+            placeholderTextColor={theme.textSecondary}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -119,18 +114,31 @@ export default function EditProfile({ navigation }) {
 
         {msg ? (
           <Text
-            style={[s.msg, { color: msgType === "success" ? "green" : "red" }]}
+            style={[
+              s.msg,
+              {
+                color: msgType === "success" ? theme.success : theme.error,
+              },
+            ]}
           >
             {msg}
           </Text>
         ) : null}
 
         <TouchableOpacity
-          style={[s.btn, (loading || isUnchanged) && { opacity: 0.6 }]}
+          style={[
+            s.btn,
+            {
+              backgroundColor:
+                loading || isUnchanged ? theme.disabled : theme.primary,
+            },
+          ]}
           onPress={handleSave}
           disabled={loading || isUnchanged}
         >
-          <Text style={s.btnTxt}>{loading ? "جارٍ الحفظ..." : "حفظ"}</Text>
+          <Text style={[s.btnTxt, { color: theme.iconOnPrimary }]}>
+            {loading ? i18n.t("profileSaving") : i18n.t("profileSave")}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -138,34 +146,9 @@ export default function EditProfile({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
 
-  header: {
-    backgroundColor: "#2B4C7E",
-    width: "100%",
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-
-  backBtn: {
-    paddingVertical: 6,
-    paddingRight: 10,
-  },
-
-  headerTitle: {
-    color: "#FFF",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-
-  body: {
-    padding: 16,
-  },
+  body: { padding: 16 },
 
   inputWrap: {
     flexDirection: "row",
@@ -183,7 +166,6 @@ const s = StyleSheet.create({
   },
 
   btn: {
-    backgroundColor: "#2B4C7E",
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
@@ -191,7 +173,6 @@ const s = StyleSheet.create({
   },
 
   btnTxt: {
-    color: "#fff",
     fontWeight: "700",
   },
 

@@ -20,6 +20,7 @@ import { useTheme } from "../hooks/ThemeContext";
 import i18n from "../hooks/i18n";
 import { useAuth } from "../hooks/AuthContext";
 import { useData } from "../hooks/DataContext";
+import AppHeader from "../components/AppHeader";
 
 export default function Settings({ navigation }) {
   const { theme, isDark, toggleTheme } = useTheme();
@@ -29,13 +30,14 @@ export default function Settings({ navigation }) {
     camActive,
     cameraEnabled,
     setCameraEnabled,
+    chairOnline,
   } = useData();
 
   const [alertTimeout, setAlertTimeout] = useState(5);
   const [lang, setLang] = useState(i18n.locale.startsWith("ar") ? "ar" : "en");
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(false);
-  const connected = chairPressures !== null;
+  const connected = chairOnline;
   const batteryLevel = chairBattery ?? 0;
 
   // ====================== HANDLERS ======================
@@ -66,7 +68,7 @@ export default function Settings({ navigation }) {
   };
 
   const handleCloudSync = () => {
-    Alert.alert("☁️", "تمت مزامنة البيانات مع السحابة بنجاح ✅");
+    Alert.alert("☁️", i18n.t("cloudSyncSuccess"));
   };
 
   const handleAbout = () => {
@@ -92,22 +94,11 @@ export default function Settings({ navigation }) {
   // ====================== UI ======================
   return (
     <View style={[s.container, { backgroundColor: theme.background }]}>
-      <StatusBar
-        translucent
-        barStyle={isDark ? "light-content" : "dark-content"}
-        backgroundColor="transparent"
-      />
-
       {/* HEADER */}
-      <SafeAreaView
-        style={[s.headerContainer, { backgroundColor: theme.primary }]}
-        edges={["top"]}
-      >
-        <View style={s.headerInner}>
-          <Text style={s.headerTitle}>{i18n.t("settingsTitle")}</Text>
-          <Text style={s.headerSubtitle}>{i18n.t("headerSubtitle")}</Text>
-        </View>
-      </SafeAreaView>
+      <AppHeader
+        title={i18n.t("settingsTitle")}
+        subtitle={i18n.t("headerSubtitle")}
+      />
 
       <ScrollView
         contentContainerStyle={s.scrollContent}
@@ -131,8 +122,9 @@ export default function Settings({ navigation }) {
               style={[
                 s.avatar,
                 {
-                  backgroundColor: isDark ? "#FFFFFF10" : "#00000008",
+                  backgroundColor: theme.surfaceAlt,
                   overflow: "hidden",
+                  marginRight: 12,
                 },
               ]}
             >
@@ -171,17 +163,25 @@ export default function Settings({ navigation }) {
         <View
           style={[
             s.cloudCard,
-            { backgroundColor: theme.card, borderColor: theme.border },
+            {
+              backgroundColor: theme.card,
+              borderColor: theme.border,
+              marginRight: 12,
+            },
           ]}
         >
           <View style={s.row}>
             <View
               style={[
                 s.cloudIcon,
-                { backgroundColor: isDark ? "#FFFFFF08" : "#00000006" },
+                { backgroundColor: theme.surfaceAlt, marginRight: 12 },
               ]}
             >
-              <Ionicons name="cloud-outline" size={22} color={theme.primary} />
+              <Ionicons
+                name="cloud-outline"
+                size={22}
+                color={theme.iconSecondary}
+              />
             </View>
 
             <View style={{ flex: 1 }}>
@@ -193,7 +193,10 @@ export default function Settings({ navigation }) {
               </Text>
             </View>
 
-            <TouchableOpacity onPress={handleCloudSync} style={s.syncBtn}>
+            <TouchableOpacity
+              onPress={handleCloudSync}
+              style={[s.syncBtn, { backgroundColor: theme.secondary }]} // أو theme.primary
+            >
               <Text style={s.syncBtnTxt}>{i18n.t("cloudSyncNow")}</Text>
             </TouchableOpacity>
           </View>
@@ -219,7 +222,7 @@ export default function Settings({ navigation }) {
             />
             <View style={{ marginLeft: 10 }}>
               <Text style={[s.cardTitle, { color: theme.text }]}>
-                {connected ? "متصل بالكرسي" : "غير متصل بالكرسي"}
+                {connected ? i18n.t("chairConnected") : i18n.t("chairInactive")}
               </Text>
               <Text style={[s.cardSub, { color: theme.textSecondary }]}>
                 {connected
@@ -237,15 +240,12 @@ export default function Settings({ navigation }) {
                 color={getBatteryColor(batteryLevel)}
               />
               <Text style={[s.batteryText, { color: theme.text }]}>
-                طاقة البطارية: {batteryLevel}%
+                {i18n.t("batteryLevel")}: {batteryLevel}%
               </Text>
             </View>
 
             <View
-              style={[
-                s.batteryBarBg,
-                { backgroundColor: theme.border || "#00000010" },
-              ]}
+              style={[s.batteryBarBg, { backgroundColor: theme.surfaceAlt }]}
             >
               <View
                 style={[
@@ -265,7 +265,7 @@ export default function Settings({ navigation }) {
               s.secondaryBtn,
               {
                 borderColor: theme.secondary,
-                backgroundColor: isDark ? "#FFFFFF05" : "#00000003",
+                backgroundColor: theme.surface,
               },
             ]}
           >
@@ -319,7 +319,7 @@ export default function Settings({ navigation }) {
             style={[
               s.divider,
               {
-                backgroundColor: theme.border || "#00000015",
+                backgroundColor: theme.border,
                 marginVertical: 12,
               },
             ]}
@@ -340,7 +340,7 @@ export default function Settings({ navigation }) {
                   color: camActive ? theme.success : theme.error,
                 }}
               >
-                {camActive ? "الكاميرا متصلة" : "الكاميرا غير متصلة"}
+                {camActive ? i18n.t("camActive") : i18n.t("camDisconnected")}
               </Text>
             </View>
 
@@ -349,8 +349,8 @@ export default function Settings({ navigation }) {
               style={[
                 s.secondaryBtn,
                 {
-                  borderColor: theme.primary,
-                  backgroundColor: isDark ? "#FFFFFF05" : "#00000003",
+                  borderColor: theme.secondary,
+                  backgroundColor: theme.surface,
                   paddingHorizontal: 12,
                   paddingVertical: 6,
                 },
@@ -359,15 +359,15 @@ export default function Settings({ navigation }) {
               <MaterialCommunityIcons
                 name="qrcode-scan"
                 size={16}
-                color={theme.primary}
+                color={theme.secondary}
               />
               <Text
                 style={[
                   s.secondaryBtnTxt,
-                  { color: theme.primary, marginLeft: 6 },
+                  { color: theme.secondary, marginLeft: 6 },
                 ]}
               >
-                ربط الكاميرا
+                {i18n.t("cameraPair")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -389,7 +389,7 @@ export default function Settings({ navigation }) {
             <MaterialCommunityIcons
               name="clock-alert-outline"
               size={20}
-              color={theme.primary}
+              color={theme.iconSecondary}
             />
             <View style={{ marginLeft: 8 }}>
               <Text style={[s.cardTitle, { color: theme.text }]}>
@@ -434,13 +434,13 @@ export default function Settings({ navigation }) {
         >
           <TouchableOpacity style={s.row} onPress={toggleLanguage}>
             <View style={s.rowLeft}>
-              <Ionicons name="language" size={20} color={theme.primary} />
+              <Ionicons name="language" size={20} color={theme.iconSecondary} />
               <Text style={[s.cardTitle, { color: theme.text, marginLeft: 8 }]}>
                 {i18n.t("language")}
               </Text>
             </View>
             <Text style={[s.value, { color: theme.secondary }]}>
-              {lang === "ar" ? "العربية" : "English"}
+              {lang === "ar" ? i18n.t("langArabic") : i18n.t("langEnglish")}
             </Text>
           </TouchableOpacity>
 
@@ -488,7 +488,7 @@ export default function Settings({ navigation }) {
               />
               <View style={{ marginLeft: 8 }}>
                 <Text style={[s.cardTitle, { color: theme.text }]}>
-                  تشغيل الصوت
+                  {i18n.t("soundToggle")}
                 </Text>
                 <Text style={[s.cardSub, { color: theme.textSecondary }]}>
                   {i18n.t("soundDescription")}
@@ -515,7 +515,7 @@ export default function Settings({ navigation }) {
               />
               <View style={{ marginLeft: 8 }}>
                 <Text style={[s.cardTitle, { color: theme.text }]}>
-                  تفعيل الاهتزاز
+                  {i18n.t("vibrationToggle")}
                 </Text>
                 <Text style={[s.cardSub, { color: theme.textSecondary }]}>
                   {i18n.t("vibrationDescription")}
@@ -551,7 +551,7 @@ export default function Settings({ navigation }) {
           ]}
         >
           <Ionicons name="help-circle-outline" size={20} color="#FFF" />
-          <Text style={s.mainBtnTxt}>حول النظام</Text>
+          <Text style={s.mainBtnTxt}>{i18n.t("about")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -570,31 +570,6 @@ const s = StyleSheet.create({
     paddingVertical: 16,
     paddingBottom: 40,
   },
-
-  // HEADER
-  headerContainer: {
-    width: "100%",
-    paddingBottom: 10,
-    alignItems: "flex-start",
-    justifyContent: "flex-end",
-  },
-  headerInner: {
-    width: "100%",
-    paddingHorizontal: 20,
-    paddingTop: 6,
-    paddingBottom: 6,
-  },
-  headerTitle: {
-    color: "#FFF",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  headerSubtitle: {
-    color: "#FFFFFFCC",
-    fontSize: 12,
-    marginTop: 4,
-  },
-
   sectionTitle: {
     width: "92%",
     fontSize: 12,
@@ -667,7 +642,6 @@ const s = StyleSheet.create({
     marginTop: 2,
   },
   syncBtn: {
-    backgroundColor: "#3B82F6",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,

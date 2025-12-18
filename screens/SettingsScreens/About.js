@@ -1,26 +1,29 @@
 // screens/SettingsScreens/About.js
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  StatusBar,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../hooks/ThemeContext";
 import i18n from "../../hooks/i18n";
+import AppHeader from "../../components/AppHeader";
 
 export default function About({ navigation }) {
   const { theme } = useTheme();
 
   return (
     <View style={[s.container, { backgroundColor: theme.background }]}>
-      <StatusBar translucent barStyle="light-content" backgroundColor="transparent" />
-
-      {/* HEADER — نفس Account تمامًا */}
-      <SafeAreaView style={s.header} edges={["top"]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#FFF" />
-        </TouchableOpacity>
-
-        <Text style={s.headerTitle}>{i18n.t("aboutTitle")}</Text>
-      </SafeAreaView>
+      {/* HEADER*/}
+      <AppHeader
+        title={i18n.t("aboutTitle")}
+        onBack={() => navigation.goBack()}
+      />
 
       {/* CONTENT */}
       <View style={s.content}>
@@ -29,6 +32,15 @@ export default function About({ navigation }) {
         <Text style={[s.projectTitle, { color: theme.text }]}>
           {i18n.t("aboutProjectName")}
         </Text>
+        <View
+          style={{
+            width: 40,
+            height: 3,
+            backgroundColor: theme.primary,
+            borderRadius: 2,
+            marginVertical: 12,
+          }}
+        />
 
         <Text style={[s.description, { color: theme.textSecondary }]}>
           {i18n.t("aboutDescription")}
@@ -51,7 +63,7 @@ export default function About({ navigation }) {
             {i18n.t("aboutDevRahaf")}
           </Text>
           <Text style={[s.devEmail, { color: theme.textSecondary }]}>
-            rahaf@gmail.com
+            rahafadeelah99@gmail.com
           </Text>
         </View>
 
@@ -72,29 +84,6 @@ export default function About({ navigation }) {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
-
-  // 🔥 نفس هيدر Account بالضبط
-  header: {
-    backgroundColor: "#2B4C7E",
-    width: "100%",
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-
-  backBtn: {
-    paddingVertical: 6,
-    paddingRight: 10,
-  },
-
-  headerTitle: {
-    color: "#FFF",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-
   content: {
     padding: 20,
     alignItems: "center",

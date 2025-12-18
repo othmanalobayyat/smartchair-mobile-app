@@ -34,8 +34,8 @@ export default function Coach() {
   // ========================
   // STATES
   // ========================
-  const [posture, setPosture] = useState("طويلة"); // صحيحة – منحنية – تعب – طويلة
-  const [sessionMinutes, setSessionMinutes] = useState(60);
+  const [posture, setPosture] = useState("صحيحة"); // صحيحة – منحنية – تعب – طويلة
+  const [sessionMinutes, setSessionMinutes] = useState(15);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   // تمرين
@@ -125,7 +125,7 @@ export default function Coach() {
       try {
         const { sound } = await Audio.Sound.createAsync(
           // عدّل المسار حسب مكان ملف الصوت عندك
-          require("../../../assets/exercise-beep.mp3")
+          require("../assets/exercise-beep.mp3")
         );
         if (isMounted) beepSoundRef.current = sound;
       } catch (e) {
@@ -232,13 +232,13 @@ export default function Coach() {
     {
       id: 1,
       name: i18n.t("coachEx1Name"),
-      img: "https://cdn-icons-png.flaticon.com/512/3048/3048391.png",
+      img: require("../assets/exercises/arm_stretch.png"),
       desc: i18n.t("coachEx1Desc"),
     },
     {
       id: 2,
       name: i18n.t("coachEx2Name"),
-      img: "https://cdn-icons-png.flaticon.com/512/3048/3048381.png",
+      img: require("../assets/exercises/neck_rotation.png"),
       desc: i18n.t("coachEx2Desc"),
     },
     {

@@ -11,13 +11,14 @@ const i18n = new I18n({
   ar: {
     // ===== SETTINGS (موجودة كما هي) =====
     settingsTitle: "إعدادات النظام",
-    alertTimeout: "⏱ مهلة التنبيه الحالية:",
+    alertTimeout: " مهلة التنبيه الحالية:",
     minutes: "دقيقة",
     cameraToggle: "تفعيل الكاميرا",
     language: "اللغة",
     darkMode: "الوضع الليلي",
     testConnection: "اختبار الاتصال مع الكرسي",
-    support: "الدعم / عن النظام",
+    support: " الدعم",
+    about: " من نحن",
     connectionTest: "📡 اختبار الاتصال",
     connectionSuccess: "تم الاتصال مع الكرسي بنجاح ✅",
     supportTitle: "ℹ️ الدعم الفني",
@@ -43,6 +44,73 @@ const i18n = new I18n({
     accountCloud: "الحساب والمزامنة",
     supportAbout: "من نحن ؟ بحاجة إلى دعم؟",
     chairSettings: "ضبط الكرسي والكاميرا",
+    batteryLevel: "طاقة البطارية",
+    cameraPair: "ربط الكاميرا",
+    soundToggle: "تشغيل الصوت",
+    vibrationToggle: "تفعيل الاهتزاز",
+    cloudSyncSuccess: "تمت مزامنة البيانات مع السحابة بنجاح ✅",
+    langArabic: "العربية",
+    langEnglish: "الإنجليزية",
+    // --- Account Settings ---
+    accountSettingsTitle: "إعدادات الحساب",
+    editProfile: "تعديل البيانات الشخصية",
+    changePassword: "تغيير كلمة المرور",
+    logout: "تسجيل الخروج",
+
+    success: "تم",
+    error: "خطأ",
+    avatarUpdated: "تم تحديث صورة البروفايل بنجاح",
+    avatarUpdateFailed: "فشل تحديث الصورة",
+
+    // ===== Change Password =====
+    changePasswordTitle: "تغيير كلمة المرور",
+    currentPassword: "كلمة المرور الحالية",
+    newPassword: "كلمة المرور الجديدة",
+    confirmNewPassword: "تأكيد كلمة المرور الجديدة",
+
+    changePasswordBtn: "تغيير",
+    changePasswordSaving: "جارٍ الحفظ...",
+
+    cpAllFieldsRequired: "جميع الحقول مطلوبة",
+    cpMinLength: "كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل",
+    cpNotMatch: "كلمتا المرور غير متطابقتين",
+    cpSameAsOld: "كلمة المرور الجديدة يجب أن تختلف عن الحالية",
+    cpSuccess: "تم تغيير كلمة المرور بنجاح",
+    cpGenericError: "حدث خطأ أثناء تغيير كلمة المرور",
+
+    // ===== Edit Profile =====
+    editProfileTitle: "تعديل البيانات",
+    profileName: "الاسم",
+    profileEmail: "الإيميل",
+
+    profileSave: "حفظ",
+    profileSaving: "جارٍ الحفظ...",
+
+    profileAllFieldsRequired: "جميع الحقول مطلوبة",
+    profileInvalidEmail: "صيغة البريد الإلكتروني غير صحيحة",
+    profileUpdateSuccess: "تم تحديث البيانات بنجاح",
+    profileUpdateError: "حدث خطأ أثناء التحديث",
+
+    // ===== Support =====
+    supportTitle: "الدعم",
+    supportHelpTitle: "كيف يمكننا مساعدتك؟",
+    supportDescription:
+      "إذا واجهت أي مشكلة أو لديك سؤال، يمكنك التواصل معنا مباشرة من خلال الخيارات التالية:",
+
+    supportContact: "مراسلة فريق الدعم",
+    supportContactSub: "الرد خلال 24 ساعة",
+
+    supportReport: "الإبلاغ عن خطأ",
+    supportReportSub: "ساعدنا في تحسين التطبيق",
+
+    supportFAQ: "الأسئلة الشائعة",
+    supportFAQSub: "إجابات لأكثر الأسئلة شيوعاً",
+
+    supportWebsite: "الموقع الرسمي",
+    supportWebsiteSub: "سيتم إطلاقه لاحقاً",
+
+    supportFaqSoon: "سيتم إضافة صفحة الأسئلة الشائعة قريباً.",
+    supportWebsiteSoon: "سيتم إضافة موقع رسمي عند الإطلاق.",
 
     // ===== SMART CHAIR (مضاف جديد) =====
     smartChairTitle: "الكرسي الذكي",
@@ -103,9 +171,8 @@ const i18n = new I18n({
     coachEx1Name: "تمديد الذراعين",
     coachEx1Desc: "حرّك ذراعيك للأمام والخلف لمدة 30 ثانية.",
 
-    coachEx2Name: "تمرين الرقبة",
-    coachEx2Desc: "حرّك رقبتك بلطف يمينًا ويسارًا.",
-
+    coachEx2Name: "تمرين دوران الرقبة",
+    coachEx2Desc: "حرّك رقبتك ببطء يمينًا ثم يسارًا لتحسين المرونة.",
     coachEx3Name: "استقامة الجلوس",
     coachEx3Desc: "اجلس باستقامة مع شد الكتفين للخلف.",
 
@@ -217,13 +284,14 @@ const i18n = new I18n({
   en: {
     // ===== SETTINGS (موجودة كما هي) =====
     settingsTitle: "System Settings",
-    alertTimeout: "⏱ Alert Timeout:",
+    alertTimeout: " Alert Timeout:",
     minutes: "min",
     cameraToggle: "Camera",
     language: "Language",
     darkMode: "Dark Mode",
     testConnection: "Test Chair Connection",
-    support: "Support / About",
+    support: "Support",
+    about: "About Us",
     connectionTest: "📡 Connection Test",
     connectionSuccess: "Chair connection successful ✅",
     supportTitle: "ℹ️ Support",
@@ -258,6 +326,74 @@ const i18n = new I18n({
     accountCloud: "Account & Cloud Sync",
     cloudSyncTitle: "Cloud Sync",
     supportAbout: "About us & support",
+    batteryLevel: "Battery Level",
+    cameraPair: "Pair Camera",
+    soundToggle: "Sound",
+    vibrationToggle: "Vibration",
+    cloudSyncSuccess: "Data synced to the cloud successfully ✅",
+    langArabic: "Arabic",
+    langEnglish: "English",
+
+    // --- Account Settings ---
+    accountSettingsTitle: "Account Settings",
+    editProfile: "Edit Profile",
+    changePassword: "Change Password",
+    logout: "Log Out",
+
+    success: "Success",
+    error: "Error",
+    avatarUpdated: "Profile picture updated successfully",
+    avatarUpdateFailed: "Failed to update profile picture",
+
+    // ===== Change Password =====
+    changePasswordTitle: "Change Password",
+    currentPassword: "Current Password",
+    newPassword: "New Password",
+    confirmNewPassword: "Confirm New Password",
+
+    changePasswordBtn: "Change",
+    changePasswordSaving: "Saving...",
+
+    cpAllFieldsRequired: "All fields are required",
+    cpMinLength: "New password must be at least 8 characters",
+    cpNotMatch: "Passwords do not match",
+    cpSameAsOld: "New password must be different from the current one",
+    cpSuccess: "Password changed successfully",
+    cpGenericError: "An error occurred while changing the password",
+
+    // ===== Edit Profile =====
+    editProfileTitle: "Edit Profile",
+    profileName: "Name",
+    profileEmail: "Email",
+
+    profileSave: "Save",
+    profileSaving: "Saving...",
+
+    profileAllFieldsRequired: "All fields are required",
+    profileInvalidEmail: "Invalid email format",
+    profileUpdateSuccess: "Profile updated successfully",
+    profileUpdateError: "An error occurred while updating",
+
+    // ===== Support =====
+    supportTitle: "Support",
+    supportHelpTitle: "How can we help you?",
+    supportDescription:
+      "If you encounter any issue or have a question, you can contact us directly using the options below:",
+
+    supportContact: "Contact Support Team",
+    supportContactSub: "Response within 24 hours",
+
+    supportReport: "Report a Bug",
+    supportReportSub: "Help us improve the app",
+
+    supportFAQ: "FAQ",
+    supportFAQSub: "Answers to the most common questions",
+
+    supportWebsite: "Official Website",
+    supportWebsiteSub: "Coming soon",
+
+    supportFaqSoon: "FAQ page will be added soon.",
+    supportWebsiteSoon: "Official website will be launched soon.",
 
     // ===== SMART CHAIR (مضاف جديد) =====
     smartChairTitle: "Smart Chair",
@@ -318,8 +454,9 @@ const i18n = new I18n({
     coachEx1Name: "Arm Stretch",
     coachEx1Desc: "Move your arms forward and backward for 30 seconds.",
 
-    coachEx2Name: "Neck Exercise",
-    coachEx2Desc: "Gently move your neck left and right.",
+    coachEx2Name: "Neck Rotation",
+    coachEx2Desc:
+      "Slowly move your neck left and right to improve flexibility.",
 
     coachEx3Name: "Posture Correction",
     coachEx3Desc: "Sit straight and pull your shoulders back.",
