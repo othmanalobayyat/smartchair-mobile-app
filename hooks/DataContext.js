@@ -7,6 +7,8 @@ import React, {
   useState,
 } from "react";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const DataContext = createContext();
 export const useData = () => useContext(DataContext);
 
@@ -30,7 +32,13 @@ export function DataProvider({ children }) {
   const [cameraEnabled, setCameraEnabled] = useState(true);
 
   // PAIRING (مؤقت)
-  const [cameraPaired, setCameraPaired] = useState(true);
+  const [cameraPaired, setCameraPaired] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem("CAMERA_PAIRED").then((v) => {
+      setCameraPaired(v === "true");
+    });
+  }, []);
 
   // CHAIR STATES (NEW)
   const [chairOnline, setChairOnline] = useState(false);
@@ -160,7 +168,7 @@ export function DataProvider({ children }) {
   // FINAL CAMERA STATE (derived, NOT a state)
   const camActive = cameraPaired && camOnline && cameraEnabled;
   useEffect(() => {
-    if (!cameraPaired) return;
+    if (!cameraPaired || !camOnline) return;
     if (!wsRef.current) return;
     if (wsRef.current.readyState !== WebSocket.OPEN) return;
 
@@ -170,7 +178,7 @@ export function DataProvider({ children }) {
         action: cameraEnabled ? "start" : "stop",
       })
     );
-  }, [cameraEnabled, cameraPaired]);
+  }, [cameraEnabled, cameraPaired, camOnline]);
 
   return (
     <DataContext.Provider
@@ -179,7 +187,7 @@ export function DataProvider({ children }) {
         camOnline,
         cameraEnabled,
         setCameraEnabled,
-
+        setCameraPaired,
         attention,
         isPresent,
         drowsy,
