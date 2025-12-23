@@ -1,26 +1,15 @@
 // screens/Statistics.js
 import React, { useState, useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  I18nManager,
-  StatusBar,
-} from "react-native";
+import { View, Text, ScrollView, StyleSheet, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AppHeader from "../components/AppHeader";
 import { useTheme } from "../hooks/ThemeContext";
 import { useAuth } from "../hooks/AuthContext";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
-
 import i18n from "../hooks/i18n";
+import SessionCard from "./StatisticsScreens/SessionCard";
+import DailyScoreCard from "./StatisticsScreens/DailyScoreCard";
+import InsightTip from "./StatisticsScreens/InsightTip";
+import HistoryButton from "./StatisticsScreens/HistoryButton";
 
 export default function Statistics() {
   const { theme, isDark } = useTheme();
@@ -139,183 +128,38 @@ export default function Statistics() {
         contentContainerStyle={{ alignItems: "center", paddingBottom: 40 }}
       >
         {sessions.map((sess) => (
-          <View
+          <SessionCard
             key={sess.id}
-            style={[
-              s.card,
-              {
-                backgroundColor: theme.card,
-                shadowOpacity: isDark ? 0 : 0.08,
-                borderColor: theme.border,
-                borderWidth: 1,
-              },
-            ]}
-          >
-            <Text style={[s.cardTitle, { color: theme.text }]}>
-              {i18n.t("session")} {sess.id}
-            </Text>
-
-            <View
-              style={[
-                s.table,
-                {
-                  backgroundColor: theme.surfaceAlt,
-                  borderColor: theme.border,
-                },
-              ]}
-            >
-              {/* المدة */}
-              <View style={s.row}>
-                <View style={s.iconText}>
-                  <Ionicons
-                    name="time-outline"
-                    size={18}
-                    color={theme.iconSecondary}
-                  />
-                  <Text style={[s.label, { color: theme.text }]}>
-                    {i18n.t("duration")}
-                  </Text>
-                </View>
-                <Text style={[s.value, { color: theme.text }]}>
-                  {formatDuration(sess.duration)}
-                </Text>
-              </View>
-
-              <View style={[s.sep, { backgroundColor: theme.border }]} />
-
-              {/* النسبة الصحيحة */}
-              <View style={s.row}>
-                <View style={s.iconText}>
-                  <MaterialCommunityIcons
-                    name="check-decagram"
-                    size={20}
-                    color={colorByScore(sess.correct)}
-                  />
-                  <Text style={[s.label, { color: theme.text }]}>
-                    {i18n.t("correctPercent")}
-                  </Text>
-                </View>
-                <Text style={[s.value, { color: colorByScore(sess.correct) }]}>
-                  {sess.correct}%
-                </Text>
-              </View>
-
-              <View
-                style={[
-                  s.sep,
-                  { backgroundColor: isDark ? "#303A52" : "#E0E5EE" },
-                ]}
-              />
-
-              {/* عدد التنبيهات */}
-              <View style={s.row}>
-                <View style={s.iconText}>
-                  <MaterialIcons
-                    name="warning-amber"
-                    size={20}
-                    color={theme.warning}
-                  />
-                  <Text style={[s.label, { color: theme.text }]}>
-                    {i18n.t("alertsCount")}
-                  </Text>
-                </View>
-                <Text style={[s.value, { color: "#E67E22" }]}>
-                  {sess.alerts}
-                </Text>
-              </View>
-            </View>
-          </View>
+            session={sess}
+            theme={theme}
+            isDark={isDark}
+            formatDuration={formatDuration}
+            colorByScore={colorByScore}
+          />
         ))}
 
         {/* التقييم اليومي */}
-        <View
-          style={[
-            s.scoreCard,
-            {
-              backgroundColor: isDark ? "#1C2433" : "#FFF",
-              borderColor: isDark ? "#2E3A50" : "#E0E5EE",
-              borderWidth: 1,
-            },
-          ]}
-        >
-          <Text
-            style={[s.scoreTitle, { color: isDark ? "#AFCBFF" : "#2B4C7E" }]}
-          >
-            {i18n.t("dailyScore")}
-          </Text>
-
-          <View
-            style={[
-              s.barBg,
-              { backgroundColor: isDark ? "#303A52" : "#E0E5EE" },
-            ]}
-          >
-            <View
-              style={[
-                s.barFill,
-                {
-                  width: `${dailyScore}%`,
-                  backgroundColor: colorByScore(dailyScore),
-                },
-              ]}
-            />
-          </View>
-
-          <Text style={[s.scoreText, { color: theme.text }]}>
-            {dailyScore}/100
-          </Text>
-        </View>
+        <DailyScoreCard
+          dailyScore={dailyScore}
+          theme={theme}
+          isDark={isDark}
+          colorByScore={colorByScore}
+        />
 
         {/* نص الملاحظة */}
-        <View
-          style={[
-            s.tipBox,
-            {
-              backgroundColor: theme.surfaceAlt,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              borderColor: theme.border,
-            },
-          ]}
-        >
-          <MaterialCommunityIcons
-            name="lightbulb-on-outline"
-            size={20}
-            color={theme.secondary}
-            style={{ marginRight: 6 }}
-          />
-          <Text style={[s.tipText, { color: theme.secondary }]}>{tip}</Text>
-        </View>
+        <InsightTip text={tip} theme={theme} />
 
         {/* زر التاريخ */}
-        <TouchableOpacity
-          activeOpacity={0.8}
+        <HistoryButton
+          theme={theme}
           onPress={() => navigation.navigate("Historical")}
-          style={[
-            s.btn,
-            {
-              backgroundColor: theme.secondary,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          ]}
-        >
-          <MaterialCommunityIcons
-            name="calendar-month-outline"
-            size={20}
-            color="#FFF"
-            style={{ marginRight: 6 }}
-          />
-          <Text style={s.btnTxt}>{i18n.t("historyBtn")}</Text>
-        </TouchableOpacity>
+        />
       </ScrollView>
     </View>
   );
 }
 
-// ====================== STYLES (كما هي بدون أي تعديل) ======================
+// ====================== STYLES ======================
 const s = StyleSheet.create({
   container: { flex: 1, alignItems: "center" },
   headerContainer: {

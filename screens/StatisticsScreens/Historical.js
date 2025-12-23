@@ -19,6 +19,11 @@ import * as Sharing from "expo-sharing";
 import { LineChart } from "react-native-chart-kit";
 import AppHeader from "../../components/AppHeader";
 import i18n from "../../hooks/i18n";
+import AveragePerformanceCard from "./AveragePerformanceCard";
+import PerformanceChart from "./PerformanceChart";
+import HistoryDayCard from "./HistoryDayCard";
+import MotivationFooter from "./MotivationFooter";
+import ShareResultsButton from "./ShareResultsButton";
 
 export default function Historical({ navigation }) {
   const { theme, isDark } = useTheme();
@@ -105,47 +110,14 @@ export default function Historical({ navigation }) {
           }}
         >
           {/* AVERAGE PERFORMANCE */}
-          <View
-            style={[
-              s.avgBox,
-              {
-                backgroundColor: theme.card,
-                borderColor: theme.border,
-              },
-            ]}
-          >
-            <Text style={[s.avgLabel, { color: theme.text }]}>
-              {i18n.t("averagePerformance")}
-            </Text>
-            <Text style={[s.avgValue, { color: colorByScore(avg) }]}>
-              {avg}%
-            </Text>
-          </View>
+          <AveragePerformanceCard
+            avg={avg}
+            theme={theme}
+            colorByScore={colorByScore}
+          />
 
           {/* LINE CHART */}
-          {history.length > 0 && (
-            <View style={s.chartBox}>
-              <LineChart
-                data={{
-                  labels: history.map((h) => h.date.slice(5)),
-                  datasets: [{ data: history.map((h) => h.score) }],
-                }}
-                width={Dimensions.get("window").width * 0.9}
-                height={180}
-                yAxisSuffix="%"
-                chartConfig={{
-                  backgroundGradientFrom: isDark ? "#1C2433" : "#DDE9FA",
-                  backgroundGradientTo: isDark ? "#1C2433" : "#FFFFFF",
-                  decimalPlaces: 0,
-                  color: (opacity = 1) => `rgba(76,137,200,${opacity})`,
-                  labelColor: () => (isDark ? "#B9D4F5" : "#2B4C7E"),
-                  propsForDots: { r: "5", strokeWidth: "2", stroke: "#4C89C8" },
-                }}
-                bezier
-                style={{ borderRadius: 12 }}
-              />
-            </View>
-          )}
+          <PerformanceChart history={history} theme={theme} isDark={isDark} />
 
           {/* TITLE */}
           <Text style={[s.title, { color: theme.text }]}>
@@ -153,72 +125,21 @@ export default function Historical({ navigation }) {
           </Text>
 
           {/* CARDS */}
-          {history.map((d, i) => (
-            <Animated.View
+          {history.map((d) => (
+            <HistoryDayCard
               key={d.date}
-              style={{
-                opacity: fadeAnim,
-                transform: [
-                  {
-                    translateY: fadeAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [20, 0],
-                    }),
-                  },
-                ],
-              }}
-            >
-              <View
-                style={[
-                  s.card,
-                  {
-                    backgroundColor: theme.card,
-                    borderColor: theme.border,
-                  },
-                ]}
-              >
-                <View style={s.row}>
-                  <MaterialCommunityIcons
-                    name="calendar-month-outline"
-                    size={20}
-                    color={theme.iconSecondary}
-                  />
-                  <Text style={[s.dateText, { color: theme.text }]}>
-                    {d.date}
-                  </Text>
-                </View>
-
-                <View style={[s.barBg, { backgroundColor: theme.border }]}>
-                  <View
-                    style={[
-                      s.barFill,
-                      {
-                        width: `${d.score}%`,
-                        backgroundColor: colorByScore(d.score),
-                      },
-                    ]}
-                  />
-                </View>
-
-                <Text style={[s.score, { color: colorByScore(d.score) }]}>
-                  {d.score}/100
-                </Text>
-              </View>
-            </Animated.View>
+              day={d}
+              theme={theme}
+              fadeAnim={fadeAnim}
+              colorByScore={colorByScore}
+            />
           ))}
 
           {/* FOOTER */}
-          <View style={[s.footerBox, { backgroundColor: theme.surfaceAlt }]}>
-            <Text style={[s.footerTxt, { color: theme.secondary }]}>
-              {motivation}
-            </Text>
-          </View>
+          <MotivationFooter text={motivation} theme={theme} />
 
           {/* SHARE BUTTON */}
-          <TouchableOpacity onPress={handleShare} style={s.shareBtn}>
-            <Ionicons name="share-social" size={20} color="#FFF" />
-            <Text style={s.shareTxt}>{i18n.t("shareResults")}</Text>
-          </TouchableOpacity>
+          <ShareResultsButton onPress={handleShare} />
         </ViewShot>
       </ScrollView>
     </View>
