@@ -21,8 +21,15 @@ import i18n from "../hooks/i18n";
 import { useAuth } from "../hooks/AuthContext";
 import { useData } from "../hooks/DataContext";
 import AppHeader from "../components/AppHeader";
+import { useSettings } from "../hooks/SettingsContext";
 
 export default function Settings({ navigation }) {
+  const {
+    soundEnabled,
+    setSoundEnabled,
+    vibrationEnabled,
+    setVibrationEnabled,
+  } = useSettings();
   const { theme, isDark, toggleTheme } = useTheme();
   const {
     chairBattery,
@@ -35,8 +42,7 @@ export default function Settings({ navigation }) {
 
   const [alertTimeout, setAlertTimeout] = useState(5);
   const [lang, setLang] = useState(i18n.locale.startsWith("ar") ? "ar" : "en");
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [vibrationEnabled, setVibrationEnabled] = useState(false);
+
   const connected = chairOnline;
   const batteryLevel = chairBattery ?? 0;
 

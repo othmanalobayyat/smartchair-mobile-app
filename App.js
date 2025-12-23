@@ -8,6 +8,7 @@ import { DataProvider } from "./hooks/DataContext";
 import { loadLanguage } from "./hooks/i18n";
 import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import i18n from "./hooks/i18n";
+import { SettingsProvider } from "./hooks/SettingsContext";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -180,13 +181,15 @@ function RootNavigator() {
 export default function App() {
   return (
     <ThemeProvider>
-      <DataProvider>
-        <AuthProvider>
-          <NavigationContainer>
-            <RootNavigator />
-          </NavigationContainer>
-        </AuthProvider>
-      </DataProvider>
+      <SettingsProvider>
+        <DataProvider>
+          <AuthProvider>
+            <NavigationContainer>
+              <RootNavigator />
+            </NavigationContainer>
+          </AuthProvider>
+        </DataProvider>
+      </SettingsProvider>
     </ThemeProvider>
   );
 }

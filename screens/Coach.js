@@ -2,6 +2,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import i18n from "../hooks/i18n";
 import { useTheme } from "../hooks/ThemeContext";
+import { useSettings } from "../hooks/SettingsContext";
+import { playSound, vibrate } from "../services/feedback";
 import {
   View,
   Text,
@@ -15,9 +17,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import { Audio } from "expo-av";
-
 import ChatBot from "./CoachScreens/ChatBot";
 import Header from "./CoachScreens/Header";
 import HeroCard from "./CoachScreens/HeroCard";
@@ -106,50 +105,20 @@ export default function Coach() {
     }, 60000);
     return () => clearInterval(timer);
   }, []);
+  // ========================
+  const { soundEnabled, vibrationEnabled, ready } = useSettings();
+  if (!ready) return null;
 
   // ========================
   // HAPTICS عند تغير الـ posture
   // ========================
   useEffect(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-  }, [posture]);
+    vibrate(vibrationEnabled, "light");
+  }, [posture, vibrationEnabled]);
 
   // ========================
   // BEEP SOUND للعد التنازلي
   // ========================
-  const beepSoundRef = useRef(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      try {
-        const { sound } = await Audio.Sound.createAsync(
-          // عدّل المسار حسب مكان ملف الصوت عندك
-          require("../assets/exercise-beep.mp3")
-        );
-        if (isMounted) beepSoundRef.current = sound;
-      } catch (e) {
-        console.log("Error loading beep sound:", e);
-      }
-    })();
-
-    return () => {
-      isMounted = false;
-      if (beepSoundRef.current) {
-        beepSoundRef.current.unloadAsync();
-      }
-    };
-  }, []);
-
-  const playBeep = async () => {
-    try {
-      if (beepSoundRef.current) {
-        await beepSoundRef.current.replayAsync();
-      }
-    } catch (e) {
-      console.log("Error playing beep:", e);
-    }
-  };
 
   // ========================
   // EXERCISE COUNTDOWN TIMER
@@ -170,7 +139,8 @@ export default function Coach() {
         },
         ...prev,
       ]);
-      playBeep();
+      playSound(soundEnabled, require("../assets/exercise-beep.mp3"));
+      vibrate(vibrationEnabled, "heavy");
       return;
     }
 
@@ -178,15 +148,21 @@ export default function Coach() {
       setExerciseSeconds((prev) => {
         const next = prev - 1;
         if (next > 0 && next <= 3) {
-          // آخر ثلاث ثواني
-          playBeep();
+          playSound(soundEnabled, require("../assets/exercise-beep.mp3"));
         }
         return next;
       });
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isExerciseRunning, exerciseSeconds, activeExercise, exerciseDuration]);
+  }, [
+    isExerciseRunning,
+    exerciseSeconds,
+    activeExercise,
+    exerciseDuration,
+    soundEnabled,
+    vibrationEnabled,
+  ]);
 
   const handleStartExercise = (ex) => {
     setActiveExercise(ex);
