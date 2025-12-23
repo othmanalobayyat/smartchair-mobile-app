@@ -11,7 +11,9 @@ import {
   StatusBar,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AppHeader from "../components/AppHeader";
 import { useTheme } from "../hooks/ThemeContext";
+import { useAuth } from "../hooks/AuthContext";
 import {
   Ionicons,
   MaterialCommunityIcons,
@@ -23,6 +25,7 @@ import i18n from "../hooks/i18n";
 export default function Statistics() {
   const { theme, isDark } = useTheme();
   const navigation = useNavigation();
+  const { token } = useAuth();
 
   // ⭐ حل بسيط لإعادة تحديث الصفحة عند تغيير اللغة
   const [, forceRerender] = useState(false);
@@ -35,28 +38,81 @@ export default function Statistics() {
     return () => clearInterval(interval);
   }, []);
 
-  const [sessions] = useState([
-    { id: 1, duration: 45, correct: 82, alerts: 3 },
-    { id: 2, duration: 30, correct: 90, alerts: 1 },
-    { id: 3, duration: 55, correct: 76, alerts: 4 },
-  ]);
+  const formatDuration = (minutes) => {
+    if (minutes < 60) {
+      return `${minutes} ${i18n.t("minutesUnit")}`;
+    }
 
-  const dailyScore = 84;
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+
+    if (m === 0) {
+      return `${h} ${i18n.t("hoursUnit")}`;
+    }
+
+    return `${h} ${i18n.t("hoursUnit")} ${m} ${i18n.t("minutesUnit")}`;
+  };
+
+  const [sessions, setSessions] = useState([]);
+  const [dailyScore, setDailyScore] = useState(0);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // 1️⃣ daily score
+        const summaryRes = await fetch(
+          "http://10.76.189.74:3000/api/stats/summary",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const summary = await summaryRes.json();
+        setDailyScore(summary.score ?? 0);
+
+        // 2️⃣ sessions list
+        const sessionsRes = await fetch(
+          "http://10.76.189.74:3000/api/session/list",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const sessionsData = await sessionsRes.json();
+
+        setSessions(
+          sessionsData.map((s, i) => ({
+            id: i + 1,
+            duration: Math.round(s.duration_seconds / 60),
+            correct: s.avg_posture_score,
+            alerts: s.alerts_count,
+          }))
+        );
+      } catch (e) {
+        console.log("❌ Failed to fetch stats", e);
+      }
+    };
+
+    if (!token) return;
+    fetchStats();
+  }, [token]);
 
   const tip = i18n.locale.startsWith("ar")
     ? "ميلك للأمام زاد اليوم 20% عن أمس."
     : "Your forward leaning increased by 20% today.";
 
   const colorByScore = (x) =>
-    x >= 80 ? "#27AE60" : x >= 60 ? "#4C89C8" : "#E74C3C";
+    x >= 80 ? theme.success : x >= 60 ? theme.secondary : theme.error;
 
   return (
     <View
       style={[
         s.container,
         {
-          backgroundColor:
-            isDark || theme.mode === "dark" ? "#0F172A" : theme.background,
+          backgroundColor: theme.background,
         },
       ]}
     >
@@ -67,12 +123,13 @@ export default function Statistics() {
       />
 
       {/* HEADER */}
-      <SafeAreaView style={s.headerContainer} edges={["top"]}>
-        <Text style={s.headerTitle}>{i18n.t("statsTitle")}</Text>
-      </SafeAreaView>
+      <AppHeader
+        title={i18n.t("statsTitle")}
+        subtitle={i18n.t("statsOverview")}
+      />
 
       {/* PAGE TITLE */}
-      <Text style={[s.title, { color: isDark ? "#D6E4FF" : "#2B4C7E" }]}>
+      <Text style={[s.title, { color: theme.primary }]}>
         {i18n.t("dailySummary")}
       </Text>
 
@@ -87,16 +144,14 @@ export default function Statistics() {
             style={[
               s.card,
               {
-                backgroundColor: isDark ? "#1C2433" : "#FFF",
+                backgroundColor: theme.card,
                 shadowOpacity: isDark ? 0 : 0.08,
-                borderColor: isDark ? "#2E3A50" : "#E0E5EE",
+                borderColor: theme.border,
                 borderWidth: 1,
               },
             ]}
           >
-            <Text
-              style={[s.cardTitle, { color: isDark ? "#AFCBFF" : "#2B4C7E" }]}
-            >
+            <Text style={[s.cardTitle, { color: theme.text }]}>
               {i18n.t("session")} {sess.id}
             </Text>
 
@@ -104,8 +159,8 @@ export default function Statistics() {
               style={[
                 s.table,
                 {
-                  backgroundColor: isDark ? "#242E42" : "#FAFBFD",
-                  borderColor: isDark ? "#303A52" : "#E0E5EE",
+                  backgroundColor: theme.surfaceAlt,
+                  borderColor: theme.border,
                 },
               ]}
             >
@@ -115,25 +170,18 @@ export default function Statistics() {
                   <Ionicons
                     name="time-outline"
                     size={18}
-                    color={isDark ? "#E8ECF3" : "#333"}
+                    color={theme.iconSecondary}
                   />
-                  <Text
-                    style={[s.label, { color: isDark ? "#E8ECF3" : "#333" }]}
-                  >
+                  <Text style={[s.label, { color: theme.text }]}>
                     {i18n.t("duration")}
                   </Text>
                 </View>
-                <Text style={[s.value, { color: isDark ? "#E8ECF3" : "#333" }]}>
-                  {sess.duration} {i18n.t("minutesUnit")}
+                <Text style={[s.value, { color: theme.text }]}>
+                  {formatDuration(sess.duration)}
                 </Text>
               </View>
 
-              <View
-                style={[
-                  s.sep,
-                  { backgroundColor: isDark ? "#303A52" : "#E0E5EE" },
-                ]}
-              />
+              <View style={[s.sep, { backgroundColor: theme.border }]} />
 
               {/* النسبة الصحيحة */}
               <View style={s.row}>
@@ -143,9 +191,7 @@ export default function Statistics() {
                     size={20}
                     color={colorByScore(sess.correct)}
                   />
-                  <Text
-                    style={[s.label, { color: isDark ? "#E8ECF3" : "#333" }]}
-                  >
+                  <Text style={[s.label, { color: theme.text }]}>
                     {i18n.t("correctPercent")}
                   </Text>
                 </View>
@@ -167,11 +213,9 @@ export default function Statistics() {
                   <MaterialIcons
                     name="warning-amber"
                     size={20}
-                    color="#E67E22"
+                    color={theme.warning}
                   />
-                  <Text
-                    style={[s.label, { color: isDark ? "#E8ECF3" : "#333" }]}
-                  >
+                  <Text style={[s.label, { color: theme.text }]}>
                     {i18n.t("alertsCount")}
                   </Text>
                 </View>
@@ -217,7 +261,7 @@ export default function Statistics() {
             />
           </View>
 
-          <Text style={[s.scoreText, { color: isDark ? "#E8ECF3" : "#333" }]}>
+          <Text style={[s.scoreText, { color: theme.text }]}>
             {dailyScore}/100
           </Text>
         </View>
@@ -227,22 +271,21 @@ export default function Statistics() {
           style={[
             s.tipBox,
             {
-              backgroundColor: isDark ? "#1E3A5F" : "#EAF2FA",
+              backgroundColor: theme.surfaceAlt,
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
+              borderColor: theme.border,
             },
           ]}
         >
           <MaterialCommunityIcons
             name="lightbulb-on-outline"
             size={20}
-            color={isDark ? "#B9D4F5" : "#4C89C8"}
+            color={theme.secondary}
             style={{ marginRight: 6 }}
           />
-          <Text style={[s.tipText, { color: isDark ? "#B9D4F5" : "#4C89C8" }]}>
-            {tip}
-          </Text>
+          <Text style={[s.tipText, { color: theme.secondary }]}>{tip}</Text>
         </View>
 
         {/* زر التاريخ */}
@@ -252,7 +295,7 @@ export default function Statistics() {
           style={[
             s.btn,
             {
-              backgroundColor: "#4C89C8",
+              backgroundColor: theme.secondary,
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",

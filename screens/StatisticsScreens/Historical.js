@@ -10,12 +10,14 @@ import {
   Dimensions,
   Animated,
 } from "react-native";
+import { useAuth } from "../../hooks/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../hooks/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import { LineChart } from "react-native-chart-kit";
+import AppHeader from "../../components/AppHeader";
 import i18n from "../../hooks/i18n";
 
 export default function Historical({ navigation }) {
@@ -23,20 +25,17 @@ export default function Historical({ navigation }) {
   const viewRef = useRef();
 
   // SAMPLE HISTORY (replace with real data)
-  const [history] = useState([
-    { date: "2025-11-05", score: 84 },
-    { date: "2025-11-04", score: 77 },
-    { date: "2025-11-03", score: 91 },
-    { date: "2025-11-02", score: 65 },
-    { date: "2025-11-01", score: 88 },
-  ]);
+  const [history, setHistory] = useState([]);
+
+  const { token } = useAuth();
 
   const colorByScore = (x) =>
-    x >= 80 ? "#27AE60" : x >= 60 ? "#4C89C8" : "#E74C3C";
+    x >= 80 ? theme.success : x >= 60 ? theme.secondary : theme.error;
 
-  const avg = Math.round(
-    history.reduce((a, b) => a + b.score, 0) / history.length
-  );
+  const avg =
+    history.length > 0
+      ? Math.round(history.reduce((a, b) => a + b.score, 0) / history.length)
+      : 0;
 
   const motivation =
     avg >= 85
@@ -54,6 +53,26 @@ export default function Historical({ navigation }) {
     }).start();
   }, []);
 
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await fetch("http://10.76.189.74:3000/api/stats/history", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        setHistory(data);
+      } catch (e) {
+        console.log("❌ Failed to fetch history", e);
+      }
+    };
+
+    if (!token) return;
+    fetchHistory();
+  }, [token]);
+
   const handleShare = async () => {
     const uri = await viewRef.current.capture();
     await Sharing.shareAsync(uri);
@@ -67,13 +86,11 @@ export default function Historical({ navigation }) {
         backgroundColor="transparent"
       />
 
-      {/* FIXED HEADER */}
-      <SafeAreaView style={s.header} edges={["top"]}>
-        <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#FFF" />
-        </TouchableOpacity>
-        <Text style={s.headerTitle}>{i18n.t("historyTitle")}</Text>
-      </SafeAreaView>
+      {/* HEADER */}
+      <AppHeader
+        title={i18n.t("historyTitle")}
+        onBack={() => navigation.goBack()}
+      />
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: 40, alignItems: "center" }}
@@ -84,7 +101,7 @@ export default function Historical({ navigation }) {
           options={{ format: "jpg", quality: 0.95 }}
           style={{
             width: "100%",
-            backgroundColor: isDark ? "#0F172A" : theme.background,
+            backgroundColor: theme.background,
           }}
         >
           {/* AVERAGE PERFORMANCE */}
@@ -92,14 +109,12 @@ export default function Historical({ navigation }) {
             style={[
               s.avgBox,
               {
-                backgroundColor: isDark ? "#1C2433" : "#FFF",
-                borderColor: isDark ? "#2E3A50" : "#E0E5EE",
+                backgroundColor: theme.card,
+                borderColor: theme.border,
               },
             ]}
           >
-            <Text
-              style={[s.avgLabel, { color: isDark ? "#AFCBFF" : "#2B4C7E" }]}
-            >
+            <Text style={[s.avgLabel, { color: theme.text }]}>
               {i18n.t("averagePerformance")}
             </Text>
             <Text style={[s.avgValue, { color: colorByScore(avg) }]}>
@@ -108,37 +123,39 @@ export default function Historical({ navigation }) {
           </View>
 
           {/* LINE CHART */}
-          <View style={s.chartBox}>
-            <LineChart
-              data={{
-                labels: history.map((h) => h.date.slice(5)),
-                datasets: [{ data: history.map((h) => h.score) }],
-              }}
-              width={Dimensions.get("window").width * 0.9}
-              height={180}
-              yAxisSuffix="%"
-              chartConfig={{
-                backgroundGradientFrom: isDark ? "#1C2433" : "#DDE9FA",
-                backgroundGradientTo: isDark ? "#1C2433" : "#FFFFFF",
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(76,137,200,${opacity})`,
-                labelColor: () => (isDark ? "#B9D4F5" : "#2B4C7E"),
-                propsForDots: { r: "5", strokeWidth: "2", stroke: "#4C89C8" },
-              }}
-              bezier
-              style={{ borderRadius: 12 }}
-            />
-          </View>
+          {history.length > 0 && (
+            <View style={s.chartBox}>
+              <LineChart
+                data={{
+                  labels: history.map((h) => h.date.slice(5)),
+                  datasets: [{ data: history.map((h) => h.score) }],
+                }}
+                width={Dimensions.get("window").width * 0.9}
+                height={180}
+                yAxisSuffix="%"
+                chartConfig={{
+                  backgroundGradientFrom: isDark ? "#1C2433" : "#DDE9FA",
+                  backgroundGradientTo: isDark ? "#1C2433" : "#FFFFFF",
+                  decimalPlaces: 0,
+                  color: (opacity = 1) => `rgba(76,137,200,${opacity})`,
+                  labelColor: () => (isDark ? "#B9D4F5" : "#2B4C7E"),
+                  propsForDots: { r: "5", strokeWidth: "2", stroke: "#4C89C8" },
+                }}
+                bezier
+                style={{ borderRadius: 12 }}
+              />
+            </View>
+          )}
 
           {/* TITLE */}
-          <Text style={[s.title, { color: isDark ? "#D6E4FF" : "#2B4C7E" }]}>
+          <Text style={[s.title, { color: theme.text }]}>
             {i18n.t("prevDaysResults")}
           </Text>
 
           {/* CARDS */}
           {history.map((d, i) => (
             <Animated.View
-              key={i}
+              key={d.date}
               style={{
                 opacity: fadeAnim,
                 transform: [
@@ -155,8 +172,8 @@ export default function Historical({ navigation }) {
                 style={[
                   s.card,
                   {
-                    backgroundColor: isDark ? "#1C2433" : "#FFF",
-                    borderColor: isDark ? "#2E3A50" : "#E0E5EE",
+                    backgroundColor: theme.card,
+                    borderColor: theme.border,
                   },
                 ]}
               >
@@ -164,21 +181,14 @@ export default function Historical({ navigation }) {
                   <MaterialCommunityIcons
                     name="calendar-month-outline"
                     size={20}
-                    color={isDark ? "#AFCBFF" : "#2B4C7E"}
+                    color={theme.iconSecondary}
                   />
-                  <Text
-                    style={[s.dateText, { color: isDark ? "#F5F7FA" : "#333" }]}
-                  >
+                  <Text style={[s.dateText, { color: theme.text }]}>
                     {d.date}
                   </Text>
                 </View>
 
-                <View
-                  style={[
-                    s.barBg,
-                    { backgroundColor: isDark ? "#303A52" : "#E0E5EE" },
-                  ]}
-                >
+                <View style={[s.barBg, { backgroundColor: theme.border }]}>
                   <View
                     style={[
                       s.barFill,
@@ -198,15 +208,8 @@ export default function Historical({ navigation }) {
           ))}
 
           {/* FOOTER */}
-          <View
-            style={[
-              s.footerBox,
-              { backgroundColor: isDark ? "#1E3A5F" : "#EAF2FA" },
-            ]}
-          >
-            <Text
-              style={[s.footerTxt, { color: isDark ? "#B9D4F5" : "#2B4C7E" }]}
-            >
+          <View style={[s.footerBox, { backgroundColor: theme.surfaceAlt }]}>
+            <Text style={[s.footerTxt, { color: theme.secondary }]}>
               {motivation}
             </Text>
           </View>
