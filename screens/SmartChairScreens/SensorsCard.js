@@ -4,6 +4,7 @@ import { View, Text, StyleSheet } from "react-native";
 import i18n from "../../hooks/i18n";
 
 export default function SensorsCard({ pressures, theme, isDark }) {
+  const LABELS = ["LF", "RF", "LR", "RR"];
   return (
     <View
       style={[
@@ -25,11 +26,16 @@ export default function SensorsCard({ pressures, theme, isDark }) {
         {pressures.map((p, i) => (
           <View key={i} style={s.readCell}>
             <Text style={[s.readVal, { color: theme.text }]}>
-              L{i + 1}: {p.toFixed(1)}kg
+              {LABELS[i]}: {p.toFixed(2)}
             </Text>
           </View>
         ))}
       </View>
+      <Text style={[s.hint, { color: theme.muted }]}>
+        {i18n.isRTL
+          ? "LF: أمام يسار | RF: أمام يمين | LR: خلف يسار | RR: خلف يمين"
+          : "LF: Left Front | RF: Right Front | LR: Left Rear | RR: Right Rear"}
+      </Text>
     </View>
   );
 }
@@ -54,4 +60,10 @@ const s = StyleSheet.create({
   },
   readCell: { width: "45%", marginVertical: 6, alignItems: "center" },
   readVal: { fontSize: 14, fontWeight: "600" },
+  hint: {
+    fontSize: 12,
+    marginTop: 8,
+    textAlign: "center",
+    opacity: 0.7,
+  },
 });

@@ -61,8 +61,6 @@ export default function ChairGraphic({
         <Circle cx="360" cy="300" r="16" fill={getColor(pressures[1])} />
         <Circle cx="150" cy="355" r="16" fill={getColor(pressures[2])} />
         <Circle cx="360" cy="355" r="16" fill={getColor(pressures[3])} />
-        <Circle cx="190" cy="220" r="16" fill={getColor(pressures[4])} />
-        <Circle cx="320" cy="220" r="16" fill={getColor(pressures[5])} />
       </Svg>
     </Animated.View>
   );

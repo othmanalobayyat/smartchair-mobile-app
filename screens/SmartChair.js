@@ -38,7 +38,8 @@ export default function SmartChair() {
   } = useData();
 
   // إذا ما وصلت بيانات من السيرفر → fallback حتى ما يضرب UI
-  const pressures = chairPressures || [5, 8, 6, 10, 7, 9];
+  const pressures = chairPressures || [0.25, 0.25, 0.25, 0.25];
+
   const posture = chairPosture || "correct";
 
   const [chairActive] = useState(true);
@@ -73,9 +74,9 @@ export default function SmartChair() {
 
   const getColor = (v) => {
     if (!monitoring) return theme.disabled;
-    if (v > 10) return theme.error;
-    if (v > 6) return theme.warning;
-    return theme.success;
+    if (v > 0.35) return theme.error; // حمل زائد
+    if (v > 0.28) return theme.warning; // ميل
+    return theme.success; // توزيع جيد
   };
 
   const attentionText =

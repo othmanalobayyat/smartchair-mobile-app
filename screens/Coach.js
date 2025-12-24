@@ -10,12 +10,10 @@ import {
   StyleSheet,
   ScrollView,
   StatusBar,
-  Image,
   TouchableOpacity,
   Animated,
   Easing,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import ChatBot from "./CoachScreens/ChatBot";
 import Header from "./CoachScreens/Header";
@@ -24,7 +22,6 @@ import QuickTips from "./CoachScreens/QuickTips";
 import ExercisesCarousel from "./CoachScreens/ExercisesCarousel";
 import BreakSuggestion from "./CoachScreens/BreakSuggestion";
 import ExerciseModal from "./CoachScreens/ExerciseModal";
-import { useData } from "../hooks/DataContext";
 
 const EXERCISE_CARD_WIDTH = 220;
 

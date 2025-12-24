@@ -13,6 +13,9 @@ export default function SessionStatusCard({
   theme,
   isDark,
 }) {
+  // ✅ posture enum logic (language-independent)
+  const isCorrectPosture = posture === "correct";
+
   return (
     <View
       style={[
@@ -40,8 +43,7 @@ export default function SessionStatusCard({
           style={[
             s.iconBubble,
             {
-              backgroundColor:
-                posture === "صحيحة" ? theme.success : theme.error,
+              backgroundColor: isCorrectPosture ? theme.success : theme.error,
             },
           ]}
         >
@@ -62,14 +64,13 @@ export default function SessionStatusCard({
             style={[
               s.infoValue,
               {
-                color: posture === "صحيحة" ? theme.success : theme.error,
+                color: isCorrectPosture ? theme.success : theme.error,
                 textAlign: i18n.isRTL ? "right" : "left",
               },
             ]}
           >
-            {posture === "صحيحة"
-              ? i18n.t("postureCorrect")
-              : i18n.t("postureIncorrect")}
+            {/* 🔑 posture translation handled ONLY here */}
+            {i18n.t(`posture.${posture}`)}
           </Text>
         </View>
       </View>

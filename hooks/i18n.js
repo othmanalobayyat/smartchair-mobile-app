@@ -120,7 +120,14 @@ const i18n = new I18n({
     camDisconnected: "الكاميرا غير متصلة",
     camDisabled: "الكاميرا غير مفعلة",
 
-    sensorsReadings: "قراءات الحساسات",
+    posture: {
+      correct: "وضعية صحيحة",
+      leaning_left: "ميلان لليسار",
+      leaning_right: "ميلان لليمين",
+      leaning_forward: "ميلان للأمام",
+    },
+
+    sensorsReadings: "توازن الجلوس",
     sessionStatus: "حالة الجلسة",
 
     postureLabel: "وضعية الجلسة",
@@ -404,8 +411,14 @@ const i18n = new I18n({
     camActive: "Camera Active",
     camDisconnected: "Camera Disconnected",
     camDisabled: "Camera Disable",
+    posture: {
+      correct: "Correct posture",
+      leaning_left: "Leaning left",
+      leaning_right: "Leaning right",
+      leaning_forward: "Leaning forward",
+    },
 
-    sensorsReadings: "Sensor Readings",
+    sensorsReadings: "Seating Balance",
     sessionStatus: "Session Status",
 
     postureLabel: "Posture",

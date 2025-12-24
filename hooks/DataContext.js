@@ -102,7 +102,12 @@ export function DataProvider({ children }) {
             setChairBattery(null);
           }, 3000);
 
-          setChairPressures(data.pressures || null);
+          setChairPressures(
+            Array.isArray(data.pressures) && data.pressures.length === 4
+              ? data.pressures
+              : null
+          );
+
           setChairPosture(data.posture || null);
           setChairBattery(
             typeof data.battery === "number" ? data.battery : null
