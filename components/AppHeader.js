@@ -1,4 +1,4 @@
-// components/Header.js
+// components/AppHeader.js
 import React from "react";
 import {
   View,

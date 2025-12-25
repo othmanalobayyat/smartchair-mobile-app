@@ -24,6 +24,7 @@ import PerformanceChart from "./PerformanceChart";
 import HistoryDayCard from "./HistoryDayCard";
 import MotivationFooter from "./MotivationFooter";
 import ShareResultsButton from "./ShareResultsButton";
+import { API_BASE } from "../../config/api";
 
 export default function Historical({ navigation }) {
   const { theme, isDark } = useTheme();
@@ -61,7 +62,7 @@ export default function Historical({ navigation }) {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await fetch("http://10.76.189.74:3000/api/stats/history", {
+        const res = await fetch(`${API_BASE}/api/stats/history`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -1,9 +1,7 @@
 // hooks/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// غيّر هذا لاحقاً حسب بيئتك (محلي / Railway)
-const API_BASE = "https://smartchairserver-production.up.railway.app"; // نفس السيرفر المحلي
+import { API_BASE } from "../config/api";
 
 const AuthContext = createContext();
 

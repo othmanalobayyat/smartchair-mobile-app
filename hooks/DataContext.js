@@ -14,7 +14,7 @@ export const useData = () => useContext(DataContext);
 
 // ترتيب السيرفرات حسب الأولوية
 const SERVERS = [
-  "ws://10.10.10.19:3000", // LOCAL
+  "ws://192.168.1.29:3000", // LOCAL
   "wss://smartchairserver-production.up.railway.app", // BACKUP
 ];
 

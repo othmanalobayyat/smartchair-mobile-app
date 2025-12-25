@@ -10,6 +10,7 @@ import SessionCard from "./StatisticsScreens/SessionCard";
 import DailyScoreCard from "./StatisticsScreens/DailyScoreCard";
 import InsightTip from "./StatisticsScreens/InsightTip";
 import HistoryButton from "./StatisticsScreens/HistoryButton";
+import { API_BASE } from "../config/api";
 
 export default function Statistics() {
   const { theme, isDark } = useTheme();
@@ -49,26 +50,21 @@ export default function Statistics() {
     const fetchStats = async () => {
       try {
         // 1️⃣ daily score
-        const summaryRes = await fetch(
-          "http://10.76.189.74:3000/api/stats/summary",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const summaryRes = await fetch(`${API_BASE}/api/stats/summary`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const summary = await summaryRes.json();
+        console.log("📦 SUMMARY RESPONSE:", summary);
         setDailyScore(summary.score ?? 0);
 
         // 2️⃣ sessions list
-        const sessionsRes = await fetch(
-          "http://10.76.189.74:3000/api/session/list",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const sessionsRes = await fetch(`${API_BASE}/api/session/list`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         const sessionsData = await sessionsRes.json();
 
