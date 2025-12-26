@@ -20,8 +20,10 @@ import HistoryDayCard from "./components/HistoryDayCard";
 import MotivationFooter from "./components/MotivationFooter";
 import ShareResultsButton from "./components/ShareResultsButton";
 import { API_BASE } from "../../config/api";
+import { useNavigation } from "@react-navigation/native";
 
-export default function HistoricalScreen({ navigation }) {
+export default function HistoricalScreen() {
+  const navigation = useNavigation();
   const { theme, isDark } = useTheme();
   const viewRef = useRef();
 

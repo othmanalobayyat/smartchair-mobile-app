@@ -19,7 +19,7 @@ import {
 } from "@expo/vector-icons";
 
 // الشاشات
-import SmartChair from "./screens/SmartChair";
+import SmartChairScreen from "./screens/SmartChair/SmartChairScreen";
 import StatisticsScreen from "./screens/Statistics/StatisticsScreen";
 import Coach from "./screens/Coach";
 import Settings from "./screens/Settings";
@@ -88,7 +88,7 @@ function Tabs() {
       >
         <Tab.Screen
           name="Dashboard"
-          component={SmartChair}
+          component={SmartChairScreen}
           options={{ title: i18n.t("tabDashboard") }}
         />
 

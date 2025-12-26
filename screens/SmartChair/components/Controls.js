@@ -1,7 +1,7 @@
 // screens/SmartChairScreens/Controls.js
 import React from "react";
 import { View, Pressable, Text, StyleSheet } from "react-native";
-import i18n from "../../hooks/i18n";
+import i18n from "../../../hooks/i18n";
 
 export default function Controls({ monitoring, setMonitoring, theme }) {
   return (

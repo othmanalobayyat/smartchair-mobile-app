@@ -1,6 +1,6 @@
 // screens/SmartChair.js
 import React, { useState, useEffect, useRef } from "react";
-import i18n from "../hooks/i18n";
+import i18n from "../../hooks/i18n";
 import {
   View,
   Text,
@@ -10,18 +10,18 @@ import {
   ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useTheme } from "../hooks/ThemeContext";
-import { useData } from "../hooks/DataContext";
+import { useTheme } from "../../hooks/ThemeContext";
+import { useData } from "../../hooks/DataContext";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import Header from "./SmartChairScreens/Header";
-import ChairGraphic from "./SmartChairScreens/ChairGraphic";
-import SensorsCard from "./SmartChairScreens/SensorsCard";
-import SessionStatusCard from "./SmartChairScreens/SessionStatusCard";
-import Controls from "./SmartChairScreens/Controls";
+import Header from "./components/Header";
+import ChairGraphic from "./components/ChairGraphic";
+import SensorsCard from "./components/SensorsCard";
+import SessionStatusCard from "./components/SessionStatusCard";
+import Controls from "./components/Controls";
 
-export default function SmartChair() {
+export default function SmartChairScreen() {
   const { theme, isDark } = useTheme();
 
   // 🟢 NEW: جلب بيانات الكرسي الحقيقية من DataContext

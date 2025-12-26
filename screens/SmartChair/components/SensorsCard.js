@@ -1,7 +1,7 @@
 // screens/SmartChairScreens/SensorsCard.js
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import i18n from "../../hooks/i18n";
+import i18n from "../../../hooks/i18n";
 
 export default function SensorsCard({ pressures, theme, isDark }) {
   const LABELS = ["LF", "RF", "LR", "RR"];
