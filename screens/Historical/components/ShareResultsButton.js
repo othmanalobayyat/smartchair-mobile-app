@@ -2,7 +2,7 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import i18n from "../../hooks/i18n";
+import i18n from "../../../hooks/i18n";
 
 export default function ShareResultsButton({ onPress }) {
   return (

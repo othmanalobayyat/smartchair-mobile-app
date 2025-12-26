@@ -4,7 +4,6 @@ import i18n from "../hooks/i18n";
 import {
   View,
   Text,
-  Pressable,
   StyleSheet,
   StatusBar,
   Animated,

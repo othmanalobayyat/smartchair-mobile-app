@@ -20,10 +20,10 @@ import {
 
 // الشاشات
 import SmartChair from "./screens/SmartChair";
-import Statistics from "./screens/Statistics";
+import StatisticsScreen from "./screens/Statistics/StatisticsScreen";
 import Coach from "./screens/Coach";
 import Settings from "./screens/Settings";
-import Historical from "./screens/StatisticsScreens/Historical";
+import HistoricalScreen from "./screens/Historical/HistoricalScreen";
 import Account from "./screens/SettingsScreens/Account";
 import About from "./screens/SettingsScreens/About";
 import Support from "./screens/SettingsScreens/Support";
@@ -94,7 +94,7 @@ function Tabs() {
 
         <Tab.Screen
           name="Statistics"
-          component={Statistics}
+          component={StatisticsScreen}
           options={{ title: i18n.t("tabStatistics") }}
         />
 
@@ -124,7 +124,7 @@ function AppStackNavigator() {
       }}
     >
       <Stack.Screen name="Tabs" component={Tabs} />
-      <Stack.Screen name="Historical" component={Historical} />
+      <Stack.Screen name="Historical" component={HistoricalScreen} />
       <Stack.Screen name="Account" component={Account} />
       <Stack.Screen name="About" component={About} />
       <Stack.Screen name="Support" component={Support} />

@@ -3,30 +3,25 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   StyleSheet,
   StatusBar,
-  Dimensions,
   Animated,
 } from "react-native";
 import { useAuth } from "../../hooks/AuthContext";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../hooks/ThemeContext";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
-import { LineChart } from "react-native-chart-kit";
 import AppHeader from "../../components/AppHeader";
 import i18n from "../../hooks/i18n";
-import AveragePerformanceCard from "./AveragePerformanceCard";
-import PerformanceChart from "./PerformanceChart";
-import HistoryDayCard from "./HistoryDayCard";
-import MotivationFooter from "./MotivationFooter";
-import ShareResultsButton from "./ShareResultsButton";
+import AveragePerformanceCard from "./components/AveragePerformanceCard";
+import PerformanceChart from "./components/PerformanceChart";
+import HistoryDayCard from "./components/HistoryDayCard";
+import MotivationFooter from "./components/MotivationFooter";
+import ShareResultsButton from "./components/ShareResultsButton";
 import { API_BASE } from "../../config/api";
 
-export default function Historical({ navigation }) {
+export default function HistoricalScreen({ navigation }) {
   const { theme, isDark } = useTheme();
   const viewRef = useRef();
 

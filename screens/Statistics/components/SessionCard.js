@@ -6,7 +6,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import i18n from "../../hooks/i18n";
+import i18n from "../../../hooks/i18n";
 
 export default function SessionCard({
   session,

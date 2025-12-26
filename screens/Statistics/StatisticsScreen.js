@@ -2,17 +2,17 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AppHeader from "../components/AppHeader";
-import { useTheme } from "../hooks/ThemeContext";
-import { useAuth } from "../hooks/AuthContext";
-import i18n from "../hooks/i18n";
-import SessionCard from "./StatisticsScreens/SessionCard";
-import DailyScoreCard from "./StatisticsScreens/DailyScoreCard";
-import InsightTip from "./StatisticsScreens/InsightTip";
-import HistoryButton from "./StatisticsScreens/HistoryButton";
-import { API_BASE } from "../config/api";
+import AppHeader from "../../components/AppHeader";
+import { useTheme } from "../../hooks/ThemeContext";
+import { useAuth } from "../../hooks/AuthContext";
+import i18n from "../../hooks/i18n";
+import SessionCard from "./components/SessionCard";
+import DailyScoreCard from "./components/DailyScoreCard";
+import InsightTip from "./components/InsightTip";
+import HistoryButton from "./components/HistoryButton";
+import { API_BASE } from "../../config/api";
 
-export default function Statistics() {
+export default function StatisticsScreen() {
   const { theme, isDark } = useTheme();
   const navigation = useNavigation();
   const { token } = useAuth();
