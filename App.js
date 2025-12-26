@@ -21,7 +21,7 @@ import {
 // الشاشات
 import SmartChairScreen from "./screens/SmartChair/SmartChairScreen";
 import StatisticsScreen from "./screens/Statistics/StatisticsScreen";
-import Coach from "./screens/Coach";
+import CoachScreen from "./screens/Coach/CoachScreen";
 import Settings from "./screens/Settings";
 import HistoricalScreen from "./screens/Historical/HistoricalScreen";
 import Account from "./screens/SettingsScreens/Account";
@@ -100,7 +100,7 @@ function Tabs() {
 
         <Tab.Screen
           name="Coach"
-          component={Coach}
+          component={CoachScreen}
           options={{ title: i18n.t("tabCoach") }}
         />
 

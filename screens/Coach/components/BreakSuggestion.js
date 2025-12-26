@@ -1,6 +1,6 @@
 // CoachScreens/BreakSuggestion.js
 import React from "react";
-import i18n from "../../hooks/i18n";
+import i18n from "../../../hooks/i18n";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 

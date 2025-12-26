@@ -1,7 +1,7 @@
 // CoachScreens/ExerciseModal.js
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import i18n from "../../hooks/i18n";
+import i18n from "../../../hooks/i18n";
 
 export default function ExerciseModal({
   theme,

@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
-import i18n from "../../hooks/i18n";
+import i18n from "../../../hooks/i18n";
 
 export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
   const [messages, setMessages] = useState([
@@ -74,7 +74,7 @@ export default function ChatBot({ visible, onClose, posture, sessionMinutes }) {
     (async () => {
       try {
         const { sound } = await Audio.Sound.createAsync(
-          require("../../assets/chat-pop.mp3")
+          require("../../../assets/chat-pop.mp3")
         );
         if (mounted) soundRef.current = sound;
       } catch {}

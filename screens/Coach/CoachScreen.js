@@ -1,9 +1,9 @@
 // screens/Coach.js
 import React, { useState, useRef, useEffect } from "react";
-import i18n from "../hooks/i18n";
-import { useTheme } from "../hooks/ThemeContext";
-import { useSettings } from "../hooks/SettingsContext";
-import { playSound, vibrate } from "../services/feedback";
+import i18n from "../../hooks/i18n";
+import { useTheme } from "../../hooks/ThemeContext";
+import { useSettings } from "../../hooks/SettingsContext";
+import { playSound, vibrate } from "../../services/feedback";
 import {
   View,
   Text,
@@ -15,17 +15,17 @@ import {
   Easing,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import ChatBot from "./CoachScreens/ChatBot";
-import Header from "./CoachScreens/Header";
-import HeroCard from "./CoachScreens/HeroCard";
-import QuickTips from "./CoachScreens/QuickTips";
-import ExercisesCarousel from "./CoachScreens/ExercisesCarousel";
-import BreakSuggestion from "./CoachScreens/BreakSuggestion";
-import ExerciseModal from "./CoachScreens/ExerciseModal";
+import ChatBot from "./components/ChatBot";
+import Header from "./components/Header";
+import HeroCard from "./components/HeroCard";
+import QuickTips from "./components/QuickTips";
+import ExercisesCarousel from "./components/ExercisesCarousel";
+import BreakSuggestion from "./components/BreakSuggestion";
+import ExerciseModal from "./components/ExerciseModal";
 
 const EXERCISE_CARD_WIDTH = 220;
 
-export default function Coach() {
+export default function CoachScreen() {
   const { theme } = useTheme();
   // ========================
   // STATES
@@ -136,7 +136,7 @@ export default function Coach() {
         },
         ...prev,
       ]);
-      playSound(soundEnabled, require("../assets/exercise-beep.mp3"));
+      playSound(soundEnabled, require("../../assets/exercise-beep.mp3"));
       vibrate(vibrationEnabled, "heavy");
       return;
     }
@@ -145,7 +145,7 @@ export default function Coach() {
       setExerciseSeconds((prev) => {
         const next = prev - 1;
         if (next > 0 && next <= 3) {
-          playSound(soundEnabled, require("../assets/exercise-beep.mp3"));
+          playSound(soundEnabled, require("../../assets/exercise-beep.mp3"));
         }
         return next;
       });
@@ -205,13 +205,13 @@ export default function Coach() {
     {
       id: 1,
       name: i18n.t("coachEx1Name"),
-      img: require("../assets/exercises/arm_stretch.png"),
+      img: require("../../assets/exercises/arm_stretch.png"),
       desc: i18n.t("coachEx1Desc"),
     },
     {
       id: 2,
       name: i18n.t("coachEx2Name"),
-      img: require("../assets/exercises/neck_rotation.png"),
+      img: require("../../assets/exercises/neck_rotation.png"),
       desc: i18n.t("coachEx2Desc"),
     },
     {

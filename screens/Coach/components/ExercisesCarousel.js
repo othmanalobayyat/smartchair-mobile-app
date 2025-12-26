@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Animated,
 } from "react-native";
-import i18n from "../../hooks/i18n";
+import i18n from "../../../hooks/i18n";
 
 export default function ExercisesCarousel({
   exercises,
