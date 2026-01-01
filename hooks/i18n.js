@@ -41,6 +41,8 @@ const i18n = new I18n({
     soundDescription: "تنبيهات صوتية عند سوء الوضعية أو انتهاء الجلسة",
     vibrationDescription: "اهتزاز بسيط مع التنبيه (على الأجهزة الداعمة)",
     generalSettings: "الإعدادات العامة",
+    alertTimeoutDescription: "دقائق قبل التنبيه بوضعيتك الخاطئة",
+    alertsEnabled: "تفعيل التنبيه",
     accountCloud: "الحساب والمزامنة",
     supportAbout: "من نحن ؟ بحاجة إلى دعم؟",
     chairSettings: "ضبط الكرسي والكاميرا",
@@ -313,6 +315,7 @@ const i18n = new I18n({
     cameraDescription: "Use camera for attention & fatigue detection",
     generalSettings: "General Settings",
     alertTimeoutDescription: "Minutes before bad posture alert",
+    alertsEnabled: " Alerts Enable",
     darkModeDescription: "Toggle light / dark mode",
 
     cloudSyncTitle: "Cloud Sync",

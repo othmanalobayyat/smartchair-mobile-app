@@ -25,11 +25,18 @@ import { useSettings } from "../hooks/SettingsContext";
 
 export default function Settings({ navigation }) {
   const {
-    soundEnabled,
-    setSoundEnabled,
-    vibrationEnabled,
-    setVibrationEnabled,
-  } = useSettings();
+  soundEnabled,
+  setSoundEnabled,
+  vibrationEnabled,
+  setVibrationEnabled,
+  alertEnabled,
+  setAlertEnabled,
+  alertIntervalMinutes,
+  setAlertIntervalMinutes,
+  alertTypes,
+  setAlertTypes,
+} = useSettings();
+
   const { theme, isDark, toggleTheme } = useTheme();
   const {
     chairBattery,
@@ -40,7 +47,7 @@ export default function Settings({ navigation }) {
     chairOnline,
   } = useData();
 
-  const [alertTimeout, setAlertTimeout] = useState(5);
+
   const [lang, setLang] = useState(i18n.locale.startsWith("ar") ? "ar" : "en");
 
   const connected = chairOnline;
@@ -384,6 +391,30 @@ export default function Settings({ navigation }) {
           {i18n.t("generalSettings")}
         </Text>
 
+        {/* ALERT ENABLE CARD */}
+<View
+  style={[
+    s.card,
+    { backgroundColor: theme.card, borderColor: theme.border },
+  ]}
+>
+  <View style={s.row}>
+    <View style={s.rowLeft}>
+      <MaterialCommunityIcons
+        name="bell-outline"
+        size={20}
+        color={theme.iconSecondary}
+      />
+      <Text style={[s.cardTitle, { color: theme.text, marginLeft: 8 }]}>
+        {i18n.t("alertsEnabled")}
+      </Text>
+    </View>
+
+    <Switch value={alertEnabled} onValueChange={setAlertEnabled} />
+  </View>
+</View>
+
+
         {/* ALERT TIMEOUT CARD */}
         <View
           style={[
@@ -398,9 +429,8 @@ export default function Settings({ navigation }) {
               color={theme.iconSecondary}
             />
             <View style={{ marginLeft: 8 }}>
-              <Text style={[s.cardTitle, { color: theme.text }]}>
-                {i18n.t("alertTimeout")}
-              </Text>
+              <Text style={s.timeoutValue}>{alertIntervalMinutes}</Text>
+
               <Text style={[s.cardSub, { color: theme.textSecondary }]}>
                 {i18n.t("alertTimeoutDescription")}
               </Text>
@@ -410,7 +440,10 @@ export default function Settings({ navigation }) {
           <View style={s.btnRow}>
             <TouchableOpacity
               style={[s.iconBtn, { backgroundColor: theme.secondary }]}
-              onPress={() => setAlertTimeout((p) => Math.max(1, p - 1))}
+              onPress={() =>
+  setAlertIntervalMinutes((p) => p + 1)
+}
+
             >
               <Text style={s.iconBtnTxt}>-</Text>
             </TouchableOpacity>
@@ -418,13 +451,16 @@ export default function Settings({ navigation }) {
             <View
               style={[s.timeoutDisplay, { backgroundColor: theme.primary }]}
             >
-              <Text style={s.timeoutValue}>{alertTimeout}</Text>
+              <Text style={s.timeoutValue}>{alertIntervalMinutes}</Text>
               <Text style={s.timeoutUnit}>{i18n.t("minutes")}</Text>
             </View>
 
             <TouchableOpacity
               style={[s.iconBtn, { backgroundColor: theme.secondary }]}
-              onPress={() => setAlertTimeout((p) => p + 1)}
+              onPress={() =>
+  setAlertIntervalMinutes((p) => Math.max(1, p - 1))
+}
+
             >
               <Text style={s.iconBtnTxt}>+</Text>
             </TouchableOpacity>

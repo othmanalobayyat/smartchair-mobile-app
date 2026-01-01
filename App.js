@@ -36,9 +36,14 @@ import CameraPairing from "./screens/SettingsScreens/CameraPairing";
 import Login from "./screens/Auth/Login";
 import Register from "./screens/Auth/Register";
 
+// Notifications
+import { requestNotificationPermission } from "./services/NotificationService";
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
+
+/* ================= Tabs ================= */
 
 function Tabs() {
   return (
@@ -65,15 +70,23 @@ function Tabs() {
               );
 
             if (route.name === "Statistics")
-              return <Ionicons name="stats-chart" size={size} color={color} />;
+              return (
+                <Ionicons name="stats-chart" size={size} color={color} />
+              );
 
             if (route.name === "Coach")
               return (
-                <FontAwesome5 name="heartbeat" size={size} color={color} />
+                <FontAwesome5
+                  name="heartbeat"
+                  size={size}
+                  color={color}
+                />
               );
 
             if (route.name === "Settings")
-              return <Ionicons name="settings" size={size} color={color} />;
+              return (
+                <Ionicons name="settings" size={size} color={color} />
+              );
           },
           headerShown: false,
           tabBarStyle: {
@@ -114,7 +127,8 @@ function Tabs() {
   );
 }
 
-// Stack التطبيق الأساسي بعد تسجيل الدخول
+/* ================= App Stack ================= */
+
 function AppStackNavigator() {
   return (
     <Stack.Navigator
@@ -128,15 +142,22 @@ function AppStackNavigator() {
       <Stack.Screen name="Account" component={Account} />
       <Stack.Screen name="About" component={About} />
       <Stack.Screen name="Support" component={Support} />
-      <Stack.Screen name="ChairProvisioning" component={ChairProvisioning} />
+      <Stack.Screen
+        name="ChairProvisioning"
+        component={ChairProvisioning}
+      />
       <Stack.Screen name="EditProfile" component={EditProfile} />
-      <Stack.Screen name="ChangePassword" component={ChangePassword} />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePassword}
+      />
       <Stack.Screen name="CameraPairing" component={CameraPairing} />
     </Stack.Navigator>
   );
 }
 
-// Stack شاشة الدخول/التسجيل
+/* ================= Auth Stack ================= */
+
 function AuthStackNavigator() {
   return (
     <AuthStack.Navigator
@@ -151,7 +172,8 @@ function AuthStackNavigator() {
   );
 }
 
-// Root يقرر: Auth أو App
+/* ================= Root ================= */
+
 function RootNavigator() {
   const { user, loading } = useAuth();
 
@@ -160,7 +182,6 @@ function RootNavigator() {
   }, []);
 
   if (loading) {
-    // شاشة تحميل بسيطة
     return (
       <View
         style={{
@@ -178,7 +199,13 @@ function RootNavigator() {
   return user ? <AppStackNavigator /> : <AuthStackNavigator />;
 }
 
+/* ================= App (FINAL الوحيد) ================= */
+
 export default function App() {
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
   return (
     <ThemeProvider>
       <SettingsProvider>

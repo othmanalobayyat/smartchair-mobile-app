@@ -8,6 +8,9 @@ import React, {
 } from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSettings } from "./SettingsContext";
+import { playAlertSound, vibrateAlert } from "../services/NotificationService";
+import { sendLocalNotification } from "../services/NotificationService";
 
 const DataContext = createContext();
 export const useData = () => useContext(DataContext);
@@ -21,7 +24,43 @@ const SERVERS = [
 let cameraTimeout = null;
 
 export function DataProvider({ children }) {
-  // CAMERA STATES
+  // ===================== SETTINGS =====================
+  const {
+    alertEnabled,
+    alertIntervalMinutes,
+    alertTypes,
+    soundEnabled,
+    vibrationEnabled,
+  } = useSettings();
+
+  const lastAlertRef = useRef(0);
+
+const triggerAlert = async (type) => {
+  if (!alertEnabled) return;
+  if (!alertTypes[type]) return;
+
+  const now = Date.now();
+  const cooldown = alertIntervalMinutes * 60 * 1000;
+
+  if (now - lastAlertRef.current < cooldown) return;
+  lastAlertRef.current = now;
+
+  // إشعار فعلي
+  await sendLocalNotification({
+    title: "Posturic Alert",
+    body:
+      type === "BAD_POSTURE"
+        ? "Please correct your sitting posture"
+        : type === "DROWSINESS"
+        ? "You look drowsy. Take a short break"
+        : "Attention required",
+  });
+};
+
+
+
+
+  // ===================== CAMERA STATES =====================
   const [camOnline, setCamOnline] = useState(false);
   const [attention, setAttention] = useState(null);
   const [isPresent, setIsPresent] = useState(false);
@@ -31,7 +70,7 @@ export function DataProvider({ children }) {
   // PRIVACY (زر toggle)
   const [cameraEnabled, setCameraEnabled] = useState(true);
 
-  // PAIRING (مؤقت)
+  // PAIRING
   const [cameraPaired, setCameraPaired] = useState(false);
 
   useEffect(() => {
@@ -40,13 +79,14 @@ export function DataProvider({ children }) {
     });
   }, []);
 
-  // CHAIR STATES (NEW)
+  // ===================== CHAIR STATES =====================
   const [chairOnline, setChairOnline] = useState(false);
   const chairTimeoutRef = useRef(null);
   const [chairPressures, setChairPressures] = useState(null);
   const [chairPosture, setChairPosture] = useState(null);
   const [chairBattery, setChairBattery] = useState(null);
 
+  // ===================== WS =====================
   const wsRef = useRef(null);
   const serverIndexRef = useRef(0);
   const reconnectTimer = useRef(null);
@@ -74,7 +114,6 @@ export function DataProvider({ children }) {
     wsRef.current.onopen = () => {
       console.log(`✅ Connected to ${url}`);
 
-      // أرسل حالة الخصوصية الحالية فور الاتصال
       wsRef.current.send(
         JSON.stringify({
           type: "camera_control",
@@ -93,13 +132,16 @@ export function DataProvider({ children }) {
         if (data.type === "chair_data") {
           setChairOnline(true);
 
-          if (chairTimeoutRef.current) clearTimeout(chairTimeoutRef.current);
+          if (chairTimeoutRef.current)
+            clearTimeout(chairTimeoutRef.current);
 
           chairTimeoutRef.current = setTimeout(() => {
             setChairOnline(false);
             setChairPressures(null);
             setChairPosture(null);
             setChairBattery(null);
+
+            triggerAlert("NO_MOVEMENT");
           }, 3000);
 
           setChairPressures(
@@ -109,6 +151,7 @@ export function DataProvider({ children }) {
           );
 
           setChairPosture(data.posture || null);
+
           setChairBattery(
             typeof data.battery === "number" ? data.battery : null
           );
@@ -127,6 +170,7 @@ export function DataProvider({ children }) {
             cameraTimeout = setTimeout(() => {
               setCamOnline(false);
               resetData();
+              triggerAlert("CAMERA_DISCONNECTED");
             }, 3000);
           }
           return;
@@ -156,7 +200,8 @@ export function DataProvider({ children }) {
 
       resetData();
 
-      serverIndexRef.current = (serverIndexRef.current + 1) % SERVERS.length;
+      serverIndexRef.current =
+        (serverIndexRef.current + 1) % SERVERS.length;
 
       reconnectTimer.current = setTimeout(connect, 3000);
     };
@@ -170,8 +215,10 @@ export function DataProvider({ children }) {
       if (cameraTimeout) clearTimeout(cameraTimeout);
     };
   }, []);
-  // FINAL CAMERA STATE (derived, NOT a state)
+
+  // FINAL CAMERA STATE (derived)
   const camActive = cameraPaired && camOnline && cameraEnabled;
+
   useEffect(() => {
     if (!cameraPaired || !camOnline) return;
     if (!wsRef.current) return;
@@ -184,6 +231,22 @@ export function DataProvider({ children }) {
       })
     );
   }, [cameraEnabled, cameraPaired, camOnline]);
+
+  // ===================== ALERT CONDITIONS =====================
+
+  // BAD POSTURE
+  useEffect(() => {
+    if (chairPosture === "BAD") {
+      triggerAlert("BAD_POSTURE");
+    }
+  }, [chairPosture]);
+
+  // DROWSINESS
+  useEffect(() => {
+    if (drowsy) {
+      triggerAlert("DROWSINESS");
+    }
+  }, [drowsy]);
 
   return (
     <DataContext.Provider
