@@ -124,9 +124,9 @@ const i18n = new I18n({
 
     posture: {
       correct: "وضعية صحيحة",
-      leaning_left: "ميلان لليسار",
-      leaning_right: "ميلان لليمين",
-      leaning_forward: "ميلان للأمام",
+      left: "ميلان لليسار",
+      right: "ميلان لليمين",
+      forward: "ميلان للأمام",
     },
 
     sensorsReadings: "توازن الجلوس",
@@ -417,9 +417,9 @@ const i18n = new I18n({
     camDisabled: "Camera Disable",
     posture: {
       correct: "Correct posture",
-      leaning_left: "Leaning left",
-      leaning_right: "Leaning right",
-      leaning_forward: "Leaning forward",
+      left: "Leaning left",
+      right: "Leaning right",
+      forward: "Leaning forward",
     },
 
     sensorsReadings: "Seating Balance",

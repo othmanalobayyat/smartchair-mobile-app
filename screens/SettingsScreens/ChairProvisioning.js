@@ -1,3 +1,4 @@
+// Screens/SettingsScreens/ChairProvisioning.js
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -9,6 +10,7 @@ import {
   PermissionsAndroid,
   Platform,
   StatusBar,
+  Alert,
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { BleManager } from "react-native-ble-plx";
@@ -18,11 +20,14 @@ import { useData } from "../../hooks/DataContext";
 
 const manager = new BleManager();
 
+const WIFI_SERVICE_UUID = "12345678-1234-1234-1234-1234567890ab";
+const WIFI_CHARACTERISTIC_UUID = "abcd1234-5678-90ab-cdef-1234567890ab";
+
 export default function ChairProvisioning({ navigation }) {
   const { theme } = useTheme();
   const { chairOnline } = useData();
 
-  // ===== STEPPER STATE (فقط عند عدم الاتصال) =====
+  // ================= STATE =================
   const [step, setStep] = useState(1);
   const [scanning, setScanning] = useState(false);
   const [devices, setDevices] = useState([]);
@@ -31,10 +36,11 @@ export default function ChairProvisioning({ navigation }) {
   const [password, setPassword] = useState("");
   const [sending, setSending] = useState(false);
 
-  // تنظيف scan عند الخروج
+  // ================= CLEANUP =================
   useEffect(() => {
     return () => {
       manager.stopDeviceScan();
+      manager.destroy();
     };
   }, []);
 
@@ -55,8 +61,11 @@ export default function ChairProvisioning({ navigation }) {
 
   // ================= SCAN =================
   const handleScan = async () => {
-    const perms = await requestBlePermissions();
-    if (!perms) return;
+    const ok = await requestBlePermissions();
+    if (!ok) {
+      Alert.alert("خطأ", "يرجى منح صلاحيات البلوتوث");
+      return;
+    }
 
     setDevices([]);
     setScanning(true);
@@ -68,8 +77,8 @@ export default function ChairProvisioning({ navigation }) {
       }
 
       if (device?.name?.startsWith("SmartChair")) {
-        setDevices((p) =>
-          p.find((d) => d.id === device.id) ? p : [...p, device]
+        setDevices((prev) =>
+          prev.find((d) => d.id === device.id) ? prev : [...prev, device]
         );
       }
     });
@@ -81,76 +90,110 @@ export default function ChairProvisioning({ navigation }) {
   };
 
   // ================= SEND WIFI =================
-  const WIFI_SERVICE_UUID = "12345678-1234-1234-1234-1234567890ab";
-  const WIFI_CHARACTERISTIC_UUID = "abcd1234-5678-90ab-cdef-1234567890ab";
-
   const handleSend = async () => {
-    if (!ssid || !password || !selected) return;
+    if (!ssid || !password || !selected) {
+      Alert.alert("تنبيه", "يرجى إدخال بيانات الشبكة");
+      return;
+    }
 
     setSending(true);
 
     try {
-      const device = devices.find((d) => d.id === selected);
-      const connected = await manager.connectToDevice(device.id);
-      await connected.discoverAllServicesAndCharacteristics();
+      manager.stopDeviceScan();
 
-      const services = await connected.services();
+      const device = await manager.connectToDevice(selected, {
+        autoConnect: false,
+      });
+      await device.discoverAllServicesAndCharacteristics();
+
+      const services = await device.services();
       const service = services.find(
         (s) => s.uuid.toUpperCase() === WIFI_SERVICE_UUID.toUpperCase()
       );
 
-      const chars = await connected.characteristicsForService(service.uuid);
+      if (!service) throw new Error("Service not found");
+
+      const chars = await device.characteristicsForService(service.uuid);
       const char = chars.find(
         (c) => c.uuid.toUpperCase() === WIFI_CHARACTERISTIC_UUID.toUpperCase()
       );
+
+      if (!char) throw new Error("Characteristic not found");
 
       const payload = global.btoa(
         unescape(encodeURIComponent(JSON.stringify({ ssid, password })))
       );
 
-      await char.writeWithResponse(payload);
+      // استمع لرد ESP32
+      const sub = char.monitor((error, characteristic) => {
+        if (error || !characteristic?.value) return;
 
-      setStep(3); // ننتظر الاتصال الحقيقي من السيرفر
-    } catch {
-      alert("فشل إرسال الإعدادات");
+        try {
+          const response = JSON.parse(
+            decodeURIComponent(escape(global.atob(characteristic.value)))
+          );
+
+          if (response.status === "connected") {
+            setStep(3);
+          } else {
+            Alert.alert("فشل", "فشل الاتصال بالشبكة");
+            setStep(2);
+          }
+
+          sub.remove();
+        } catch {
+          Alert.alert("خطأ", "رد غير صالح من الكرسي");
+          setStep(2);
+          sub.remove();
+        }
+      });
+
+      await char.writeWithResponse(payload);
+    } catch (e) {
+      Alert.alert("خطأ", "فشل إرسال الإعدادات");
+      setStep(2);
     } finally {
       setSending(false);
     }
   };
 
+  // ================= STEP 3 TIMEOUT =================
+  useEffect(() => {
+    if (step !== 3) return;
+
+    const t = setTimeout(() => {
+      if (!chairOnline) {
+        Alert.alert("تنبيه", "لم يتم الاتصال بالسيرفر");
+        setStep(2);
+      }
+    }, 15000);
+
+    return () => clearTimeout(t);
+  }, [step, chairOnline]);
+
   // ================= UI =================
   return (
     <View style={[s.container, { backgroundColor: theme.background }]}>
       <StatusBar translucent backgroundColor="transparent" />
-      <AppHeader
-        title="إعداد اتصال الكرسي"
-        onBack={() => navigation.goBack()}
-      />
+      <AppHeader title="إعداد اتصال الكرسي" onBack={navigation.goBack} />
 
-      {/* ===================== CASE 1: CONNECTED ===================== */}
       {chairOnline && (
         <View
           style={[
             s.heroCard,
-            {
-              borderColor: theme.success,
-              backgroundColor: "#22c55e20",
-            },
+            { borderColor: theme.success, backgroundColor: "#22c55e20" },
           ]}
         >
           <Ionicons name="wifi" size={40} color={theme.success} />
-
           <Text style={[s.heroTitle, { color: theme.success }]}>
             الكرسي متصل وجاهز
           </Text>
-
           <Text style={[s.heroSub, { color: theme.textSecondary }]}>
-            اتصال إنترنت مستقر · يتم إرسال البيانات الآن
+            اتصال مستقر · يتم إرسال البيانات الآن
           </Text>
         </View>
       )}
 
-      {/* ===================== CASE 2: NOT CONNECTED ===================== */}
       {!chairOnline && (
         <>
           {/* STEPPER */}
@@ -194,6 +237,7 @@ export default function ChairProvisioning({ navigation }) {
                 <TouchableOpacity
                   key={d.id}
                   onPress={() => {
+                    manager.stopDeviceScan();
                     setSelected(d.id);
                     setStep(2);
                   }}
@@ -255,9 +299,7 @@ export default function ChairProvisioning({ navigation }) {
           {step === 3 && (
             <View style={s.successCard}>
               <ActivityIndicator size="large" color={theme.primary} />
-              <Text style={s.successTxt}>
-                جارِ إعادة اتصال الكرسي بالشبكة...
-              </Text>
+              <Text style={s.successTxt}>جارِ ربط الكرسي بالشبكة...</Text>
             </View>
           )}
         </>
@@ -268,18 +310,6 @@ export default function ChairProvisioning({ navigation }) {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
-
-  // STATUS
-  statusCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    borderWidth: 1,
-    borderRadius: 16,
-    margin: 16,
-  },
-
-  // STEPPER
   stepper: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -295,7 +325,6 @@ const s = StyleSheet.create({
   },
   stepNum: { color: "#FFF", fontWeight: "700" },
   stepLabel: { fontSize: 12, marginTop: 6 },
-
   card: {
     margin: 16,
     padding: 16,
@@ -325,7 +354,6 @@ const s = StyleSheet.create({
     gap: 8,
   },
   btnTxt: { color: "#FFF", fontWeight: "700" },
-
   successCard: {
     alignItems: "center",
     marginTop: 60,

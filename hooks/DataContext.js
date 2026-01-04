@@ -17,7 +17,7 @@ export const useData = () => useContext(DataContext);
 
 // ترتيب السيرفرات حسب الأولوية
 const SERVERS = [
-  "ws://192.168.1.29:3000", // LOCAL
+  "wss://smartchair.posturic.online", // PRIMARY (Cloudflare)
   "wss://smartchairserver-production.up.railway.app", // BACKUP
 ];
 
@@ -69,6 +69,17 @@ export function DataProvider({ children }) {
   // PAIRING
   const [cameraPaired, setCameraPaired] = useState(false);
 
+  const normalizePosture = (raw) => {
+    if (!raw) return "correct";
+
+    if (raw.includes("Right")) return "right";
+    if (raw.includes("Left")) return "left";
+    if (raw.includes("Forward")) return "forward";
+    if (raw.includes("Back")) return "back";
+
+    return "correct";
+  };
+
   useEffect(() => {
     AsyncStorage.getItem("CAMERA_PAIRED").then((v) => {
       setCameraPaired(v === "true");
@@ -79,7 +90,7 @@ export function DataProvider({ children }) {
   const [chairOnline, setChairOnline] = useState(false);
   const chairTimeoutRef = useRef(null);
   const [chairPressures, setChairPressures] = useState(null);
-  const [chairPosture, setChairPosture] = useState(null);
+  const [chairPosture, setChairPosture] = useState("correct");
   const [chairBattery, setChairBattery] = useState(null);
 
   // ===================== WS =====================
@@ -133,11 +144,11 @@ export function DataProvider({ children }) {
           chairTimeoutRef.current = setTimeout(() => {
             setChairOnline(false);
             setChairPressures(null);
-            setChairPosture(null);
+            setChairPosture("correct");
             setChairBattery(null);
 
             triggerAlert("NO_MOVEMENT");
-          }, 3000);
+          }, 6000);
 
           setChairPressures(
             Array.isArray(data.pressures) && data.pressures.length === 4
@@ -145,7 +156,7 @@ export function DataProvider({ children }) {
               : null
           );
 
-          setChairPosture(data.posture || null);
+          setChairPosture(normalizePosture(data.posture));
 
           setChairBattery(
             typeof data.battery === "number" ? data.battery : null
@@ -166,7 +177,7 @@ export function DataProvider({ children }) {
               setCamOnline(false);
               resetData();
               triggerAlert("CAMERA_DISCONNECTED");
-            }, 3000);
+            }, 6000);
           }
           return;
         }
@@ -197,7 +208,7 @@ export function DataProvider({ children }) {
 
       serverIndexRef.current = (serverIndexRef.current + 1) % SERVERS.length;
 
-      reconnectTimer.current = setTimeout(connect, 3000);
+      reconnectTimer.current = setTimeout(connect, 6000);
     };
   };
 
@@ -230,7 +241,7 @@ export function DataProvider({ children }) {
 
   // BAD POSTURE
   useEffect(() => {
-    if (chairPosture === "BAD") {
+    if (chairPosture === "right" || chairPosture === "left") {
       triggerAlert("BAD_POSTURE");
     }
   }, [chairPosture]);
