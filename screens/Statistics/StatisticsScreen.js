@@ -67,6 +67,7 @@ export default function StatisticsScreen() {
         });
 
         const sessionsData = await sessionsRes.json();
+        console.log("📦 SESSIONS RAW:", sessionsData);
 
         setSessions(
           sessionsData.map((s, i) => ({
@@ -123,16 +124,29 @@ export default function StatisticsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ alignItems: "center", paddingBottom: 40 }}
       >
-        {sessions.map((sess) => (
-          <SessionCard
-            key={sess.id}
-            session={sess}
-            theme={theme}
-            isDark={isDark}
-            formatDuration={formatDuration}
-            colorByScore={colorByScore}
-          />
-        ))}
+        {sessions.length === 0 ? (
+          <Text
+            style={{
+              marginTop: 20,
+              color: theme.textSecondary,
+              fontSize: 14,
+              textAlign: "center",
+            }}
+          >
+            {i18n.t("noSessionsToday")}
+          </Text>
+        ) : (
+          sessions.map((sess) => (
+            <SessionCard
+              key={sess.id}
+              session={sess}
+              theme={theme}
+              isDark={isDark}
+              formatDuration={formatDuration}
+              colorByScore={colorByScore}
+            />
+          ))
+        )}
 
         {/* التقييم اليومي */}
         <DailyScoreCard

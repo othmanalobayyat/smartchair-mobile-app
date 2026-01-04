@@ -281,6 +281,7 @@ const i18n = new I18n({
     dailyScore: "التقييم اليومي",
     tipTitle: "معلومة اليوم",
     historyBtn: "عرض التاريخ السابق",
+    noSessionsToday: "لا توجد جلسات مسجلة اليوم.",
 
     // ===== Historical  =====
     historyTitle: "عرض التاريخ السابق",
@@ -576,6 +577,7 @@ const i18n = new I18n({
     dailyScore: "Daily Score",
     tipTitle: "Today's Tip",
     historyBtn: "View History",
+    noSessionsToday: "There's no sessions for today",
 
     // ===== Historical  =====
     historyTitle: "History",

@@ -25,17 +25,17 @@ import { useSettings } from "../hooks/SettingsContext";
 
 export default function Settings({ navigation }) {
   const {
-  soundEnabled,
-  setSoundEnabled,
-  vibrationEnabled,
-  setVibrationEnabled,
-  alertEnabled,
-  setAlertEnabled,
-  alertIntervalMinutes,
-  setAlertIntervalMinutes,
-  alertTypes,
-  setAlertTypes,
-} = useSettings();
+    soundEnabled,
+    setSoundEnabled,
+    vibrationEnabled,
+    setVibrationEnabled,
+    alertEnabled,
+    setAlertEnabled,
+    alertIntervalMinutes,
+    setAlertIntervalMinutes,
+    alertTypes,
+    setAlertTypes,
+  } = useSettings();
 
   const { theme, isDark, toggleTheme } = useTheme();
   const {
@@ -46,7 +46,6 @@ export default function Settings({ navigation }) {
     setCameraEnabled,
     chairOnline,
   } = useData();
-
 
   const [lang, setLang] = useState(i18n.locale.startsWith("ar") ? "ar" : "en");
 
@@ -392,28 +391,27 @@ export default function Settings({ navigation }) {
         </Text>
 
         {/* ALERT ENABLE CARD */}
-<View
-  style={[
-    s.card,
-    { backgroundColor: theme.card, borderColor: theme.border },
-  ]}
->
-  <View style={s.row}>
-    <View style={s.rowLeft}>
-      <MaterialCommunityIcons
-        name="bell-outline"
-        size={20}
-        color={theme.iconSecondary}
-      />
-      <Text style={[s.cardTitle, { color: theme.text, marginLeft: 8 }]}>
-        {i18n.t("alertsEnabled")}
-      </Text>
-    </View>
+        <View
+          style={[
+            s.card,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
+        >
+          <View style={s.row}>
+            <View style={s.rowLeft}>
+              <MaterialCommunityIcons
+                name="bell-outline"
+                size={20}
+                color={theme.iconSecondary}
+              />
+              <Text style={[s.cardTitle, { color: theme.text, marginLeft: 8 }]}>
+                {i18n.t("alertsEnabled")}
+              </Text>
+            </View>
 
-    <Switch value={alertEnabled} onValueChange={setAlertEnabled} />
-  </View>
-</View>
-
+            <Switch value={alertEnabled} onValueChange={setAlertEnabled} />
+          </View>
+        </View>
 
         {/* ALERT TIMEOUT CARD */}
         <View
@@ -440,10 +438,7 @@ export default function Settings({ navigation }) {
           <View style={s.btnRow}>
             <TouchableOpacity
               style={[s.iconBtn, { backgroundColor: theme.secondary }]}
-              onPress={() =>
-  setAlertIntervalMinutes((p) => p + 1)
-}
-
+              onPress={() => setAlertIntervalMinutes((p) => p - 1)}
             >
               <Text style={s.iconBtnTxt}>-</Text>
             </TouchableOpacity>
@@ -457,10 +452,7 @@ export default function Settings({ navigation }) {
 
             <TouchableOpacity
               style={[s.iconBtn, { backgroundColor: theme.secondary }]}
-              onPress={() =>
-  setAlertIntervalMinutes((p) => Math.max(1, p - 1))
-}
-
+              onPress={() => setAlertIntervalMinutes((p) => Math.max(1, p + 1))}
             >
               <Text style={s.iconBtnTxt}>+</Text>
             </TouchableOpacity>

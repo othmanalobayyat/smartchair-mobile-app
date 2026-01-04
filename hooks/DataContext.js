@@ -35,31 +35,27 @@ export function DataProvider({ children }) {
 
   const lastAlertRef = useRef(0);
 
-const triggerAlert = async (type) => {
-  if (!alertEnabled) return;
-  if (!alertTypes[type]) return;
+  const triggerAlert = async (type) => {
+    if (!alertEnabled) return;
+    if (!alertTypes[type]) return;
 
-  const now = Date.now();
-  const cooldown = alertIntervalMinutes * 60 * 1000;
+    const now = Date.now();
+    const cooldown = alertIntervalMinutes * 60 * 1000;
 
-  if (now - lastAlertRef.current < cooldown) return;
-  lastAlertRef.current = now;
+    if (now - lastAlertRef.current < cooldown) return;
+    lastAlertRef.current = now;
 
-  // إشعار فعلي
-  await sendLocalNotification({
-    title: "Posturic Alert",
-    body:
-      type === "BAD_POSTURE"
-        ? "Please correct your sitting posture"
-        : type === "DROWSINESS"
-        ? "You look drowsy. Take a short break"
-        : "Attention required",
-  });
-};
-
-
-
-
+    // إشعار فعلي
+    await sendLocalNotification({
+      title: "Posturic Alert",
+      body:
+        type === "BAD_POSTURE"
+          ? "Please correct your sitting posture"
+          : type === "DROWSINESS"
+          ? "You look drowsy. Take a short break"
+          : "Attention required",
+    });
+  };
   // ===================== CAMERA STATES =====================
   const [camOnline, setCamOnline] = useState(false);
   const [attention, setAttention] = useState(null);
@@ -132,8 +128,7 @@ const triggerAlert = async (type) => {
         if (data.type === "chair_data") {
           setChairOnline(true);
 
-          if (chairTimeoutRef.current)
-            clearTimeout(chairTimeoutRef.current);
+          if (chairTimeoutRef.current) clearTimeout(chairTimeoutRef.current);
 
           chairTimeoutRef.current = setTimeout(() => {
             setChairOnline(false);
@@ -200,8 +195,7 @@ const triggerAlert = async (type) => {
 
       resetData();
 
-      serverIndexRef.current =
-        (serverIndexRef.current + 1) % SERVERS.length;
+      serverIndexRef.current = (serverIndexRef.current + 1) % SERVERS.length;
 
       reconnectTimer.current = setTimeout(connect, 3000);
     };

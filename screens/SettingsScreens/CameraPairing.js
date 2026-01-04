@@ -13,7 +13,7 @@ export default function CameraPairing({ navigation }) {
   const { user, token } = useAuth();
 
   const userId = user?.id;
-
+  const userName = user?.name;
   const payload = useMemo(() => {
     if (!userId) return null;
 
@@ -22,7 +22,7 @@ export default function CameraPairing({ navigation }) {
       scheme: "smartchair",
       action: "pair",
       user_id: userId,
-      token: token || null, // اختياري الآن، بس مفيد لاحقاً
+      user_name: userName,
       ts: Date.now(),
     });
   }, [userId, token]);
