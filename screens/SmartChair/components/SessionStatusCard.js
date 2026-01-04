@@ -14,7 +14,7 @@ export default function SessionStatusCard({
   isDark,
 }) {
   // ✅ posture enum logic (language-independent)
-  const isCorrectPosture = posture === "correct";
+  const isCorrectPosture = posture === "correct" || posture === "no_user";
 
   return (
     <View

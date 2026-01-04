@@ -71,6 +71,7 @@ export function DataProvider({ children }) {
 
   const normalizePosture = (raw) => {
     if (!raw) return "correct";
+    if (raw === "no_user") return "no_user";
 
     if (raw.includes("Right")) return "right";
     if (raw.includes("Left")) return "left";
@@ -108,7 +109,7 @@ export function DataProvider({ children }) {
 
     // chair
     setChairPressures(null);
-    setChairPosture(null);
+    setChairPosture("no_user"); // ✅ ثابتة وواضحة
     setChairBattery(null);
   };
 
@@ -144,7 +145,6 @@ export function DataProvider({ children }) {
           chairTimeoutRef.current = setTimeout(() => {
             setChairOnline(false);
             setChairPressures(null);
-            setChairPosture("correct");
             setChairBattery(null);
 
             triggerAlert("NO_MOVEMENT");

@@ -127,6 +127,7 @@ const i18n = new I18n({
       left: "ميلان لليسار",
       right: "ميلان لليمين",
       forward: "ميلان للأمام",
+      no_user: "لا يوجد مستخدم",
     },
 
     sensorsReadings: "توازن الجلوس",
@@ -420,6 +421,7 @@ const i18n = new I18n({
       left: "Leaning left",
       right: "Leaning right",
       forward: "Leaning forward",
+      no_user: "No User Detected",
     },
 
     sensorsReadings: "Seating Balance",
